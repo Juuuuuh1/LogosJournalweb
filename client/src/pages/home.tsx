@@ -1,0 +1,519 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { 
+  Feather, 
+  Settings, 
+  Key, 
+  Lock, 
+  ChevronLeft, 
+  ChevronRight, 
+  Heart, 
+  Sparkles,
+  Download,
+  Share2,
+  Edit,
+  Clock,
+  FileText,
+  Eye,
+  EyeOff
+} from "lucide-react";
+import type { PhilosophicalQuestion, QuestionResponse, JournalResponse } from "@shared/schema";
+
+type JournalStep = "apiSetup" | "questions" | "finalComments" | "journalOutput";
+
+export default function Home() {
+  const { toast } = useToast();
+  const [currentStep, setCurrentStep] = useState<JournalStep>("apiSetup");
+  const [apiKey, setApiKey] = useState("");
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [questions, setQuestions] = useState<PhilosophicalQuestion[]>([]);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [responses, setResponses] = useState<Record<string, QuestionResponse>>({});
+  const [finalThoughts, setFinalThoughts] = useState("");
+  const [journalEntry, setJournalEntry] = useState<JournalResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load API key from localStorage on mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem("openai_api_key");
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
+  const validateAndSaveApiKey = async () => {
+    if (!apiKey.trim()) {
+      toast({
+        title: "API Key Required",
+        description: "Please enter your OpenAI API key to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await apiRequest("POST", "/api/validate-key", { apiKey });
+      const data = await response.json();
+      
+      if (data.valid) {
+        localStorage.setItem("openai_api_key", apiKey);
+        await generateQuestions();
+      } else {
+        toast({
+          title: "Invalid API Key",
+          description: "The provided API key is not valid. Please check and try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Failed",
+        description: "Unable to validate API key. Please check your connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiRequest("POST", "/api/generate-questions", { apiKey });
+      const data = await response.json();
+      
+      setQuestions(data.questions);
+      setCurrentStep("questions");
+      
+      toast({
+        title: "Questions Generated",
+        description: "Your philosophical reflection questions are ready.",
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate questions. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateResponse = (questionId: string, field: 'selectedOption' | 'customAnswer', value: string) => {
+    setResponses(prev => ({
+      ...prev,
+      [questionId]: {
+        ...prev[questionId],
+        questionId,
+        [field]: value,
+      }
+    }));
+  };
+
+  const canProceedFromQuestion = () => {
+    const currentQuestion = questions[currentQuestionIndex];
+    const response = responses[currentQuestion?.id];
+    return response && (response.selectedOption || response.customAnswer);
+  };
+
+  const nextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      setCurrentStep("finalComments");
+    }
+  };
+
+  const previousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    } else {
+      setCurrentStep("apiSetup");
+    }
+  };
+
+  const generateJournalEntry = async () => {
+    setIsLoading(true);
+    try {
+      const allResponses = {
+        ...responses,
+        finalThoughts: finalThoughts || null
+      };
+
+      const response = await apiRequest("POST", "/api/generate-journal", {
+        apiKey,
+        responses: allResponses
+      });
+      const data = await response.json();
+      
+      setJournalEntry(data);
+      setCurrentStep("journalOutput");
+      
+      toast({
+        title: "Journal Generated",
+        description: "Your philosophical reflection has been synthesized into a beautiful journal entry.",
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate journal entry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startNewReflection = () => {
+    setCurrentStep("apiSetup");
+    setCurrentQuestionIndex(0);
+    setResponses({});
+    setFinalThoughts("");
+    setJournalEntry(null);
+    setQuestions([]);
+  };
+
+  const downloadJournal = () => {
+    if (!journalEntry) return;
+    
+    const content = `Philosophical Daily Journal\n${new Date().toLocaleDateString()}\n\n${journalEntry.finalEntry}`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `journal-${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const getProgressPercentage = () => {
+    if (currentStep === "apiSetup") return 0;
+    if (currentStep === "questions") return ((currentQuestionIndex + 1) / questions.length) * 80;
+    if (currentStep === "finalComments") return 90;
+    return 100;
+  };
+
+  const currentQuestion = questions[currentQuestionIndex];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center">
+                <Feather className="text-white text-lg" />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold text-gray-800">Philosophical Journal</h1>
+                <p className="text-sm text-gray-500">Daily Reflection & Inquiry</p>
+              </div>
+            </div>
+            <Button variant="ghost" size="sm">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-4xl mx-auto px-6 py-8">
+        {/* Progress Bar */}
+        {currentStep !== "apiSetup" && (
+          <Card className="mb-8">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-medium text-gray-800">Reflection Progress</h3>
+                <span className="text-sm text-gray-600">
+                  {currentStep === "questions" && `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+                  {currentStep === "finalComments" && "Final Thoughts"}
+                  {currentStep === "journalOutput" && "Complete"}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-teal-500 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${getProgressPercentage()}%` }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* API Key Setup */}
+        {currentStep === "apiSetup" && (
+          <Card className="shadow-lg">
+            <CardContent className="p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Key className="text-teal-600 text-xl" />
+                </div>
+                <h2 className="text-2xl font-semibold text-gray-800 mb-2">Configure Your Journey</h2>
+                <p className="text-gray-600 max-w-md mx-auto">
+                  To begin your philosophical reflection, please provide your OpenAI API key for personalized question generation.
+                </p>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <Label htmlFor="api-key" className="text-sm font-medium text-gray-700 mb-2 block">
+                    OpenAI API Key <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="api-key"
+                      type={showApiKey ? "text" : "password"}
+                      placeholder="sk-..."
+                      value={apiKey}
+                      onChange={(e) => setApiKey(e.target.value)}
+                      className="pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                    >
+                      {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2 flex items-center">
+                    <Lock className="h-3 w-3 mr-1" />
+                    Your API key is stored locally and never shared
+                  </p>
+                </div>
+                
+                <div className="flex items-center justify-between pt-6">
+                  <a 
+                    href="https://platform.openai.com/api-keys" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+                  >
+                    Need an API key? Get one here →
+                  </a>
+                  <Button 
+                    onClick={validateAndSaveApiKey}
+                    disabled={isLoading || !apiKey.trim()}
+                    className="bg-teal-500 hover:bg-teal-600"
+                  >
+                    {isLoading ? "Validating..." : "Begin Reflection"}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Questions */}
+        {currentStep === "questions" && currentQuestion && (
+          <div className="space-y-8">
+            <Card className="shadow-lg">
+              <CardContent className="p-8">
+                <div className="mb-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+                      <span className="text-teal-600 font-semibold text-sm">{currentQuestionIndex + 1}</span>
+                    </div>
+                    <Badge variant="secondary" className="uppercase tracking-wide">
+                      {currentQuestion.category}
+                    </Badge>
+                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-3">{currentQuestion.text}</h2>
+                  <p className="text-gray-600 italic">{currentQuestion.philosopherQuote}</p>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Multiple Choice Options */}
+                  <RadioGroup
+                    value={responses[currentQuestion.id]?.selectedOption || ""}
+                    onValueChange={(value) => updateResponse(currentQuestion.id, 'selectedOption', value)}
+                  >
+                    <div className="space-y-3">
+                      {currentQuestion.options.map((option, index) => (
+                        <Label
+                          key={index}
+                          className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-teal-300 cursor-pointer transition-colors"
+                        >
+                          <RadioGroupItem value={option} className="mr-3" />
+                          <span className="text-gray-700">{option}</span>
+                        </Label>
+                      ))}
+                    </div>
+                  </RadioGroup>
+
+                  {/* Custom Answer */}
+                  <div>
+                    <Label htmlFor={`question-${currentQuestion.id}-custom`} className="block text-sm font-medium text-gray-700 mb-2">
+                      Or share your own reflection:
+                    </Label>
+                    <Textarea
+                      id={`question-${currentQuestion.id}-custom`}
+                      rows={4}
+                      placeholder="Take a moment to describe your thoughts in your own words..."
+                      value={responses[currentQuestion.id]?.customAnswer || ""}
+                      onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                      className="resize-none"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={previousQuestion}
+                disabled={currentQuestionIndex === 0}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+              <Button
+                onClick={nextQuestion}
+                disabled={!canProceedFromQuestion()}
+                className="bg-teal-500 hover:bg-teal-600"
+              >
+                {currentQuestionIndex === questions.length - 1 ? "Final Thoughts" : "Continue Reflection"}
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Final Comments */}
+        {currentStep === "finalComments" && (
+          <div className="space-y-8">
+            <Card className="shadow-lg">
+              <CardContent className="p-8">
+                <div className="mb-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+                      <Heart className="text-teal-600 text-sm" />
+                    </div>
+                    <Badge variant="secondary" className="uppercase tracking-wide">Final Reflection</Badge>
+                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-800 mb-3">Any final thoughts?</h2>
+                  <p className="text-gray-600">
+                    This space is for any additional reflections, insights, or thoughts you'd like to capture from today.
+                  </p>
+                </div>
+
+                <div>
+                  <Textarea
+                    rows={6}
+                    placeholder="Optional: Share any final thoughts, gratitudes, or insights from your reflection..."
+                    value={finalThoughts}
+                    onChange={(e) => setFinalThoughts(e.target.value)}
+                    className="resize-none"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep("questions")}
+              >
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+              <Button
+                onClick={generateJournalEntry}
+                disabled={isLoading}
+                className="bg-teal-500 hover:bg-teal-600"
+              >
+                <Sparkles className="h-4 w-4 mr-2" />
+                {isLoading ? "Generating..." : "Generate Journal Entry"}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Generated Journal */}
+        {currentStep === "journalOutput" && journalEntry && (
+          <div className="space-y-8">
+            <Card className="shadow-lg">
+              <CardContent className="p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-gray-800">Your Daily Journal</h2>
+                    <p className="text-gray-600">{new Date().toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Button variant="ghost" size="sm" title="Edit">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={downloadJournal} title="Download">
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" title="Share">
+                      <Share2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-6 border-l-4 border-teal-500 mb-8">
+                  <div className="prose prose-lg max-w-none">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {journalEntry.finalEntry}
+                    </p>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between pt-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <Clock className="h-3 w-3 mr-1" />
+                      Generated in {journalEntry.generationTime.toFixed(1)}s
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center">
+                      <FileText className="h-3 w-3 mr-1" />
+                      {journalEntry.wordCount} words
+                    </div>
+                  </div>
+                  <Button
+                    onClick={startNewReflection}
+                    className="bg-teal-500 hover:bg-teal-600"
+                  >
+                    Start New Reflection
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-16">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-6">
+              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Privacy</a>
+              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Terms</a>
+              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Support</a>
+            </div>
+            <p className="text-xs text-gray-500">Built with contemplation and care</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
