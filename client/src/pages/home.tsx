@@ -78,12 +78,27 @@ export default function Home() {
       return;
     }
 
+    // Basic API key format validation
+    if (!apiKey.startsWith('sk-') || apiKey.length < 20) {
+      toast({
+        title: "Invalid API Key Format",
+        description: "OpenAI API keys start with 'sk-' and are longer. Please check your key.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const response = await apiRequest("POST", "/api/validate-key", { apiKey });
-      const data = await response.json();
+      // Test the API key by making a direct call to OpenAI
+      const testResponse = await fetch('https://api.openai.com/v1/models', {
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
       
-      if (data.valid) {
+      if (testResponse.ok) {
         storeApiKey(apiKey);
         await generateQuestions();
       } else {
@@ -107,10 +122,33 @@ export default function Home() {
   const generateQuestions = async () => {
     setIsLoading(true);
     try {
-      const response = await apiRequest("POST", "/api/generate-questions", { apiKey });
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{
+            role: "system",
+            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Generate 5 thoughtful philosophical questions that encourage introspection. Each question should be accompanied by a brief quote from a relevant philosopher. Structure your response as JSON with this format: {\"questions\": [{\"id\": \"1\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}]}"
+          }, {
+            role: "user",
+            content: "Generate 5 diverse philosophical questions for daily reflection, starting with 'How was your day?' Each should have 3 multiple choice options plus 'Write my own response'."
+          }],
+          response_format: { type: "json_object" },
+          temperature: 0.8
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate questions');
+      }
+
       const data = await response.json();
-      
-      setQuestions(data.questions);
+      const result = JSON.parse(data.choices[0].message.content);
+      setQuestions(result.questions);
       setCurrentStep("questions");
       
       toast({
@@ -120,7 +158,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Generation Failed",
-        description: "Unable to generate questions. Please try again.",
+        description: "Unable to generate questions. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -169,13 +207,43 @@ export default function Home() {
         finalThoughts: finalThoughts || null
       };
 
-      const response = await apiRequest("POST", "/api/generate-journal", {
-        apiKey,
-        responses: allResponses
+      // Format responses for the journal prompt
+      const responseText = questions.map(q => {
+        const response = responses[q.id];
+        const answer = response?.selectedOption || response?.customAnswer || 'No response';
+        return `Question: ${q.text}\nAnswer: ${answer}`;
+      }).join('\n\n');
+
+      const finalThoughtsText = finalThoughts ? `\n\nFinal Thoughts: ${finalThoughts}` : '';
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{
+            role: "system",
+            content: "You are a philosophical journal writer. Create a thoughtful, introspective journal entry based on the user's responses to philosophical questions. Include relevant philosophical quotes and insights. Structure your response as JSON with: {\"finalEntry\": \"the journal entry text\", \"philosophicalQuote\": \"a relevant quote with attribution\", \"keyInsights\": [\"insight1\", \"insight2\", \"insight3\"]}"
+          }, {
+            role: "user",
+            content: `Please create a philosophical journal entry based on these responses:\n\n${responseText}${finalThoughtsText}\n\nSynthesize these into a coherent, meaningful reflection that captures the philosophical themes and personal insights.`
+          }],
+          response_format: { type: "json_object" },
+          temperature: 0.7
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate journal entry');
+      }
+
       const data = await response.json();
+      const result = JSON.parse(data.choices[0].message.content);
       
-      setJournalEntry(data);
+      setJournalEntry(result);
       setCurrentStep("journalOutput");
       
       toast({
@@ -185,7 +253,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Generation Failed",
-        description: "Unable to generate journal entry. Please try again.",
+        description: "Unable to generate journal entry. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -218,14 +286,34 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      const response = await apiRequest("POST", "/api/revise-journal", {
-        apiKey,
-        currentEntry: journalEntry.finalEntry,
-        revisionPrompt: revisionPrompt.trim()
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{
+            role: "system",
+            content: "You are a philosophical journal writer. Revise the given journal entry based on the user's feedback while maintaining the philosophical depth and insights. Structure your response as JSON with: {\"finalEntry\": \"the revised journal entry text\", \"philosophicalQuote\": \"a relevant quote with attribution\", \"keyInsights\": [\"insight1\", \"insight2\", \"insight3\"]}"
+          }, {
+            role: "user",
+            content: `Please revise this journal entry based on my feedback:\n\nCurrent Entry: ${journalEntry.finalEntry}\n\nRevision Request: ${revisionPrompt.trim()}\n\nPlease make the requested changes while maintaining the philosophical depth and personal insights.`
+          }],
+          response_format: { type: "json_object" },
+          temperature: 0.7
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to revise journal entry');
+      }
+
       const data = await response.json();
+      const result = JSON.parse(data.choices[0].message.content);
       
-      setJournalEntry(data);
+      setJournalEntry(result);
       setShowRevisionInput(false);
       setRevisionPrompt("");
       
@@ -236,7 +324,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Revision Failed",
-        description: "Unable to revise journal entry. Please try again.",
+        description: "Unable to revise journal entry. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -249,13 +337,27 @@ export default function Home() {
 
     setIsGeneratingImage(true);
     try {
-      const response = await apiRequest("POST", "/api/generate-image", {
-        apiKey,
-        journalEntry: journalEntry.finalEntry
+      const response = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}...`,
+          n: 1,
+          size: "1024x1024",
+          quality: "standard"
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate image');
+      }
+
       const data = await response.json();
-      
-      setGeneratedImage(data);
+      setGeneratedImage(data.data[0].url);
       
       toast({
         title: "Image Generated",
@@ -264,7 +366,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Image Generation Failed",
-        description: "Unable to generate image. Please try again.",
+        description: "Unable to generate image. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
@@ -277,13 +379,27 @@ export default function Home() {
 
     setIsGeneratingImage(true);
     try {
-      const response = await apiRequest("POST", "/api/generate-image", {
-        apiKey,
-        journalEntry: journalEntry.finalEntry + "\n\nUser preferences for image: " + imageRevisionPrompt
+      const response = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "dall-e-3",
+          prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry with specific preferences: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}`,
+          n: 1,
+          size: "1024x1024",
+          quality: "standard"
+        })
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate image');
+      }
+
       const data = await response.json();
-      
-      setGeneratedImage(data);
+      setGeneratedImage(data.data[0].url);
       setShowImageRevision(false);
       setImageRevisionPrompt("");
       
@@ -294,7 +410,7 @@ export default function Home() {
     } catch (error) {
       toast({
         title: "Image Generation Failed",
-        description: "Unable to generate new image. Please try again.",
+        description: "Unable to generate new image. Please check your API key and try again.",
         variant: "destructive",
       });
     } finally {
