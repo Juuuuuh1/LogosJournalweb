@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import type { PhilosophicalQuestion, JournalResponse } from "@shared/schema";
+import type { PhilosophicalQuestion, JournalResponse, ImageResponse } from "@shared/schema";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const MODEL = "gpt-4o";
@@ -181,6 +181,37 @@ Return the response in JSON format:
       };
     } catch (error) {
       throw new Error(`Failed to revise journal entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async generateImageFromJournal(journalEntry: string): Promise<ImageResponse> {
+    const startTime = Date.now();
+
+    // Create a prompt for DALL-E based on the journal content
+    const imagePrompt = `Create an abstract, contemplative artwork that visually represents the philosophical themes and emotions in this journal entry. The style should be artistic, thoughtful, and serene - suitable for philosophical reflection. Use warm, muted colors and symbolic elements that capture the essence of personal growth and contemplation. Avoid literal representations and focus on mood, atmosphere, and abstract concepts.
+
+Journal entry themes: ${journalEntry.substring(0, 500)}`;
+
+    try {
+      const response = await this.client.images.generate({
+        model: "dall-e-3",
+        prompt: imagePrompt,
+        n: 1,
+        size: "1024x1024",
+        quality: "standard",
+        style: "natural"
+      });
+
+      const imageUrl = response.data[0]?.url;
+      const generationTime = (Date.now() - startTime) / 1000;
+
+      return {
+        imageUrl: imageUrl || "",
+        prompt: imagePrompt,
+        generationTime,
+      };
+    } catch (error) {
+      throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

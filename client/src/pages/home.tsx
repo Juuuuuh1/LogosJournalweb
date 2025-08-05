@@ -24,10 +24,12 @@ import {
   Clock,
   FileText,
   Eye,
-  EyeOff
+  EyeOff,
+  Image as ImageIcon,
+  Loader2
 } from "lucide-react";
 import logoImage from "@assets/image_1754419399979.png";
-import type { PhilosophicalQuestion, QuestionResponse, JournalResponse } from "@shared/schema";
+import type { PhilosophicalQuestion, QuestionResponse, JournalResponse, ImageResponse } from "@shared/schema";
 
 type JournalStep = "apiSetup" | "questions" | "finalComments" | "journalOutput";
 
@@ -44,6 +46,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showRevisionInput, setShowRevisionInput] = useState(false);
   const [revisionPrompt, setRevisionPrompt] = useState("");
+  const [generatedImage, setGeneratedImage] = useState<ImageResponse | null>(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Load API key from localStorage on mount
   useEffect(() => {
@@ -187,6 +191,7 @@ export default function Home() {
     setQuestions([]);
     setShowRevisionInput(false);
     setRevisionPrompt("");
+    setGeneratedImage(null);
   };
 
   const reviseJournalEntry = async () => {
@@ -217,6 +222,34 @@ export default function Home() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const generateImage = async () => {
+    if (!journalEntry) return;
+
+    setIsGeneratingImage(true);
+    try {
+      const response = await apiRequest("POST", "/api/generate-image", {
+        apiKey,
+        journalEntry: journalEntry.finalEntry
+      });
+      const data = await response.json();
+      
+      setGeneratedImage(data);
+      
+      toast({
+        title: "Image Generated",
+        description: "A visual representation of your journal has been created.",
+      });
+    } catch (error) {
+      toast({
+        title: "Image Generation Failed",
+        description: "Unable to generate image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingImage(false);
     }
   };
 
@@ -606,13 +639,48 @@ export default function Home() {
                       {journalEntry.wordCount} words
                     </div>
                   </div>
-                  <Button
-                    onClick={startNewReflection}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    Start New Reflection
-                  </Button>
+                  <div className="flex space-x-3">
+                    <Button
+                      onClick={generateImage}
+                      disabled={isGeneratingImage}
+                      variant="outline"
+                      className="flex items-center"
+                    >
+                      {isGeneratingImage ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <ImageIcon className="h-4 w-4 mr-2" />
+                      )}
+                      Generate Artwork
+                    </Button>
+                    <Button
+                      onClick={startNewReflection}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      Start New Reflection
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Generated Image Display */}
+                {generatedImage && (
+                  <div className="mt-8">
+                    <Separator className="mb-6" />
+                    <div className="text-center">
+                      <h3 className="text-lg font-semibold text-foreground mb-4">Visual Reflection</h3>
+                      <div className="bg-accent rounded-xl p-6 border">
+                        <img
+                          src={generatedImage.imageUrl}
+                          alt="Generated artwork representing your journal reflection"
+                          className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                        />
+                        <div className="mt-4 text-xs text-muted-foreground">
+                          Generated in {generatedImage.generationTime.toFixed(1)}s
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

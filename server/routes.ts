@@ -7,6 +7,7 @@ import {
   generateQuestionsSchema, 
   generateJournalSchema,
   reviseJournalSchema,
+  generateImageSchema,
   insertJournalEntrySchema 
 } from "@shared/schema";
 
@@ -79,6 +80,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to revise journal entry" 
+      });
+    }
+  });
+
+  // Generate image based on journal content
+  app.post("/api/generate-image", async (req, res) => {
+    try {
+      const { apiKey, journalEntry } = generateImageSchema.parse(req.body);
+      const openaiService = new OpenAIService(apiKey);
+      const imageResponse = await openaiService.generateImageFromJournal(journalEntry);
+      
+      res.json(imageResponse);
+    } catch (error) {
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to generate image" 
       });
     }
   });
