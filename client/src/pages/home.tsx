@@ -1043,7 +1043,7 @@ export default function Home() {
       <footer className="bg-card border-t border-border mt-16">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
-            <div className="flex-1 text-center">
+            <div className="flex-1">
               <blockquote className="text-muted-foreground italic text-sm font-serif leading-relaxed">
                 {(() => {
                   const quotes = [
