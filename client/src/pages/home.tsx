@@ -1226,15 +1226,95 @@ export default function Home() {
                             <div className="text-xs text-muted-foreground">
                               Generated in {generatedImage.generationTime.toFixed(1)}s
                             </div>
-                            <Button
-                              onClick={() => setShowImageRevision(!showImageRevision)}
-                              disabled={isGeneratingImage}
-                              variant="ghost"
-                              size="sm"
-                            >
-                              <ImageIcon className="h-3 w-3 mr-1" />
-                              Regenerate
-                            </Button>
+                            <div className="flex items-center space-x-2">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" title="Download Image">
+                                    <Download className="h-3 w-3" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-40">
+                                  <DropdownMenuItem onClick={async () => {
+                                    if (generatedImage) {
+                                      try {
+                                        const response = await fetch(generatedImage.imageUrl);
+                                        const blob = await response.blob();
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.download = `philosophical-${generatedImage.type || 'artwork'}-${new Date().toISOString().split('T')[0]}.png`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                        toast({
+                                          title: "Image Downloaded",
+                                          description: "Your image has been saved to your device.",
+                                        });
+                                      } catch (error) {
+                                        toast({
+                                          title: "Download Failed",
+                                          description: "Unable to download image. Please try again.",
+                                          variant: "destructive",
+                                        });
+                                      }
+                                    }
+                                  }}>
+                                    <Download className="h-3 w-3 mr-2" />
+                                    Save Image
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" title="Share Image">
+                                    <Share2 className="h-3 w-3" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-48">
+                                  <DropdownMenuItem onClick={() => {
+                                    if (generatedImage && journalEntry) {
+                                      const text = `Check out my philosophical ${generatedImage.type || 'artwork'} inspired by my daily reflection. Created with Logos Journal.`;
+                                      navigator.clipboard.writeText(`${text}\n\nImage: ${generatedImage.imageUrl}`);
+                                      toast({
+                                        title: "Copied to Clipboard",
+                                        description: "Image link and description copied to clipboard.",
+                                      });
+                                    }
+                                  }}>
+                                    <FileText className="h-3 w-3 mr-2" />
+                                    Copy Link
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    if (generatedImage && journalEntry) {
+                                      const text = encodeURIComponent(`Check out my philosophical ${generatedImage.type || 'artwork'} created from my daily reflection! 🎨✨`);
+                                      const url = encodeURIComponent(generatedImage.imageUrl);
+                                      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+                                    }
+                                  }}>
+                                    <Share2 className="h-3 w-3 mr-2" />
+                                    Share on Twitter
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    if (generatedImage && journalEntry) {
+                                      const subject = encodeURIComponent(`My Philosophical ${generatedImage.type === 'sketch' ? 'Sketch' : 'Artwork'}`);
+                                      const body = encodeURIComponent(`I wanted to share this ${generatedImage.type || 'artwork'} created from my daily philosophical reflection.\n\nStyle: ${generatedImage.artistStyle}\n\nImage: ${generatedImage.imageUrl}\n\nCreated with Logos Journal`);
+                                      window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+                                    }
+                                  }}>
+                                    <Share2 className="h-3 w-3 mr-2" />
+                                    Share via Email
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                              <Button
+                                onClick={() => setShowImageRevision(!showImageRevision)}
+                                disabled={isGeneratingImage}
+                                variant="ghost"
+                                size="sm"
+                              >
+                                <ImageIcon className="h-3 w-3 mr-1" />
+                                Regenerate
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
