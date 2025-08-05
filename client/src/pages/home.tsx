@@ -451,11 +451,26 @@ export default function Home() {
     }
   };
 
-  const generateImage = async () => {
+  const generateImage = async (style: 'artwork' | 'sketch' = 'artwork') => {
     if (!journalEntry) return;
 
     setIsGeneratingImage(true);
     const startTime = Date.now() / 1000;
+    
+    // Choose prompt based on style
+    const sketchStyles = [
+      "manga and anime style with clean line art",
+      "American comic book style with bold outlines", 
+      "detailed pencil sketch with cross-hatching",
+      "minimalist line drawing style"
+    ];
+    
+    const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
+    
+    const prompt = style === 'sketch' 
+      ? `Create a hand-drawn sketch that captures the philosophical essence of this journal entry. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation of inner reflection. Use clean, expressive lines and thoughtful composition. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`
+      : `Create a contemplative, abstract artwork that captures the philosophical essence of this journal entry through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`;
+
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
@@ -465,7 +480,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, abstract artwork that captures the philosophical essence of this journal entry through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`,
+          prompt: prompt,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -494,9 +509,10 @@ export default function Home() {
       
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Abstract contemplative artwork capturing philosophical reflection through colors and mood`,
+        prompt: style === 'sketch' ? `Hand-drawn ${selectedSketchStyle} sketch` : `Abstract contemplative artwork`,
         generationTime: Date.now() / 1000 - startTime,
-        artistStyle: selectedStyle
+        artistStyle: style === 'sketch' ? selectedSketchStyle : selectedStyle,
+        type: style
       };
       setGeneratedImage(imageResponse);
       
@@ -518,10 +534,27 @@ export default function Home() {
   };
 
   const regenerateImage = async () => {
-    if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim()) return;
+    if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim() || !generatedImage) return;
 
     setIsGeneratingImage(true);
     const startTime = Date.now() / 1000;
+    
+    // Determine the current image type and use the same style
+    const currentImageType = generatedImage.type || 'artwork';
+    
+    const sketchStyles = [
+      "manga and anime style with clean line art",
+      "American comic book style with bold outlines", 
+      "detailed pencil sketch with cross-hatching",
+      "minimalist line drawing style"
+    ];
+    
+    const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
+    
+    const prompt = currentImageType === 'sketch' 
+      ? `Create a hand-drawn sketch that captures philosophical reflection. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`
+      : `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`;
+
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
@@ -531,7 +564,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`,
+          prompt: prompt,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -560,9 +593,10 @@ export default function Home() {
       
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Abstract contemplative artwork with custom user vision`,
+        prompt: currentImageType === 'sketch' ? `Hand-drawn ${selectedSketchStyle} sketch with custom vision` : `Abstract contemplative artwork with custom user vision`,
         generationTime: Date.now() / 1000 - startTime,
-        artistStyle: selectedStyle
+        artistStyle: currentImageType === 'sketch' ? selectedSketchStyle : selectedStyle,
+        type: currentImageType
       };
       setGeneratedImage(imageResponse);
       setShowImageRevision(false);
@@ -965,20 +999,35 @@ export default function Home() {
                     </div>
                   </div>
                   {isJournalConfirmed && (
-                    <div className="flex space-x-3">
-                      <Button
-                        onClick={generateImage}
-                        disabled={isGeneratingImage}
-                        variant="outline"
-                        className="flex items-center"
-                      >
-                        {isGeneratingImage ? (
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        ) : (
-                          <ImageIcon className="h-4 w-4 mr-2" />
-                        )}
-                        Generate Artwork
-                      </Button>
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex space-x-3">
+                        <Button
+                          onClick={() => generateImage('artwork')}
+                          disabled={isGeneratingImage}
+                          variant="outline"
+                          className="flex items-center"
+                        >
+                          {isGeneratingImage ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <ImageIcon className="h-4 w-4 mr-2" />
+                          )}
+                          Generate Artwork
+                        </Button>
+                        <Button
+                          onClick={() => generateImage('sketch')}
+                          disabled={isGeneratingImage}
+                          variant="outline"
+                          className="flex items-center"
+                        >
+                          {isGeneratingImage ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Edit className="h-4 w-4 mr-2" />
+                          )}
+                          Generate Sketch
+                        </Button>
+                      </div>
                       <Button
                         onClick={startNewReflection}
                         className="bg-primary hover:bg-primary/90"
@@ -1072,7 +1121,7 @@ export default function Home() {
                         />
                         <div className="mt-4 space-y-1">
                           <div className="text-sm text-muted-foreground font-medium">
-                            Inspired by {generatedImage.artistStyle}
+                            {generatedImage.type === 'sketch' ? 'Style:' : 'Inspired by'} {generatedImage.artistStyle}
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="text-xs text-muted-foreground">
