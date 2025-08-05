@@ -26,6 +26,7 @@ import {
   Eye,
   EyeOff
 } from "lucide-react";
+import logoImage from "@assets/image_1754419399979.png";
 import type { PhilosophicalQuestion, QuestionResponse, JournalResponse } from "@shared/schema";
 
 type JournalStep = "apiSetup" | "questions" | "finalComments" | "journalOutput";
@@ -253,8 +254,12 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center">
-                <Feather className="text-white text-lg" />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img 
+                  src={logoImage} 
+                  alt="Logos Journal Logo" 
+                  className="w-10 h-10 object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-800">Logos Journal</h1>
