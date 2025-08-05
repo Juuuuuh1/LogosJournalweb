@@ -596,15 +596,7 @@ export default function Home() {
 
         {/* API Key Setup */}
         {currentStep === "apiSetup" && (
-          <div>
-            {/* Show security badge first if API key exists */}
-            {hasStoredApiKey() && apiKey && (
-              <SecurityBadge 
-                apiKey={apiKey} 
-                onKeyCleared={handleApiKeyCleared}
-              />
-            )}
-            
+          <div>            
             <Card className="shadow-lg">
               <CardContent className="p-8">
               <div className="text-center mb-8">
@@ -685,6 +677,14 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Show security badge below the main card if API key exists */}
+          {hasStoredApiKey() && apiKey && (
+            <SecurityBadge 
+              apiKey={apiKey} 
+              onKeyCleared={handleApiKeyCleared}
+            />
+          )}
           </div>
         )}
 
