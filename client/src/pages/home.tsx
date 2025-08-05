@@ -362,7 +362,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}...`,
+          prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}... NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -374,11 +374,24 @@ export default function Home() {
       }
 
       const data = await response.json();
+      // Randomly select an artist style for variety
+      const artistStyles = [
+        "Van Gogh's Post-Impressionist Style",
+        "Monet's Impressionist Technique", 
+        "Picasso's Cubist Approach",
+        "Kandinsky's Abstract Expressionism",
+        "Turner's Romantic Landscape Style",
+        "Rothko's Color Field Painting",
+        "Cézanne's Post-Impressionist Method",
+        "Dalí's Surrealist Vision"
+      ];
+      const selectedStyle = artistStyles[Math.floor(Math.random() * artistStyles.length)];
+      
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}...`,
+        prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}... NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
         generationTime: Date.now() / 1000 - startTime,
-        artistStyle: "Contemporary Digital Art"
+        artistStyle: selectedStyle
       };
       setGeneratedImage(imageResponse);
       
@@ -411,7 +424,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry with specific preferences: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}`,
+          prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -423,11 +436,24 @@ export default function Home() {
       }
 
       const data = await response.json();
+      // Randomly select an artist style for variety in regenerated images
+      const artistStyles = [
+        "Van Gogh's Post-Impressionist Style",
+        "Monet's Impressionist Technique", 
+        "Picasso's Cubist Approach",
+        "Kandinsky's Abstract Expressionism",
+        "Turner's Romantic Landscape Style",
+        "Rothko's Color Field Painting",
+        "Cézanne's Post-Impressionist Method",
+        "Dalí's Surrealist Vision"
+      ];
+      const selectedStyle = artistStyles[Math.floor(Math.random() * artistStyles.length)];
+      
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry with specific preferences: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}`,
+        prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
         generationTime: Date.now() / 1000 - startTime,
-        artistStyle: "Contemporary Digital Art"
+        artistStyle: selectedStyle
       };
       setGeneratedImage(imageResponse);
       setShowImageRevision(false);
