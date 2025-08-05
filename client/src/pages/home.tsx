@@ -753,16 +753,16 @@ export default function Home() {
                     </div>
                     <Badge variant="secondary" className="uppercase tracking-wide">Final Reflection</Badge>
                   </div>
-                  <h2 className="text-2xl font-semibold text-foreground mb-3">Any final thoughts?</h2>
+                  <h2 className="text-2xl font-semibold text-foreground mb-3">Additional Reflections</h2>
                   <p className="text-muted-foreground">
-                    This space is for any additional reflections, insights, or thoughts you'd like to capture from today.
+                    Capture any final insights, gratitudes, or specific events from your day that you'd like to include in your journal.
                   </p>
                 </div>
 
                 <div>
                   <Textarea
                     rows={6}
-                    placeholder="Optional: Share any final thoughts, gratitudes, or insights from your reflection..."
+                    placeholder="Optional: Share any additional insights, gratitudes, or specific events from your day..."
                     value={finalThoughts}
                     onChange={(e) => setFinalThoughts(e.target.value)}
                     className="resize-none"
