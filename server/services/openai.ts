@@ -188,9 +188,9 @@ Return the response in JSON format:
     const startTime = Date.now();
 
     // Create a prompt for DALL-E based on the journal content
-    const imagePrompt = `Create an abstract, contemplative artwork that visually represents the philosophical themes and emotions in this journal entry. The style should be artistic, thoughtful, and serene - suitable for philosophical reflection. Use warm, muted colors and symbolic elements that capture the essence of personal growth and contemplation. Avoid literal representations and focus on mood, atmosphere, and abstract concepts.
+    const imagePrompt = `Create a purely abstract artwork with flowing forms, gradients, and organic shapes. Use warm earth tones - beiges, soft browns, muted golds, and gentle grays. The composition should evoke contemplation, inner peace, and philosophical depth through color harmony and fluid movement. Focus on abstract expressionism with soft transitions, flowing lines, and meditative color palettes. No text, symbols, or recognizable objects - only pure abstract forms that suggest emotional and spiritual themes. Style: abstract expressionist painting with soft, contemplative mood.
 
-Journal entry themes: ${journalEntry.substring(0, 500)}`;
+Emotional essence to capture: ${journalEntry.substring(0, 300)}`;
 
     try {
       const response = await this.client.images.generate({
