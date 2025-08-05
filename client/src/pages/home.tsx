@@ -121,7 +121,7 @@ export default function Home() {
     }
   };
 
-  const generateQuestions = async () => {
+  const generateFirstQuestion = async () => {
     setIsLoading(true);
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -134,10 +134,10 @@ export default function Home() {
           model: "gpt-4o",
           messages: [{
             role: "system",
-            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Generate 5 thoughtful philosophical questions that encourage introspection. Each question should be accompanied by a brief quote from a relevant philosopher. Structure your response as JSON with this format: {\"questions\": [{\"id\": \"1\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}]}"
+            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Generate 1 thoughtful opening question for daily reflection. Structure your response as JSON with this format: {\"question\": {\"id\": \"1\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}}"
           }, {
             role: "user",
-            content: "Generate 5 diverse philosophical questions for daily reflection, starting with 'How was your day?' Each should have 3 multiple choice options plus 'Write my own response'."
+            content: "Generate the first philosophical question for daily reflection. Start with something about how their day went, but make it philosophical and introspective. Include 3 multiple choice options plus 'Write my own response'."
           }],
           response_format: { type: "json_object" },
           temperature: 0.8
@@ -145,12 +145,12 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate questions');
+        throw new Error('Failed to generate question');
       }
 
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
-      setQuestions(result.questions);
+      setQuestions([result.question]);
       setCurrentStep("questions");
       
       toast({
@@ -167,6 +167,70 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  const generateNextQuestion = async () => {
+    if (questions.length >= 5) return; // Limit to 5 questions total
+    
+    setIsLoading(true);
+    try {
+      // Build context from previous questions and answers
+      const previousQA = questions.slice(0, currentQuestionIndex + 1).map((q, i) => {
+        const response = responses[q.id];
+        const answer = response?.customAnswer || response?.selectedOption || "No response";
+        return `Q${i + 1}: ${q.text}\nA${i + 1}: ${answer}`;
+      }).join('\n\n');
+
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: "gpt-4o",
+          messages: [{
+            role: "system",
+            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Based on the user's previous answers, generate 1 thoughtful follow-up question that builds upon their responses while remaining philosophical and introspective. The question should feel like a natural progression from their previous thoughts. Structure your response as JSON with this format: {\"question\": {\"id\": \"nextId\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}}"
+          }, {
+            role: "user",
+            content: `Based on the user's previous responses, generate the next philosophical question that builds upon their answers:\n\n${previousQA}\n\nCreate a follow-up question that explores deeper themes from their responses while maintaining philosophical depth. Include 3 relevant multiple choice options plus 'Write my own response'.`
+          }],
+          response_format: { type: "json_object" },
+          temperature: 0.8
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate next question');
+      }
+
+      const data = await response.json();
+      const result = JSON.parse(data.choices[0].message.content);
+      
+      // Add the new question with proper ID
+      const nextQuestion = {
+        ...result.question,
+        id: (questions.length + 1).toString()
+      };
+      
+      setQuestions(prev => [...prev, nextQuestion]);
+      
+      toast({
+        title: "Next Question Ready",
+        description: "Your next reflection question has been generated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Unable to generate next question. Please check your API key and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateQuestions = generateFirstQuestion;
 
   const updateResponse = (questionId: string, field: 'selectedOption' | 'customAnswer', value: string) => {
     setResponses(prev => ({
@@ -185,8 +249,12 @@ export default function Home() {
     return response && (response.selectedOption || response.customAnswer);
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else if (questions.length < 5) {
+      // Generate next question based on previous answers
+      await generateNextQuestion();
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
       setCurrentStep("finalComments");
