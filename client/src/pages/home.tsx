@@ -667,31 +667,42 @@ export default function Home() {
                   >
                     <div className="space-y-3">
                       {currentQuestion.options.map((option, index) => (
-                        <Label
-                          key={index}
-                          className="flex items-center p-4 border border-border rounded-lg hover:border-primary/50 cursor-pointer transition-colors"
-                        >
-                          <RadioGroupItem value={option} className="mr-3" />
-                          <span className="text-foreground">{option}</span>
-                        </Label>
+                        <div key={index} className="space-y-3">
+                          <Label className="flex items-center p-4 border border-border rounded-lg hover:border-primary/50 cursor-pointer transition-colors">
+                            <RadioGroupItem value={option} className="mr-3" />
+                            <span className="text-foreground">{option}</span>
+                          </Label>
+                          
+                          {/* Show input for selected option (except "Write my own response") */}
+                          {responses[currentQuestion.id]?.selectedOption === option && 
+                           option !== "Write my own response" && (
+                            <div className="ml-6">
+                              <Textarea
+                                rows={2}
+                                placeholder="Any specific keywords or short description to add to this choice?"
+                                value={responses[currentQuestion.id]?.customAnswer || ""}
+                                onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                                className="resize-none text-sm"
+                              />
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </RadioGroup>
 
-                  {/* Custom Answer */}
-                  <div>
-                    <Label htmlFor={`question-${currentQuestion.id}-custom`} className="block text-sm font-medium text-foreground mb-2">
-                      Or share your own reflection:
-                    </Label>
-                    <Textarea
-                      id={`question-${currentQuestion.id}-custom`}
-                      rows={4}
-                      placeholder="Take a moment to describe your thoughts in your own words..."
-                      value={responses[currentQuestion.id]?.customAnswer || ""}
-                      onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
-                      className="resize-none"
-                    />
-                  </div>
+                  {/* Show full custom answer input only when "Write my own response" is selected */}
+                  {responses[currentQuestion.id]?.selectedOption === "Write my own response" && (
+                    <div>
+                      <Textarea
+                        rows={4}
+                        placeholder="Take a moment to describe your thoughts in your own words..."
+                        value={responses[currentQuestion.id]?.customAnswer || ""}
+                        onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                        className="resize-none"
+                      />
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
