@@ -1055,6 +1055,19 @@ export default function Home() {
                           <Download className="h-4 w-4 mr-2" />
                           Share via Email
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          if (journalEntry) {
+                            const text = `${journalEntry.finalEntry.substring(0, 200)}...\n\n${journalEntry.philosophicalQuote ? `"${journalEntry.philosophicalQuote}"` : ''}\n\n#Philosophy #Reflection #LogosJournal`;
+                            navigator.clipboard.writeText(text);
+                            toast({
+                              title: "Copied for Instagram",
+                              description: "Text copied to clipboard. Open Instagram and paste in your story or post.",
+                            });
+                          }
+                        }}>
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Share on Instagram
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={downloadJournal}>
                           <Download className="h-4 w-4 mr-2" />
@@ -1302,6 +1315,19 @@ export default function Home() {
                                   }}>
                                     <Share2 className="h-3 w-3 mr-2" />
                                     Share via Email
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => {
+                                    if (generatedImage && journalEntry) {
+                                      const caption = `My philosophical ${generatedImage.type || 'artwork'} inspired by today's reflection ✨\n\nStyle: ${generatedImage.artistStyle}\n\n#Philosophy #Art #Reflection #LogosJournal #AI${generatedImage.type === 'sketch' ? ' #Sketch' : 'Art'}`;
+                                      navigator.clipboard.writeText(caption);
+                                      toast({
+                                        title: "Caption Copied",
+                                        description: "Caption copied to clipboard. Save the image and share on Instagram with this caption.",
+                                      });
+                                    }
+                                  }}>
+                                    <Share2 className="h-3 w-3 mr-2" />
+                                    Share on Instagram
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
