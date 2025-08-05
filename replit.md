@@ -6,6 +6,9 @@ This is a philosophical journaling application that uses AI to guide users throu
 - Fixed deployment issues for production mode
 - Improved error handling to prevent server crashes in production
 - Enhanced NODE_ENV detection for proper development/production mode switching
+- Added comprehensive sharing functionality for journal entries (copy, Twitter, email, Instagram)
+- Implemented download and share features for generated artwork and sketches
+- Added Instagram sharing with optimized captions and hashtags for both text and images
 
 # User Preferences
 
