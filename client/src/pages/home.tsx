@@ -837,7 +837,7 @@ export default function Home() {
                 disabled={!canProceedFromQuestion()}
                 className="bg-primary hover:bg-primary/90"
               >
-                {currentQuestionIndex === questions.length - 1 ? "Final Thoughts" : "Continue Reflection"}
+                {(currentQuestionIndex === questions.length - 1 && questions.length >= 5) ? "Final Thoughts" : "Continue Reflection"}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
