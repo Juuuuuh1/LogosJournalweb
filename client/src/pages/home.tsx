@@ -792,6 +792,19 @@ export default function Home() {
                     </Button>
                   </div>
                   <div className="mt-3 space-y-2">
+                    <div className="flex items-center space-x-2 text-xs text-blue-600">
+                      <Key className="h-3 w-3" />
+                      <span>
+                        <a 
+                          href="https://platform.openai.com/api-keys" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="hover:underline"
+                        >
+                          How to get an OpenAI API key →
+                        </a>
+                      </span>
+                    </div>
                     <div className="flex items-center space-x-2 text-xs text-green-600">
                       <Shield className="h-3 w-3" />
                       <span>Encrypted and stored only in your browser</span>
