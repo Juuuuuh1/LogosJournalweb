@@ -614,62 +614,7 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Draft Badge and Revision Section */}
-                {journalEntry.isDraft && (
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">
-                        Draft • Ready for revision
-                      </Badge>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowRevisionInput(!showRevisionInput)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
-                      </Button>
-                    </div>
 
-                    {showRevisionInput && (
-                      <Card className="border-amber-200 bg-amber-50/30">
-                        <CardContent className="p-4">
-                          <Label htmlFor="revision-prompt" className="block text-sm font-medium text-gray-700 mb-2">
-                            How would you like to revise this entry?
-                          </Label>
-                          <Textarea
-                            id="revision-prompt"
-                            rows={3}
-                            placeholder="Examples: Make it shorter, change the tone to be more hopeful, add more philosophical depth, focus more on gratitude, etc."
-                            value={revisionPrompt}
-                            onChange={(e) => setRevisionPrompt(e.target.value)}
-                            className="mb-3 bg-white"
-                          />
-                          <div className="flex items-center justify-end space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                setShowRevisionInput(false);
-                                setRevisionPrompt("");
-                              }}
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={reviseJournalEntry}
-                              disabled={isLoading || !revisionPrompt.trim()}
-                              className="bg-primary hover:bg-primary/90"
-                            >
-                              {isLoading ? "Revising..." : "Apply Revision"}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
-                  </div>
-                )}
 
                 <Separator />
 
@@ -724,7 +669,7 @@ export default function Home() {
                         onClick={() => setShowRevisionInput(!showRevisionInput)}
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        Revise Entry
+                        {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
                       </Button>
                       <Button
                         onClick={confirmJournal}
@@ -734,6 +679,47 @@ export default function Home() {
                         Confirm as Final Journal
                       </Button>
                     </div>
+                    
+                    {/* Revision Input Area */}
+                    {showRevisionInput && (
+                      <div className="mt-6 p-6 bg-accent rounded-xl border">
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="revision-prompt" className="block text-sm font-medium text-foreground mb-2">
+                              How would you like to revise your journal entry?
+                            </Label>
+                            <Textarea
+                              id="revision-prompt"
+                              rows={3}
+                              placeholder="e.g., 'Make it more hopeful', 'Add more depth about gratitude', 'Shorten it to focus on key insights'..."
+                              value={revisionPrompt}
+                              onChange={(e) => setRevisionPrompt(e.target.value)}
+                              className="resize-none"
+                            />
+                          </div>
+                          <div className="flex justify-end space-x-3">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setShowRevisionInput(false);
+                                setRevisionPrompt("");
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={reviseJournalEntry}
+                              disabled={isLoading || !revisionPrompt.trim()}
+                              className="bg-primary hover:bg-primary/90"
+                            >
+                              {isLoading ? "Revising..." : "Apply Changes"}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
