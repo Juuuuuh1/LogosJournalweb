@@ -1271,7 +1271,7 @@ export default function Home() {
                 })()}
               </blockquote>
             </div>
-            <p className="text-xs text-muted-foreground ml-4">Built with contemplation and care</p>
+            <p className="text-xs text-muted-foreground ml-4">Built with contemplation 🤔 and care ❤️</p>
           </div>
         </div>
       </footer>
