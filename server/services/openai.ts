@@ -187,10 +187,24 @@ Return the response in JSON format:
   async generateImageFromJournal(journalEntry: string): Promise<ImageResponse> {
     const startTime = Date.now();
 
-    // Create a prompt for DALL-E based on the journal content
-    const imagePrompt = `Create a purely abstract artwork with flowing forms, gradients, and organic shapes. Use warm earth tones - beiges, soft browns, muted golds, and gentle grays. The composition should evoke contemplation, inner peace, and philosophical depth through color harmony and fluid movement. Focus on abstract expressionism with soft transitions, flowing lines, and meditative color palettes. No text, symbols, or recognizable objects - only pure abstract forms that suggest emotional and spiritual themes. Style: abstract expressionist painting with soft, contemplative mood.
+    // List of famous artists known for abstract/expressive work
+    const famousArtists = [
+      "Wassily Kandinsky", "Mark Rothko", "Jackson Pollock", "Joan Miró", 
+      "Paul Klee", "Piet Mondrian", "Georgia O'Keeffe", "Helen Frankenthaler",
+      "Cy Twombly", "Willem de Kooning", "Franz Kline", "Robert Motherwell",
+      "Agnes Martin", "Yves Klein", "Barnett Newman", "Ad Reinhardt",
+      "Kazimir Malevich", "Hans Hofmann", "Morris Louis", "Kenneth Noland"
+    ];
 
-Emotional essence to capture: ${journalEntry.substring(0, 300)}`;
+    // Randomly select an artist
+    const selectedArtist = famousArtists[Math.floor(Math.random() * famousArtists.length)];
+
+    // Create a prompt for DALL-E based on the journal content
+    const imagePrompt = `Create an abstract artwork in the distinctive style of ${selectedArtist}. Use warm, contemplative colors including beiges, soft browns, muted golds, and gentle grays. The composition should be purely abstract with NO TEXT, NO LETTERS, NO WORDS, NO SYMBOLS whatsoever - only colors, shapes, forms, and brushstrokes. Focus on emotional expression through color relationships, gestural marks, and compositional flow that evokes contemplation and inner reflection. The artwork should capture philosophical depth through pure visual abstraction in ${selectedArtist}'s characteristic approach.
+
+IMPORTANT: Absolutely no text, writing, letters, or readable symbols of any kind should appear in this image. Pure abstract visual art only.
+
+Mood to express: ${journalEntry.substring(0, 200)}`;
 
     try {
       const response = await this.client.images.generate({
@@ -209,6 +223,7 @@ Emotional essence to capture: ${journalEntry.substring(0, 300)}`;
         imageUrl: imageUrl || "",
         prompt: imagePrompt,
         generationTime,
+        artistStyle: selectedArtist,
       };
     } catch (error) {
       throw new Error(`Failed to generate image: ${error instanceof Error ? error.message : 'Unknown error'}`);

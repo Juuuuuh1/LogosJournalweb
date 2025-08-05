@@ -674,8 +674,13 @@ export default function Home() {
                           alt="Generated artwork representing your journal reflection"
                           className="w-full max-w-md mx-auto rounded-lg shadow-lg"
                         />
-                        <div className="mt-4 text-xs text-muted-foreground">
-                          Generated in {generatedImage.generationTime.toFixed(1)}s
+                        <div className="mt-4 space-y-1">
+                          <div className="text-sm text-muted-foreground font-medium">
+                            Inspired by {generatedImage.artistStyle}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Generated in {generatedImage.generationTime.toFixed(1)}s
+                          </div>
                         </div>
                       </div>
                     </div>

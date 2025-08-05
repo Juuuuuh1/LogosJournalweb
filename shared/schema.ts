@@ -77,4 +77,5 @@ export interface ImageResponse {
   imageUrl: string;
   prompt: string;
   generationTime: number;
+  artistStyle: string;
 }
