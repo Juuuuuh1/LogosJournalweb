@@ -56,6 +56,7 @@ export default function Home() {
   const [revisionPrompt, setRevisionPrompt] = useState("");
   const [generatedImage, setGeneratedImage] = useState<ImageResponse | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [generatingImageType, setGeneratingImageType] = useState<'artwork' | 'sketch' | null>(null);
   const [isJournalConfirmed, setIsJournalConfirmed] = useState(false);
   const [showImageRevision, setShowImageRevision] = useState(false);
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
@@ -364,6 +365,7 @@ export default function Home() {
     setIsJournalConfirmed(false);
     setShowImageRevision(false);
     setImageRevisionPrompt("");
+    setGeneratingImageType(null);
   };
 
   const handleApiKeyCleared = () => {
@@ -384,6 +386,7 @@ export default function Home() {
     setIsJournalConfirmed(false);
     setShowImageRevision(false);
     setImageRevisionPrompt("");
+    setGeneratingImageType(null);
     
     // Keep the API key but reset everything else
     const storedKey = getStoredApiKey();
@@ -455,6 +458,7 @@ export default function Home() {
     if (!journalEntry) return;
 
     setIsGeneratingImage(true);
+    setGeneratingImageType(style);
     const startTime = Date.now() / 1000;
     
     // Choose prompt based on style
@@ -530,6 +534,7 @@ export default function Home() {
       });
     } finally {
       setIsGeneratingImage(false);
+      setGeneratingImageType(null);
     }
   };
 
@@ -541,6 +546,7 @@ export default function Home() {
     
     // Determine the current image type and use the same style
     const currentImageType = generatedImage.type || 'artwork';
+    setGeneratingImageType(currentImageType);
     
     const sketchStyles = [
       "manga and anime style with clean line art",
@@ -616,6 +622,7 @@ export default function Home() {
       });
     } finally {
       setIsGeneratingImage(false);
+      setGeneratingImageType(null);
     }
   };
 
@@ -1007,7 +1014,7 @@ export default function Home() {
                           variant="outline"
                           className="flex items-center"
                         >
-                          {isGeneratingImage ? (
+                          {isGeneratingImage && generatingImageType === 'artwork' ? (
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           ) : (
                             <ImageIcon className="h-4 w-4 mr-2" />
@@ -1020,7 +1027,7 @@ export default function Home() {
                           variant="outline"
                           className="flex items-center"
                         >
-                          {isGeneratingImage ? (
+                          {isGeneratingImage && generatingImageType === 'sketch' ? (
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                           ) : (
                             <Edit className="h-4 w-4 mr-2" />

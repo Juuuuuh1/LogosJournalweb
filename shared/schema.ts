@@ -78,4 +78,5 @@ export interface ImageResponse {
   prompt: string;
   generationTime: number;
   artistStyle: string;
+  type?: 'artwork' | 'sketch';
 }
