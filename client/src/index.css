@@ -3,43 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(180, 62%, 54%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
+  /* Logo-inspired color palette - warm beiges and dark grays */
+  --background: hsl(30, 20%, 95%);
+  --foreground: hsl(20, 15%, 25%);
+  --muted: hsl(30, 15%, 90%);
+  --muted-foreground: hsl(20, 10%, 45%);
+  --popover: hsl(30, 20%, 95%);
+  --popover-foreground: hsl(20, 15%, 25%);
+  --card: hsl(30, 25%, 92%);
+  --card-foreground: hsl(20, 15%, 25%);
+  --border: hsl(30, 12%, 85%);
+  --input: hsl(30, 15%, 88%);
+  --primary: hsl(20, 15%, 35%);
+  --primary-foreground: hsl(30, 25%, 92%);
+  --secondary: hsl(30, 15%, 88%);
+  --secondary-foreground: hsl(20, 15%, 25%);
+  --accent: hsl(30, 20%, 85%);
+  --accent-foreground: hsl(20, 15%, 25%);
   --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --destructive-foreground: hsl(30, 25%, 92%);
+  --ring: hsl(20, 15%, 35%);
   --radius: 0.5rem;
 
-  /* Contemplative color palette matching the design */
-  --contemplative-50: hsl(210, 40%, 98%);
-  --contemplative-100: hsl(210, 40%, 96%);
-  --contemplative-200: hsl(214, 32%, 91%);
-  --contemplative-300: hsl(213, 27%, 84%);
-  --contemplative-400: hsl(215, 20%, 65%);
-  --contemplative-500: hsl(215, 16%, 47%);
-  --contemplative-600: hsl(215, 19%, 35%);
-  --contemplative-700: hsl(215, 25%, 27%);
-  --contemplative-800: hsl(217, 33%, 17%);
-  --contemplative-900: hsl(222, 47%, 11%);
+  /* Logo color palette */
+  --logo-beige-light: hsl(30, 25%, 92%);
+  --logo-beige: hsl(30, 20%, 85%);
+  --logo-beige-dark: hsl(30, 15%, 78%);
+  --logo-gray-light: hsl(20, 10%, 55%);
+  --logo-gray: hsl(20, 15%, 35%);
+  --logo-gray-dark: hsl(20, 20%, 25%);
+  --logo-gray-darkest: hsl(20, 25%, 15%);
 
-  /* Accent teal colors */
-  --accent-teal-400: hsl(180, 67%, 63%);
-  --accent-teal-500: hsl(180, 62%, 54%);
-  --accent-teal-600: hsl(180, 60%, 45%);
+  /* Accent colors for interactive elements */
+  --accent-warm: hsl(25, 40%, 65%);
+  --accent-warm-hover: hsl(25, 45%, 60%);
+  --accent-warm-active: hsl(25, 50%, 55%);
 }
 
 .dark {

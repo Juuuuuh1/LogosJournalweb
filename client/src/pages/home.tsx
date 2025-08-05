@@ -248,9 +248,9 @@ export default function Home() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -262,8 +262,8 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-800">Logos Journal</h1>
-                <p className="text-sm text-gray-500">Daily Philosophy, Reflection & Inquiry</p>
+                <h1 className="text-xl font-semibold text-foreground">Logos Journal</h1>
+                <p className="text-sm text-muted-foreground">Daily Philosophy, Reflection & Inquiry</p>
               </div>
             </div>
             <Button variant="ghost" size="sm">
@@ -279,16 +279,16 @@ export default function Home() {
           <Card className="mb-8">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-gray-800">Reflection Progress</h3>
-                <span className="text-sm text-gray-600">
+                <h3 className="font-medium text-foreground">Reflection Progress</h3>
+                <span className="text-sm text-muted-foreground">
                   {currentStep === "questions" && `Question ${currentQuestionIndex + 1} of ${questions.length}`}
                   {currentStep === "finalComments" && "Final Thoughts"}
                   {currentStep === "journalOutput" && "Complete"}
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-muted rounded-full h-2">
                 <div 
-                  className="bg-teal-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-primary h-2 rounded-full transition-all duration-500"
                   style={{ width: `${getProgressPercentage()}%` }}
                 />
               </div>
@@ -301,18 +301,18 @@ export default function Home() {
           <Card className="shadow-lg">
             <CardContent className="p-8">
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Key className="text-teal-600 text-xl" />
+                <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Key className="text-primary text-xl" />
                 </div>
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">Configure Your Journey</h2>
-                <p className="text-gray-600 max-w-md mx-auto">
+                <h2 className="text-2xl font-semibold text-foreground mb-2">Configure Your Journey</h2>
+                <p className="text-muted-foreground max-w-md mx-auto">
                   To begin your philosophical reflection, please provide your OpenAI API key for personalized question generation.
                 </p>
               </div>
               
               <div className="space-y-6">
                 <div>
-                  <Label htmlFor="api-key" className="text-sm font-medium text-gray-700 mb-2 block">
+                  <Label htmlFor="api-key" className="text-sm font-medium text-foreground mb-2 block">
                     OpenAI API Key <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
@@ -334,7 +334,7 @@ export default function Home() {
                       {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2 flex items-center">
+                  <p className="text-xs text-muted-foreground mt-2 flex items-center">
                     <Lock className="h-3 w-3 mr-1" />
                     Your API key is stored locally and never shared
                   </p>
@@ -345,14 +345,14 @@ export default function Home() {
                     href="https://platform.openai.com/api-keys" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+                    className="text-primary hover:text-primary/80 text-sm font-medium"
                   >
                     Need an API key? Get one here →
                   </a>
                   <Button 
                     onClick={validateAndSaveApiKey}
                     disabled={isLoading || !apiKey.trim()}
-                    className="bg-teal-500 hover:bg-teal-600"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     {isLoading ? "Validating..." : "Begin Reflection"}
                   </Button>
@@ -430,7 +430,7 @@ export default function Home() {
               <Button
                 onClick={nextQuestion}
                 disabled={!canProceedFromQuestion()}
-                className="bg-teal-500 hover:bg-teal-600"
+                className="bg-primary hover:bg-primary/90"
               >
                 {currentQuestionIndex === questions.length - 1 ? "Final Thoughts" : "Continue Reflection"}
                 <ChevronRight className="h-4 w-4 ml-2" />
@@ -480,7 +480,7 @@ export default function Home() {
               <Button
                 onClick={generateJournalEntry}
                 disabled={isLoading}
-                className="bg-teal-500 hover:bg-teal-600"
+                className="bg-primary hover:bg-primary/90"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
                 {isLoading ? "Generating..." : "Generate Journal Entry"}
@@ -519,17 +519,17 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-6 border-l-4 border-teal-500 mb-6">
+                <div className="bg-accent rounded-xl p-6 border-l-4 border-primary mb-6">
                   <div className="prose prose-lg max-w-none">
-                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-foreground leading-relaxed whitespace-pre-wrap">
                       {journalEntry.finalEntry}
                     </p>
                   </div>
                   
                   {/* Philosophical Quote */}
                   {journalEntry.philosophicalQuote && (
-                    <div className="mt-6 pt-6 border-t border-gray-200">
-                      <blockquote className="italic text-gray-600 text-center">
+                    <div className="mt-6 pt-6 border-t border-border">
+                      <blockquote className="italic text-muted-foreground text-center">
                         {journalEntry.philosophicalQuote}
                       </blockquote>
                     </div>
@@ -582,7 +582,7 @@ export default function Home() {
                               size="sm"
                               onClick={reviseJournalEntry}
                               disabled={isLoading || !revisionPrompt.trim()}
-                              className="bg-teal-500 hover:bg-teal-600"
+                              className="bg-primary hover:bg-primary/90"
                             >
                               {isLoading ? "Revising..." : "Apply Revision"}
                             </Button>
@@ -597,18 +597,18 @@ export default function Home() {
 
                 <div className="flex items-center justify-between pt-6">
                   <div className="flex items-center space-x-4">
-                    <div className="text-xs text-gray-500 flex items-center">
+                    <div className="text-xs text-muted-foreground flex items-center">
                       <Clock className="h-3 w-3 mr-1" />
                       Generated in {journalEntry.generationTime.toFixed(1)}s
                     </div>
-                    <div className="text-xs text-gray-500 flex items-center">
+                    <div className="text-xs text-muted-foreground flex items-center">
                       <FileText className="h-3 w-3 mr-1" />
                       {journalEntry.wordCount} words
                     </div>
                   </div>
                   <Button
                     onClick={startNewReflection}
-                    className="bg-teal-500 hover:bg-teal-600"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     Start New Reflection
                   </Button>
@@ -620,15 +620,15 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
+      <footer className="bg-card border-t border-border mt-16">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
-              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Privacy</a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Terms</a>
-              <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">Support</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Privacy</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Terms</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Support</a>
             </div>
-            <p className="text-xs text-gray-500">Built with contemplation and care</p>
+            <p className="text-xs text-muted-foreground">Built with contemplation and care</p>
           </div>
         </div>
       </footer>
