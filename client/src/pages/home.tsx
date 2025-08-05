@@ -10,6 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { 
+  storeApiKey, 
+  getStoredApiKey, 
+  hasStoredApiKey, 
+  clearStoredApiKey 
+} from "@/lib/security";
+import { SecurityBadge } from "@/components/ui/security-badge";
+import { 
   Feather, 
   Settings, 
   Key, 
@@ -26,7 +33,8 @@ import {
   Eye,
   EyeOff,
   Image as ImageIcon,
-  Loader2
+  Loader2,
+  Shield
 } from "lucide-react";
 import logoImage from "@assets/image_1754419399979.png";
 import type { PhilosophicalQuestion, QuestionResponse, JournalResponse, ImageResponse } from "@shared/schema";
@@ -52,11 +60,11 @@ export default function Home() {
   const [showImageRevision, setShowImageRevision] = useState(false);
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
 
-  // Load API key from localStorage on mount
+  // Load API key from secure storage on mount
   useEffect(() => {
-    const savedApiKey = localStorage.getItem("openai_api_key");
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
+    const storedKey = getStoredApiKey();
+    if (storedKey) {
+      setApiKey(storedKey);
     }
   }, []);
 
@@ -76,7 +84,7 @@ export default function Home() {
       const data = await response.json();
       
       if (data.valid) {
-        localStorage.setItem("openai_api_key", apiKey);
+        storeApiKey(apiKey);
         await generateQuestions();
       } else {
         toast({
@@ -198,6 +206,11 @@ export default function Home() {
     setIsJournalConfirmed(false);
     setShowImageRevision(false);
     setImageRevisionPrompt("");
+  };
+
+  const handleApiKeyCleared = () => {
+    setApiKey("");
+    setCurrentStep("apiSetup");
   };
 
   const reviseJournalEntry = async () => {
@@ -376,8 +389,17 @@ export default function Home() {
 
         {/* API Key Setup */}
         {currentStep === "apiSetup" && (
-          <Card className="shadow-lg">
-            <CardContent className="p-8">
+          <div>
+            {/* Show security badge if API key is already stored */}
+            {hasStoredApiKey() && apiKey && (
+              <SecurityBadge 
+                apiKey={apiKey} 
+                onKeyCleared={handleApiKeyCleared}
+              />
+            )}
+            
+            <Card className="shadow-lg">
+              <CardContent className="p-8">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                   <Key className="text-primary text-xl" />
@@ -412,10 +434,16 @@ export default function Home() {
                       {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2 flex items-center">
-                    <Lock className="h-3 w-3 mr-1" />
-                    Your API key is stored locally and never shared
-                  </p>
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center space-x-2 text-xs text-green-600">
+                      <Shield className="h-3 w-3" />
+                      <span>Encrypted and stored only in your browser</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-xs text-green-600">
+                      <Shield className="h-3 w-3" />
+                      <span>Never sent to our servers - only directly to OpenAI</span>
+                    </div>
+                  </div>
                 </div>
                 
                 <div className="flex items-center justify-between pt-6">
@@ -438,6 +466,7 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+          </div>
         )}
 
         {/* Questions */}
