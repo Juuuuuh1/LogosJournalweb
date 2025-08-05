@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { 
   storeApiKey, 
   getStoredApiKey, 
@@ -681,9 +682,44 @@ export default function Home() {
                 <p className="text-sm text-muted-foreground">Daily Philosophy, Reflection & Inquiry</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
-              <Settings className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Settings className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setCurrentStep("apiSetup")}>
+                  <Key className="h-4 w-4 mr-2" />
+                  Manage API Key
+                </DropdownMenuItem>
+                {journalEntry && (
+                  <DropdownMenuItem onClick={downloadJournal}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Download Journal
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => {
+                  toast({
+                    title: "About Logos Journal",
+                    description: "A philosophical journaling app that uses AI to guide daily reflection and create personalized artwork.",
+                  });
+                }}>
+                  <Shield className="h-4 w-4 mr-2" />
+                  About
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  toast({
+                    title: "How to Use",
+                    description: "1. Add your OpenAI API key 2. Answer philosophical questions 3. Generate your journal entry 4. Create artwork or sketches",
+                  });
+                }}>
+                  <Eye className="h-4 w-4 mr-2" />
+                  Help
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
