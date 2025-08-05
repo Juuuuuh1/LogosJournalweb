@@ -709,6 +709,34 @@ export default function Home() {
                   )}
                 </div>
 
+                {/* Draft Confirmation Section */}
+                {!isJournalConfirmed && (
+                  <div className="mt-8 p-6 bg-accent/50 rounded-xl border border-primary/20">
+                    <div className="text-center mb-4">
+                      <h3 className="text-lg font-medium text-foreground mb-2">Review Your Journal Draft</h3>
+                      <p className="text-sm text-muted-foreground">
+                        You can confirm this draft as your final journal or make revisions first.
+                      </p>
+                    </div>
+                    <div className="flex justify-center space-x-4">
+                      <Button 
+                        variant="outline"
+                        onClick={() => setShowRevisionInput(!showRevisionInput)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Revise Entry
+                      </Button>
+                      <Button
+                        onClick={confirmJournal}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        <Sparkles className="h-4 w-4 mr-2" />
+                        Confirm as Final Journal
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Generated Image Display */}
                 {generatedImage && (
                   <div className="mt-8">
