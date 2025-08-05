@@ -257,7 +257,7 @@ export default function Home() {
                 <Feather className="text-white text-lg" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-800">Philosophical Journal</h1>
+                <h1 className="text-xl font-semibold text-gray-800">Logos Journal</h1>
                 <p className="text-sm text-gray-500">Daily Reflection & Inquiry</p>
               </div>
             </div>
