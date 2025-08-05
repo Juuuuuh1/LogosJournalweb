@@ -1043,12 +1043,32 @@ export default function Home() {
       <footer className="bg-card border-t border-border mt-16">
         <div className="max-w-4xl mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Privacy</a>
-              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Terms</a>
-              <a href="#" className="text-muted-foreground hover:text-foreground text-sm">Support</a>
+            <div className="flex-1 text-center">
+              <blockquote className="text-muted-foreground italic text-sm font-serif leading-relaxed">
+                {(() => {
+                  const quotes = [
+                    { text: "The unexamined life is not worth living.", author: "Socrates" },
+                    { text: "I think, therefore I am.", author: "René Descartes" },
+                    { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
+                    { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
+                    { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
+                    { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
+                    { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
+                    { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+                    { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
+                    { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", author: "Ralph Waldo Emerson" },
+                    { text: "The mind is everything. What you think you become.", author: "Buddha" },
+                    { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
+                    { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+                    { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+                    { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" }
+                  ];
+                  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                  return `"${randomQuote.text}" — ${randomQuote.author}`;
+                })()}
+              </blockquote>
             </div>
-            <p className="text-xs text-muted-foreground">Built with contemplation and care</p>
+            <p className="text-xs text-muted-foreground ml-4">Built with contemplation and care</p>
           </div>
         </div>
       </footer>
