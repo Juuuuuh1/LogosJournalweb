@@ -65,6 +65,8 @@ export default function Home() {
     const storedKey = getStoredApiKey();
     if (storedKey) {
       setApiKey(storedKey);
+      // If user already has a stored API key, they can skip directly to questions
+      // but still allow them to see the API setup screen to manage their key
     }
   }, []);
 
@@ -573,16 +575,29 @@ export default function Home() {
 
         {/* API Key Setup */}
         {currentStep === "apiSetup" && (
-          <div>            
+          <div>
+            {/* Show security badge first if API key exists */}
+            {hasStoredApiKey() && apiKey && (
+              <SecurityBadge 
+                apiKey={apiKey} 
+                onKeyCleared={handleApiKeyCleared}
+              />
+            )}
+            
             <Card className="shadow-lg">
               <CardContent className="p-8">
               <div className="text-center mb-8">
                 <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
                   <Key className="text-primary text-xl" />
                 </div>
-                <h2 className="text-2xl font-semibold text-foreground mb-2">Configure Your Journey</h2>
+                <h2 className="text-2xl font-semibold text-foreground mb-2">
+                  {hasStoredApiKey() && apiKey ? "Continue Your Journey" : "Configure Your Journey"}
+                </h2>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  To begin your philosophical reflection, please provide your OpenAI API key for personalized question generation.
+                  {hasStoredApiKey() && apiKey 
+                    ? "Your API key is securely stored. Ready to begin a new philosophical reflection?"
+                    : "To begin your philosophical reflection, please provide your OpenAI API key for personalized question generation."
+                  }
                 </p>
               </div>
               
@@ -623,33 +638,32 @@ export default function Home() {
                 </div>
                 
                 <div className="flex items-center justify-between pt-6">
-                  <a 
-                    href="https://platform.openai.com/api-keys" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 text-sm font-medium"
-                  >
-                    Need an API key? Get one here →
-                  </a>
+                  {!hasStoredApiKey() && (
+                    <a 
+                      href="https://platform.openai.com/api-keys" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 text-sm font-medium"
+                    >
+                      Need an API key? Get one here →
+                    </a>
+                  )}
+                  {hasStoredApiKey() && apiKey && (
+                    <div className="text-sm text-muted-foreground">
+                      Using your securely stored API key
+                    </div>
+                  )}
                   <Button 
-                    onClick={validateAndSaveApiKey}
-                    disabled={isLoading || !apiKey.trim()}
+                    onClick={hasStoredApiKey() && apiKey ? generateQuestions : validateAndSaveApiKey}
+                    disabled={isLoading || (!hasStoredApiKey() && !apiKey.trim())}
                     className="bg-primary hover:bg-primary/90"
                   >
-                    {isLoading ? "Validating..." : "Begin Reflection"}
+                    {isLoading ? "Validating..." : hasStoredApiKey() && apiKey ? "Start New Reflection" : "Begin Reflection"}
                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
-          {/* Show security badge if API key is already stored */}
-          {hasStoredApiKey() && apiKey && (
-            <SecurityBadge 
-              apiKey={apiKey} 
-              onKeyCleared={handleApiKeyCleared}
-            />
-          )}
           </div>
         )}
 
