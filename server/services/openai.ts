@@ -77,7 +77,7 @@ Create a journal entry that:
 2. Connects the philosophical themes
 3. Shows personal growth and insight
 4. Maintains a reflective, contemplative tone
-5. Is approximately 250-400 words
+5. Is LESS THAN 200 words (keep it concise and focused)
 6. Include a UNIQUE and SPECIFIC philosophical quote at the end that directly relates to the dominant themes in these particular responses
 
 IMPORTANT: Select a philosophical quote that specifically resonates with the key themes, emotions, and insights expressed in these responses. Consider quotes from various philosophers like Aristotle, Kant, Nietzsche, Sartre, Marcus Aurelius, Lao Tzu, Confucius, Buddha, Rumi, etc. Choose one that feels most relevant to this person's specific reflections today.
@@ -94,7 +94,7 @@ Return the response in JSON format:
         messages: [
           {
             role: "system",
-            content: "You are a philosophical writing assistant who creates beautiful, meaningful journal entries from reflection responses. Write in first person with depth and authenticity. Always include a relevant philosophical quote that resonates with the themes discussed."
+            content: "You are a philosophical writing assistant who creates beautiful, meaningful journal entries from reflection responses. Write in first person with depth and authenticity. Keep entries concise and under 200 words while maintaining philosophical richness. Always include a relevant philosophical quote that resonates with the themes discussed."
           },
           {
             role: "user",
