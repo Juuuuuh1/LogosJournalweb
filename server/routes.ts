@@ -6,6 +6,7 @@ import {
   apiKeyConfigSchema, 
   generateQuestionsSchema, 
   generateJournalSchema,
+  reviseJournalSchema,
   insertJournalEntrySchema 
 } from "@shared/schema";
 
@@ -63,6 +64,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to generate journal entry" 
+      });
+    }
+  });
+
+  // Revise journal entry based on user feedback
+  app.post("/api/revise-journal", async (req, res) => {
+    try {
+      const { apiKey, currentEntry, revisionPrompt } = reviseJournalSchema.parse(req.body);
+      const openaiService = new OpenAIService(apiKey);
+      const revisedJournal = await openaiService.reviseJournalEntry(currentEntry, revisionPrompt);
+      
+      res.json(revisedJournal);
+    } catch (error) {
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to revise journal entry" 
       });
     }
   });

@@ -78,10 +78,12 @@ Create a journal entry that:
 3. Shows personal growth and insight
 4. Maintains a reflective, contemplative tone
 5. Is approximately 250-400 words
+6. Include a relevant philosophical quote at the end that connects to the main themes
 
 Return the response in JSON format:
 {
-  "entry": "The complete journal entry text here..."
+  "entry": "The complete journal entry text here...",
+  "philosophicalQuote": "\"Quote text here\" — Philosopher Name"
 }`;
 
     try {
@@ -90,7 +92,7 @@ Return the response in JSON format:
         messages: [
           {
             role: "system",
-            content: "You are a philosophical writing assistant who creates beautiful, meaningful journal entries from reflection responses. Write in first person with depth and authenticity."
+            content: "You are a philosophical writing assistant who creates beautiful, meaningful journal entries from reflection responses. Write in first person with depth and authenticity. Always include a relevant philosophical quote that resonates with the themes discussed."
           },
           {
             role: "user",
@@ -103,16 +105,78 @@ Return the response in JSON format:
 
       const result = JSON.parse(response.choices[0].message.content || "{}");
       const finalEntry = result.entry || "Unable to generate journal entry.";
+      const philosophicalQuote = result.philosophicalQuote || "\"The unexamined life is not worth living.\" — Socrates";
       const generationTime = (Date.now() - startTime) / 1000;
       const wordCount = finalEntry.split(/\s+/).filter((word: string) => word.length > 0).length;
 
       return {
         finalEntry,
+        philosophicalQuote,
         wordCount,
         generationTime,
+        isDraft: true,
       };
     } catch (error) {
       throw new Error(`Failed to synthesize journal entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async reviseJournalEntry(currentEntry: string, revisionPrompt: string): Promise<JournalResponse> {
+    const startTime = Date.now();
+
+    const prompt = `Please revise the following journal entry based on the user's feedback and instructions.
+
+Current journal entry:
+${currentEntry}
+
+User's revision request:
+${revisionPrompt}
+
+Create a revised journal entry that:
+1. Addresses the user's specific feedback
+2. Maintains the philosophical depth and personal reflection
+3. Keeps the contemplative, authentic tone
+4. Adjusts according to their preferences (word count, tone, style, etc.)
+5. Include a relevant philosophical quote at the end
+
+Return the response in JSON format:
+{
+  "entry": "The revised journal entry text here...",
+  "philosophicalQuote": "\"Quote text here\" — Philosopher Name"
+}`;
+
+    try {
+      const response = await this.client.chat.completions.create({
+        model: MODEL,
+        messages: [
+          {
+            role: "system",
+            content: "You are a philosophical writing assistant who revises journal entries based on user feedback. Maintain authenticity and depth while incorporating their specific requests for changes in tone, length, style, or content."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || "{}");
+      const finalEntry = result.entry || "Unable to revise journal entry.";
+      const philosophicalQuote = result.philosophicalQuote || "\"The unexamined life is not worth living.\" — Socrates";
+      const generationTime = (Date.now() - startTime) / 1000;
+      const wordCount = finalEntry.split(/\s+/).filter((word: string) => word.length > 0).length;
+
+      return {
+        finalEntry,
+        philosophicalQuote,
+        wordCount,
+        generationTime,
+        isDraft: false,
+      };
+    } catch (error) {
+      throw new Error(`Failed to revise journal entry: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

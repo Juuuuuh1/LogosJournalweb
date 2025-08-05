@@ -41,6 +41,8 @@ export default function Home() {
   const [finalThoughts, setFinalThoughts] = useState("");
   const [journalEntry, setJournalEntry] = useState<JournalResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showRevisionInput, setShowRevisionInput] = useState(false);
+  const [revisionPrompt, setRevisionPrompt] = useState("");
 
   // Load API key from localStorage on mount
   useEffect(() => {
@@ -182,12 +184,50 @@ export default function Home() {
     setFinalThoughts("");
     setJournalEntry(null);
     setQuestions([]);
+    setShowRevisionInput(false);
+    setRevisionPrompt("");
+  };
+
+  const reviseJournalEntry = async () => {
+    if (!journalEntry || !revisionPrompt.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await apiRequest("POST", "/api/revise-journal", {
+        apiKey,
+        currentEntry: journalEntry.finalEntry,
+        revisionPrompt: revisionPrompt.trim()
+      });
+      const data = await response.json();
+      
+      setJournalEntry(data);
+      setShowRevisionInput(false);
+      setRevisionPrompt("");
+      
+      toast({
+        title: "Journal Revised",
+        description: "Your journal entry has been updated based on your feedback.",
+      });
+    } catch (error) {
+      toast({
+        title: "Revision Failed",
+        description: "Unable to revise journal entry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const downloadJournal = () => {
     if (!journalEntry) return;
     
-    const content = `Philosophical Daily Journal\n${new Date().toLocaleDateString()}\n\n${journalEntry.finalEntry}`;
+    let content = `Philosophical Daily Journal\n${new Date().toLocaleDateString()}\n\n${journalEntry.finalEntry}`;
+    
+    if (journalEntry.philosophicalQuote) {
+      content += `\n\n---\n${journalEntry.philosophicalQuote}`;
+    }
+    
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -451,11 +491,18 @@ export default function Home() {
               <CardContent className="p-8">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">Your Daily Journal</h2>
+                    <h2 className="text-2xl font-semibold text-gray-800">
+                      Your Daily Journal {journalEntry.isDraft && <span className="text-amber-600">(Draft)</span>}
+                    </h2>
                     <p className="text-gray-600">{new Date().toLocaleDateString()}</p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Button variant="ghost" size="sm" title="Edit">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setShowRevisionInput(!showRevisionInput)}
+                      title="Revise Entry"
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="sm" onClick={downloadJournal} title="Download">
@@ -467,13 +514,79 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded-xl p-6 border-l-4 border-teal-500 mb-8">
+                <div className="bg-gray-50 rounded-xl p-6 border-l-4 border-teal-500 mb-6">
                   <div className="prose prose-lg max-w-none">
                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                       {journalEntry.finalEntry}
                     </p>
                   </div>
+                  
+                  {/* Philosophical Quote */}
+                  {journalEntry.philosophicalQuote && (
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <blockquote className="italic text-gray-600 text-center">
+                        {journalEntry.philosophicalQuote}
+                      </blockquote>
+                    </div>
+                  )}
                 </div>
+
+                {/* Draft Badge and Revision Section */}
+                {journalEntry.isDraft && (
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50">
+                        Draft • Ready for revision
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowRevisionInput(!showRevisionInput)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
+                      </Button>
+                    </div>
+
+                    {showRevisionInput && (
+                      <Card className="border-amber-200 bg-amber-50/30">
+                        <CardContent className="p-4">
+                          <Label htmlFor="revision-prompt" className="block text-sm font-medium text-gray-700 mb-2">
+                            How would you like to revise this entry?
+                          </Label>
+                          <Textarea
+                            id="revision-prompt"
+                            rows={3}
+                            placeholder="Examples: Make it shorter, change the tone to be more hopeful, add more philosophical depth, focus more on gratitude, etc."
+                            value={revisionPrompt}
+                            onChange={(e) => setRevisionPrompt(e.target.value)}
+                            className="mb-3 bg-white"
+                          />
+                          <div className="flex items-center justify-end space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setShowRevisionInput(false);
+                                setRevisionPrompt("");
+                              }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={reviseJournalEntry}
+                              disabled={isLoading || !revisionPrompt.trim()}
+                              className="bg-teal-500 hover:bg-teal-600"
+                            >
+                              {isLoading ? "Revising..." : "Apply Revision"}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                )}
 
                 <Separator />
 

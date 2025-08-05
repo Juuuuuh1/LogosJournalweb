@@ -34,9 +34,16 @@ export const generateJournalSchema = z.object({
   responses: z.record(z.any()),
 });
 
+export const reviseJournalSchema = z.object({
+  apiKey: z.string().min(1, "API key is required"),
+  currentEntry: z.string().min(1, "Current entry is required"),
+  revisionPrompt: z.string().min(1, "Revision instructions are required"),
+});
+
 export type ApiKeyConfig = z.infer<typeof apiKeyConfigSchema>;
 export type GenerateQuestionsRequest = z.infer<typeof generateQuestionsSchema>;
 export type GenerateJournalRequest = z.infer<typeof generateJournalSchema>;
+export type ReviseJournalRequest = z.infer<typeof reviseJournalSchema>;
 
 export interface PhilosophicalQuestion {
   id: string;
@@ -54,6 +61,8 @@ export interface QuestionResponse {
 
 export interface JournalResponse {
   finalEntry: string;
+  philosophicalQuote: string;
   wordCount: number;
   generationTime: number;
+  isDraft?: boolean;
 }
