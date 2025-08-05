@@ -49,6 +49,8 @@ export default function Home() {
   const [generatedImage, setGeneratedImage] = useState<ImageResponse | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [isJournalConfirmed, setIsJournalConfirmed] = useState(false);
+  const [showImageRevision, setShowImageRevision] = useState(false);
+  const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
 
   // Load API key from localStorage on mount
   useEffect(() => {
@@ -194,6 +196,8 @@ export default function Home() {
     setRevisionPrompt("");
     setGeneratedImage(null);
     setIsJournalConfirmed(false);
+    setShowImageRevision(false);
+    setImageRevisionPrompt("");
   };
 
   const reviseJournalEntry = async () => {
@@ -256,17 +260,19 @@ export default function Home() {
   };
 
   const regenerateImage = async () => {
-    if (!journalEntry || !isJournalConfirmed) return;
+    if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim()) return;
 
     setIsGeneratingImage(true);
     try {
       const response = await apiRequest("POST", "/api/generate-image", {
         apiKey,
-        journalEntry: journalEntry.finalEntry
+        journalEntry: journalEntry.finalEntry + "\n\nUser preferences for image: " + imageRevisionPrompt
       });
       const data = await response.json();
       
       setGeneratedImage(data);
+      setShowImageRevision(false);
+      setImageRevisionPrompt("");
       
       toast({
         title: "New Image Generated",
@@ -577,16 +583,6 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    {!isJournalConfirmed && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => setShowRevisionInput(!showRevisionInput)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Revise Entry
-                      </Button>
-                    )}
                     <Button 
                       variant="outline" 
                       size="sm" 
@@ -688,38 +684,29 @@ export default function Home() {
                       {journalEntry.wordCount} words
                     </div>
                   </div>
-                  <div className="flex space-x-3">
-                    {isJournalConfirmed ? (
-                      <>
-                        <Button
-                          onClick={generateImage}
-                          disabled={isGeneratingImage}
-                          variant="outline"
-                          className="flex items-center"
-                        >
-                          {isGeneratingImage ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <ImageIcon className="h-4 w-4 mr-2" />
-                          )}
-                          Generate Artwork
-                        </Button>
-                        <Button
-                          onClick={startNewReflection}
-                          className="bg-primary hover:bg-primary/90"
-                        >
-                          Start New Reflection
-                        </Button>
-                      </>
-                    ) : (
+                  {isJournalConfirmed && (
+                    <div className="flex space-x-3">
                       <Button
-                        onClick={confirmJournal}
+                        onClick={generateImage}
+                        disabled={isGeneratingImage}
+                        variant="outline"
+                        className="flex items-center"
+                      >
+                        {isGeneratingImage ? (
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        ) : (
+                          <ImageIcon className="h-4 w-4 mr-2" />
+                        )}
+                        Generate Artwork
+                      </Button>
+                      <Button
+                        onClick={startNewReflection}
                         className="bg-primary hover:bg-primary/90"
                       >
-                        Confirm Final Journal
+                        Start New Reflection
                       </Button>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Generated Image Display */}
@@ -743,20 +730,67 @@ export default function Home() {
                               Generated in {generatedImage.generationTime.toFixed(1)}s
                             </div>
                             <Button
-                              onClick={regenerateImage}
+                              onClick={() => setShowImageRevision(!showImageRevision)}
                               disabled={isGeneratingImage}
                               variant="ghost"
                               size="sm"
                             >
-                              {isGeneratingImage ? (
-                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                              ) : (
-                                <ImageIcon className="h-3 w-3 mr-1" />
-                              )}
+                              <ImageIcon className="h-3 w-3 mr-1" />
                               Regenerate
                             </Button>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Image Regeneration Prompt */}
+                {showImageRevision && generatedImage && isJournalConfirmed && (
+                  <div className="mt-6 p-6 bg-accent rounded-xl border">
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="image-revision-prompt" className="block text-sm font-medium text-foreground mb-2">
+                          How would you like to modify the artwork?
+                        </Label>
+                        <Textarea
+                          id="image-revision-prompt"
+                          rows={3}
+                          placeholder="e.g., 'More vibrant colors', 'Make it a landscape instead', 'In Van Gogh style', 'Add more warmth'..."
+                          value={imageRevisionPrompt}
+                          onChange={(e) => setImageRevisionPrompt(e.target.value)}
+                          className="resize-none"
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setShowImageRevision(false);
+                            setImageRevisionPrompt("");
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={regenerateImage}
+                          disabled={isGeneratingImage || !imageRevisionPrompt.trim()}
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          {isGeneratingImage ? (
+                            <>
+                              <Loader2 className="h-3 w-3 mr-2 animate-spin" />
+                              Generating...
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="h-3 w-3 mr-2" />
+                              Generate New Image
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
                   </div>
