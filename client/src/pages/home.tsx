@@ -211,7 +211,19 @@ export default function Home() {
       // Format responses for the journal prompt
       const responseText = questions.map(q => {
         const response = responses[q.id];
-        const answer = response?.selectedOption || response?.customAnswer || 'No response';
+        let answer = 'No response';
+        
+        if (response?.selectedOption && response?.customAnswer) {
+          // Both selection and custom input exist
+          answer = `${response.selectedOption} - ${response.customAnswer}`;
+        } else if (response?.selectedOption) {
+          // Only selection exists
+          answer = response.selectedOption;
+        } else if (response?.customAnswer) {
+          // Only custom answer exists
+          answer = response.customAnswer;
+        }
+        
         return `Question: ${q.text}\nAnswer: ${answer}`;
       }).join('\n\n');
 
