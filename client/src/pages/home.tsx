@@ -258,7 +258,7 @@ export default function Home() {
               </div>
               <div>
                 <h1 className="text-xl font-semibold text-gray-800">Logos Journal</h1>
-                <p className="text-sm text-gray-500">Daily Reflection & Inquiry</p>
+                <p className="text-sm text-gray-500">Daily Philosophy, Reflection & Inquiry</p>
               </div>
             </div>
             <Button variant="ghost" size="sm">
