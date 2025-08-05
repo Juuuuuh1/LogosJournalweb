@@ -187,24 +187,48 @@ Return the response in JSON format:
   async generateImageFromJournal(journalEntry: string): Promise<ImageResponse> {
     const startTime = Date.now();
 
-    // List of famous artists known for abstract/expressive work
+    // List of famous artists known for various realistic and expressive styles
     const famousArtists = [
-      "Wassily Kandinsky", "Mark Rothko", "Jackson Pollock", "Joan Miró", 
-      "Paul Klee", "Piet Mondrian", "Georgia O'Keeffe", "Helen Frankenthaler",
-      "Cy Twombly", "Willem de Kooning", "Franz Kline", "Robert Motherwell",
-      "Agnes Martin", "Yves Klein", "Barnett Newman", "Ad Reinhardt",
-      "Kazimir Malevich", "Hans Hofmann", "Morris Louis", "Kenneth Noland"
+      "Leonardo da Vinci", "Vincent van Gogh", "Claude Monet", "Pablo Picasso",
+      "Rembrandt van Rijn", "Johannes Vermeer", "Frida Kahlo", "Georgia O'Keeffe",
+      "Salvador Dalí", "Edgar Degas", "Pierre-Auguste Renoir", "Paul Cézanne",
+      "Henri Matisse", "Gustav Klimt", "Edward Hopper", "Andrew Wyeth",
+      "John Singer Sargent", "Caravaggio", "Jean-Baptiste-Siméon Chardin", "Hokusai",
+      "Ansel Adams", "Thomas Cole", "Albert Bierstadt", "Caspar David Friedrich"
     ];
 
     // Randomly select an artist
     const selectedArtist = famousArtists[Math.floor(Math.random() * famousArtists.length)];
 
+    // List of possible subjects for realistic artwork
+    const subjects = [
+      "a contemplative portrait of a person in thoughtful pose",
+      "a serene landscape with rolling hills and soft lighting",
+      "a quiet forest scene with dappled sunlight",
+      "a peaceful lakeside view at golden hour",
+      "an elegant still life with books and flowers",
+      "a majestic animal in its natural habitat",
+      "a charming old building with weathered architecture",
+      "a tranquil garden scene with blooming flowers",
+      "a dramatic mountain vista with clouds",
+      "a cozy interior scene with warm lighting",
+      "a graceful bird in flight or perched peacefully",
+      "a weathered tree standing alone in a field",
+      "a quiet city street in soft morning light",
+      "a peaceful seaside scene with gentle waves"
+    ];
+
+    // Randomly select a subject
+    const selectedSubject = subjects[Math.floor(Math.random() * subjects.length)];
+
     // Create a prompt for DALL-E based on the journal content
-    const imagePrompt = `Create an abstract artwork in the distinctive style of ${selectedArtist}. Use warm, contemplative colors including beiges, soft browns, muted golds, and gentle grays. The composition should be purely abstract with NO TEXT, NO LETTERS, NO WORDS, NO SYMBOLS whatsoever - only colors, shapes, forms, and brushstrokes. Focus on emotional expression through color relationships, gestural marks, and compositional flow that evokes contemplation and inner reflection. The artwork should capture philosophical depth through pure visual abstraction in ${selectedArtist}'s characteristic approach.
+    const imagePrompt = `Create a beautiful realistic artwork depicting ${selectedSubject} in the distinctive style of ${selectedArtist}. Use warm, contemplative colors including beiges, soft browns, muted golds, and gentle grays that evoke philosophical reflection and inner peace. The composition should capture the artist's characteristic technique, brushwork, and aesthetic approach. NO TEXT, NO LETTERS, NO WORDS, NO SYMBOLS should appear anywhere in this image - only the visual subject matter rendered in the artist's style.
 
-IMPORTANT: Absolutely no text, writing, letters, or readable symbols of any kind should appear in this image. Pure abstract visual art only.
+The artwork should convey a sense of contemplation, serenity, and depth that complements philosophical journaling. Focus on ${selectedArtist}'s signature style, color palette, and artistic techniques while depicting this realistic subject.
 
-Mood to express: ${journalEntry.substring(0, 200)}`;
+IMPORTANT: Absolutely no text, writing, letters, or readable symbols of any kind should appear in this image. Only the artistic subject matter.
+
+Emotional essence to capture: ${journalEntry.substring(0, 200)}`;
 
     try {
       const response = await this.client.images.generate({
