@@ -48,6 +48,7 @@ export default function Home() {
   const [revisionPrompt, setRevisionPrompt] = useState("");
   const [generatedImage, setGeneratedImage] = useState<ImageResponse | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [isJournalConfirmed, setIsJournalConfirmed] = useState(false);
 
   // Load API key from localStorage on mount
   useEffect(() => {
@@ -192,6 +193,7 @@ export default function Home() {
     setShowRevisionInput(false);
     setRevisionPrompt("");
     setGeneratedImage(null);
+    setIsJournalConfirmed(false);
   };
 
   const reviseJournalEntry = async () => {
@@ -251,6 +253,43 @@ export default function Home() {
     } finally {
       setIsGeneratingImage(false);
     }
+  };
+
+  const regenerateImage = async () => {
+    if (!journalEntry || !isJournalConfirmed) return;
+
+    setIsGeneratingImage(true);
+    try {
+      const response = await apiRequest("POST", "/api/generate-image", {
+        apiKey,
+        journalEntry: journalEntry.finalEntry
+      });
+      const data = await response.json();
+      
+      setGeneratedImage(data);
+      
+      toast({
+        title: "New Image Generated",
+        description: "A new visual representation has been created.",
+      });
+    } catch (error) {
+      toast({
+        title: "Image Generation Failed",
+        description: "Unable to generate new image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const confirmJournal = () => {
+    setIsJournalConfirmed(true);
+    setShowRevisionInput(false);
+    toast({
+      title: "Journal Confirmed",
+      description: "Your journal entry has been finalized.",
+    });
   };
 
   const downloadJournal = () => {
@@ -529,21 +568,31 @@ export default function Home() {
               <CardContent className="p-8">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-semibold text-gray-800">
-                      Your Daily Journal {journalEntry.isDraft && <span className="text-amber-600">(Draft)</span>}
+                    <h2 className="text-2xl font-semibold text-foreground">
+                      {isJournalConfirmed ? "Your Daily Journal" : "Journal Draft"}
                     </h2>
-                    <p className="text-gray-600">{new Date().toLocaleDateString()}</p>
+                    <p className="text-muted-foreground">
+                      {new Date().toLocaleDateString()}
+                      {!isJournalConfirmed && " • Draft"}
+                    </p>
                   </div>
                   <div className="flex items-center space-x-3">
+                    {!isJournalConfirmed && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setShowRevisionInput(!showRevisionInput)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Revise Entry
+                      </Button>
+                    )}
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       size="sm" 
-                      onClick={() => setShowRevisionInput(!showRevisionInput)}
-                      title="Revise Entry"
+                      onClick={downloadJournal}
+                      disabled={!isJournalConfirmed}
                     >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={downloadJournal} title="Download">
                       <Download className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="sm" title="Share">
@@ -640,25 +689,36 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="flex space-x-3">
-                    <Button
-                      onClick={generateImage}
-                      disabled={isGeneratingImage}
-                      variant="outline"
-                      className="flex items-center"
-                    >
-                      {isGeneratingImage ? (
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      ) : (
-                        <ImageIcon className="h-4 w-4 mr-2" />
-                      )}
-                      Generate Artwork
-                    </Button>
-                    <Button
-                      onClick={startNewReflection}
-                      className="bg-primary hover:bg-primary/90"
-                    >
-                      Start New Reflection
-                    </Button>
+                    {isJournalConfirmed ? (
+                      <>
+                        <Button
+                          onClick={generateImage}
+                          disabled={isGeneratingImage}
+                          variant="outline"
+                          className="flex items-center"
+                        >
+                          {isGeneratingImage ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <ImageIcon className="h-4 w-4 mr-2" />
+                          )}
+                          Generate Artwork
+                        </Button>
+                        <Button
+                          onClick={startNewReflection}
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          Start New Reflection
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={confirmJournal}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        Confirm Final Journal
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -678,8 +738,23 @@ export default function Home() {
                           <div className="text-sm text-muted-foreground font-medium">
                             Inspired by {generatedImage.artistStyle}
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            Generated in {generatedImage.generationTime.toFixed(1)}s
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs text-muted-foreground">
+                              Generated in {generatedImage.generationTime.toFixed(1)}s
+                            </div>
+                            <Button
+                              onClick={regenerateImage}
+                              disabled={isGeneratingImage}
+                              variant="ghost"
+                              size="sm"
+                            >
+                              {isGeneratingImage ? (
+                                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                              ) : (
+                                <ImageIcon className="h-3 w-3 mr-1" />
+                              )}
+                              Regenerate
+                            </Button>
                           </div>
                         </div>
                       </div>
