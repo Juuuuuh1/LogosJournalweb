@@ -1016,9 +1016,52 @@ export default function Home() {
                     >
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" title="Share">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" title="Share Journal">
+                          <Share2 className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => {
+                          if (journalEntry) {
+                            const text = `${journalEntry.finalEntry}\n\n${journalEntry.philosophicalQuote ? `"${journalEntry.philosophicalQuote}"` : ''}`;
+                            navigator.clipboard.writeText(text);
+                            toast({
+                              title: "Copied to Clipboard",
+                              description: "Your journal entry has been copied to clipboard.",
+                            });
+                          }
+                        }}>
+                          <FileText className="h-4 w-4 mr-2" />
+                          Copy to Clipboard
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          if (journalEntry) {
+                            const text = encodeURIComponent(`Check out my philosophical reflection: ${journalEntry.finalEntry.substring(0, 100)}...`);
+                            window.open(`https://twitter.com/intent/tweet?text=${text}`, '_blank');
+                          }
+                        }}>
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Share on Twitter
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                          if (journalEntry) {
+                            const subject = encodeURIComponent("My Daily Philosophical Reflection");
+                            const body = encodeURIComponent(`${journalEntry.finalEntry}\n\n${journalEntry.philosophicalQuote ? `"${journalEntry.philosophicalQuote}"` : ''}\n\nShared from Logos Journal`);
+                            window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+                          }
+                        }}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Share via Email
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={downloadJournal}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Download as Text
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 
