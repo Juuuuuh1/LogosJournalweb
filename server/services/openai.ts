@@ -78,7 +78,9 @@ Create a journal entry that:
 3. Shows personal growth and insight
 4. Maintains a reflective, contemplative tone
 5. Is approximately 250-400 words
-6. Include a relevant philosophical quote at the end that connects to the main themes
+6. Include a UNIQUE and SPECIFIC philosophical quote at the end that directly relates to the dominant themes in these particular responses
+
+IMPORTANT: Select a philosophical quote that specifically resonates with the key themes, emotions, and insights expressed in these responses. Consider quotes from various philosophers like Aristotle, Kant, Nietzsche, Sartre, Marcus Aurelius, Lao Tzu, Confucius, Buddha, Rumi, etc. Choose one that feels most relevant to this person's specific reflections today.
 
 Return the response in JSON format:
 {
@@ -137,7 +139,9 @@ Create a revised journal entry that:
 2. Maintains the philosophical depth and personal reflection
 3. Keeps the contemplative, authentic tone
 4. Adjusts according to their preferences (word count, tone, style, etc.)
-5. Include a relevant philosophical quote at the end
+5. Include a FRESH philosophical quote at the end that fits the revised content
+
+IMPORTANT: Based on the revised content and tone, select a NEW philosophical quote that matches the updated themes, mood, and insights. Consider the revision request when choosing the quote - if they asked for more hope, choose an uplifting quote; if they wanted more depth, choose something profound; etc.
 
 Return the response in JSON format:
 {
