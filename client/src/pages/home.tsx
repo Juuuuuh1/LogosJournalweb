@@ -473,7 +473,9 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate image');
+        const errorText = await response.text();
+        console.error("DALL-E API error:", response.status, errorText);
+        throw new Error(`Failed to generate image: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -503,9 +505,11 @@ export default function Home() {
         description: "A visual representation of your journal has been created.",
       });
     } catch (error) {
+      console.error("Image generation error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Please check your API key and try again.';
       toast({
         title: "Image Generation Failed",
-        description: "Unable to generate image. Please check your API key and try again.",
+        description: `Unable to generate image: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
@@ -535,7 +539,9 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate image');
+        const errorText = await response.text();
+        console.error("DALL-E API regeneration error:", response.status, errorText);
+        throw new Error(`Failed to regenerate image: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -567,9 +573,11 @@ export default function Home() {
         description: "A new visual representation has been created.",
       });
     } catch (error) {
+      console.error("Image regeneration error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Please check your API key and try again.';
       toast({
         title: "Image Generation Failed",
-        description: "Unable to generate new image. Please check your API key and try again.",
+        description: `Unable to generate new image: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
