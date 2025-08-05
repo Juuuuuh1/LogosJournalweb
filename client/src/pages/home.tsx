@@ -201,6 +201,7 @@ export default function Home() {
 
   const generateJournalEntry = async () => {
     setIsLoading(true);
+    const startTime = Date.now() / 1000;
     try {
       const allResponses = {
         ...responses,
@@ -243,7 +244,14 @@ export default function Home() {
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
       
-      setJournalEntry(result);
+      // Add missing properties that the UI expects
+      const journalWithMetrics = {
+        ...result,
+        wordCount: result.finalEntry.split(' ').length,
+        generationTime: Date.now() / 1000 - startTime
+      };
+      
+      setJournalEntry(journalWithMetrics);
       setCurrentStep("journalOutput");
       
       toast({
@@ -285,6 +293,7 @@ export default function Home() {
     if (!journalEntry || !revisionPrompt.trim()) return;
 
     setIsLoading(true);
+    const startTime = Date.now() / 1000;
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -313,7 +322,14 @@ export default function Home() {
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
       
-      setJournalEntry(result);
+      // Add missing properties that the UI expects
+      const journalWithMetrics = {
+        ...result,
+        wordCount: result.finalEntry.split(' ').length,
+        generationTime: Date.now() / 1000 - startTime
+      };
+      
+      setJournalEntry(journalWithMetrics);
       setShowRevisionInput(false);
       setRevisionPrompt("");
       
@@ -336,6 +352,7 @@ export default function Home() {
     if (!journalEntry) return;
 
     setIsGeneratingImage(true);
+    const startTime = Date.now() / 1000;
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
@@ -357,7 +374,13 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setGeneratedImage(data.data[0].url);
+      const imageResponse = {
+        imageUrl: data.data[0].url,
+        prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}...`,
+        generationTime: Date.now() / 1000 - startTime,
+        artistStyle: "Contemporary Digital Art"
+      };
+      setGeneratedImage(imageResponse);
       
       toast({
         title: "Image Generated",
@@ -378,6 +401,7 @@ export default function Home() {
     if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim()) return;
 
     setIsGeneratingImage(true);
+    const startTime = Date.now() / 1000;
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
         method: 'POST',
@@ -399,7 +423,13 @@ export default function Home() {
       }
 
       const data = await response.json();
-      setGeneratedImage(data.data[0].url);
+      const imageResponse = {
+        imageUrl: data.data[0].url,
+        prompt: `Create a contemplative, artistic image that captures the philosophical essence of this journal entry with specific preferences: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}`,
+        generationTime: Date.now() / 1000 - startTime,
+        artistStyle: "Contemporary Digital Art"
+      };
+      setGeneratedImage(imageResponse);
       setShowImageRevision(false);
       setImageRevisionPrompt("");
       
