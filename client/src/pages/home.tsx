@@ -303,6 +303,27 @@ export default function Home() {
     setCurrentStep("apiSetup");
   };
 
+  const resetToHome = () => {
+    setCurrentStep("apiSetup");
+    setCurrentQuestionIndex(0);
+    setResponses({});
+    setFinalThoughts("");
+    setJournalEntry(null);
+    setQuestions([]);
+    setShowRevisionInput(false);
+    setRevisionPrompt("");
+    setGeneratedImage(null);
+    setIsJournalConfirmed(false);
+    setShowImageRevision(false);
+    setImageRevisionPrompt("");
+    
+    // Keep the API key but reset everything else
+    const storedKey = getStoredApiKey();
+    if (storedKey) {
+      setApiKey(storedKey);
+    }
+  };
+
   const reviseJournalEntry = async () => {
     if (!journalEntry || !revisionPrompt.trim()) return;
 
@@ -530,7 +551,7 @@ export default function Home() {
       <header className="bg-card shadow-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 cursor-pointer" onClick={resetToHome}>
               <div className="w-10 h-10 flex items-center justify-center">
                 <img 
                   src={logoImage} 
@@ -539,7 +560,7 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground">Logos Journal</h1>
+                <h1 className="text-xl font-semibold text-foreground hover:text-primary transition-colors">Logos Journal</h1>
                 <p className="text-sm text-muted-foreground">Daily Philosophy, Reflection & Inquiry</p>
               </div>
             </div>
