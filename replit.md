@@ -2,6 +2,11 @@
 
 This is a philosophical journaling application that uses AI to guide users through daily reflection. The app generates thoughtful philosophical questions, collects user responses, and synthesizes them into a personalized journal entry using OpenAI's API. It features a clean, contemplative interface built with React and shadcn/ui components, with a Node.js/Express backend.
 
+## Recent Changes (August 2025)
+- Fixed deployment issues for production mode
+- Improved error handling to prevent server crashes in production
+- Enhanced NODE_ENV detection for proper development/production mode switching
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
