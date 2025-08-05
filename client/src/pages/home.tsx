@@ -447,15 +447,15 @@ export default function Home() {
               <CardContent className="p-8">
                 <div className="mb-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                      <span className="text-teal-600 font-semibold text-sm">{currentQuestionIndex + 1}</span>
+                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                      <span className="text-primary font-semibold text-sm">{currentQuestionIndex + 1}</span>
                     </div>
                     <Badge variant="secondary" className="uppercase tracking-wide">
                       {currentQuestion.category}
                     </Badge>
                   </div>
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-3">{currentQuestion.text}</h2>
-                  <p className="text-gray-600 italic">{currentQuestion.philosopherQuote}</p>
+                  <h2 className="text-2xl font-semibold text-foreground mb-3">{currentQuestion.text}</h2>
+                  <p className="text-muted-foreground italic">{currentQuestion.philosopherQuote}</p>
                 </div>
 
                 <div className="space-y-6">
@@ -468,10 +468,10 @@ export default function Home() {
                       {currentQuestion.options.map((option, index) => (
                         <Label
                           key={index}
-                          className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-teal-300 cursor-pointer transition-colors"
+                          className="flex items-center p-4 border border-border rounded-lg hover:border-primary/50 cursor-pointer transition-colors"
                         >
                           <RadioGroupItem value={option} className="mr-3" />
-                          <span className="text-gray-700">{option}</span>
+                          <span className="text-foreground">{option}</span>
                         </Label>
                       ))}
                     </div>
@@ -479,7 +479,7 @@ export default function Home() {
 
                   {/* Custom Answer */}
                   <div>
-                    <Label htmlFor={`question-${currentQuestion.id}-custom`} className="block text-sm font-medium text-gray-700 mb-2">
+                    <Label htmlFor={`question-${currentQuestion.id}-custom`} className="block text-sm font-medium text-foreground mb-2">
                       Or share your own reflection:
                     </Label>
                     <Textarea
@@ -524,13 +524,13 @@ export default function Home() {
               <CardContent className="p-8">
                 <div className="mb-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                      <Heart className="text-teal-600 text-sm" />
+                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                      <Heart className="text-primary text-sm" />
                     </div>
                     <Badge variant="secondary" className="uppercase tracking-wide">Final Reflection</Badge>
                   </div>
-                  <h2 className="text-2xl font-semibold text-gray-800 mb-3">Any final thoughts?</h2>
-                  <p className="text-gray-600">
+                  <h2 className="text-2xl font-semibold text-foreground mb-3">Any final thoughts?</h2>
+                  <p className="text-muted-foreground">
                     This space is for any additional reflections, insights, or thoughts you'd like to capture from today.
                   </p>
                 </div>
