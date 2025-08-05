@@ -465,7 +465,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}... NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
+          prompt: `Create a contemplative, abstract artwork that captures the philosophical essence of this journal entry through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -494,7 +494,7 @@ export default function Home() {
       
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 500)}... NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
+        prompt: `Abstract contemplative artwork capturing philosophical reflection through colors and mood`,
         generationTime: Date.now() / 1000 - startTime,
         artistStyle: selectedStyle
       };
@@ -531,7 +531,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
+          prompt: `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`,
           n: 1,
           size: "1024x1024",
           quality: "standard"
@@ -560,7 +560,7 @@ export default function Home() {
       
       const imageResponse = {
         imageUrl: data.data[0].url,
-        prompt: `Create a contemplative, artistic image inspired by famous artists like Van Gogh, Monet, Picasso, or Kandinsky that captures the philosophical essence of this journal entry: ${journalEntry.finalEntry.substring(0, 400)}... User's specific request: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on colors, emotions, and abstract representations.`,
+        prompt: `Abstract contemplative artwork with custom user vision`,
         generationTime: Date.now() / 1000 - startTime,
         artistStyle: selectedStyle
       };
