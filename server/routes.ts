@@ -12,6 +12,40 @@ import {
   insertJournalEntrySchema 
 } from "@shared/schema";
 
+// Helper function to extract personal keywords from journal text
+function extractPersonalKeywords(text: string): string[] {
+  const personalKeywords: string[] = [];
+  const lowerText = text.toLowerCase();
+  
+  // Common personal activity keywords that should be prioritized for image search
+  const personalActivities = [
+    'friends', 'family', 'coffee', 'cafe', 'meeting', 'work', 'office',
+    'walking', 'running', 'cooking', 'reading', 'writing', 'traveling',
+    'music', 'art', 'beach', 'park', 'home', 'garden', 'city', 'mountain',
+    'restaurant', 'shopping', 'studying', 'exercise', 'yoga', 'meditation'
+  ];
+  
+  // Extract personal activities mentioned in the text
+  personalActivities.forEach(activity => {
+    if (lowerText.includes(activity)) {
+      personalKeywords.push(activity);
+    }
+  });
+  
+  // Extract nouns that might represent personal experiences
+  const words = text.split(/\s+/);
+  words.forEach(word => {
+    const cleanWord = word.toLowerCase().replace(/[^\w]/g, '');
+    if (cleanWord.length > 3 && !['that', 'this', 'with', 'from', 'have', 'been', 'were', 'will', 'they', 'them', 'their'].includes(cleanWord)) {
+      if (lowerText.includes('i ' + cleanWord) || lowerText.includes('my ' + cleanWord) || lowerText.includes('we ' + cleanWord)) {
+        personalKeywords.push(cleanWord);
+      }
+    }
+  });
+  
+  return [...new Set(personalKeywords)].slice(0, 3); // Remove duplicates and limit to top 3
+}
+
 // Helper function to extract themes from journal text
 function extractThemesFromText(text: string): string[] {
   // Simple keyword extraction for philosophical themes
@@ -100,6 +134,26 @@ function getFallbackPhilosophicalImages(query: string): any[] {
         alt_description: 'Modern urban environment for contemplation'
       }
     ],
+    social: [
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Friends enjoying coffee together',
+        alt_description: 'People meeting at a cafe for social connection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Cozy cafe atmosphere with people',
+        alt_description: 'Coffee shop scene representing social gathering'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'People sharing meaningful conversations',
+        alt_description: 'Social connection and friendship scene'
+      }
+    ],
     abstract: [
       {
         urls: { regular: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800' },
@@ -141,11 +195,13 @@ function getFallbackPhilosophicalImages(query: string): any[] {
     selectedCategory = 'ocean';
   } else if (queryLower.includes('mountain') || queryLower.includes('forest') || queryLower.includes('tree') || queryLower.includes('landscape') || queryLower.includes('nature')) {
     selectedCategory = 'nature';
+  } else if (queryLower.includes('friends') || queryLower.includes('people') || queryLower.includes('meeting') || queryLower.includes('social') || queryLower.includes('cafe') || queryLower.includes('coffee') || queryLower.includes('restaurant') || queryLower.includes('gathering')) {
+    selectedCategory = 'social';
   }
 
   console.log(`Fallback image search: query="${query}", selected category="${selectedCategory}"`);
   
-  const selectedImages = (imageCategories as any)[selectedCategory] || imageCategories.nature;
+  const selectedImages = imageCategories[selectedCategory as keyof typeof imageCategories] || imageCategories.nature;
   
   // Return a random image from the selected category
   return [selectedImages[Math.floor(Math.random() * selectedImages.length)]];
@@ -251,9 +307,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         searchQuery = searchTerms.trim();
         console.log(`Using custom search terms: "${searchQuery}"`);
       } else {
+        // Extract personal content keywords from journal entry
+        const personalKeywords = extractPersonalKeywords(journalEntry);
         const extractedThemes = extractThemesFromText(journalEntry);
-        searchQuery = extractedThemes.join(' ');
-        console.log(`Using extracted themes: "${searchQuery}"`);
+        
+        // Prioritize personal keywords if found
+        if (personalKeywords.length > 0) {
+          searchQuery = personalKeywords.join(' ');
+          console.log(`Using personal keywords: "${searchQuery}"`);
+        } else {
+          searchQuery = extractedThemes.join(' ');
+          console.log(`Using extracted themes: "${searchQuery}"`);
+        }
       }
       
       // Search for Creative Commons/royalty-free images

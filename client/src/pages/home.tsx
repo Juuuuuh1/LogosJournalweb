@@ -473,12 +473,19 @@ export default function Home() {
       personalInsights.push(finalThoughts.trim());
     }
     
+    console.log('Debug - Personal insights extracted:', personalInsights);
+    console.log('Debug - Final thoughts:', finalThoughts);
+    console.log('Debug - Responses:', responses);
+    
     // If we have personal content, prioritize it
     if (personalInsights.length > 0) {
-      return personalInsights.join('. ') + '. ' + (journalEntry?.finalEntry || '');
+      const prioritizedContent = personalInsights.join('. ') + '. ' + (journalEntry?.finalEntry || '');
+      console.log('Debug - Prioritized content:', prioritizedContent.substring(0, 200));
+      return prioritizedContent;
     }
     
     // Fallback to journal entry
+    console.log('Debug - Using fallback journal entry');
     return journalEntry?.finalEntry || '';
   };
 
