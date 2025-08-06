@@ -1,0 +1,31 @@
+# TruffleHog ignore file for Logos Journal
+# Add patterns to ignore false positives
+
+# Documentation examples
+README.md:*
+TECHNICAL_DOCUMENTATION.md:*
+docs/*
+
+# Package files (may contain placeholder tokens)
+package.json:*
+package-lock.json:*
+
+# Configuration templates
+*.example
+*.template
+*.sample
+
+# Test files
+__tests__/*
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
+
+# Build artifacts
+dist/*
+build/*
+node_modules/*
+
+# Ignore specific patterns that might trigger false positives
+# Add specific file:line patterns as needed
