@@ -35,7 +35,8 @@ import {
   EyeOff,
   Image as ImageIcon,
   Loader2,
-  Shield
+  Shield,
+  Search
 } from "lucide-react";
 import logoImage from "@assets/image_1754419399979.png";
 import type { PhilosophicalQuestion, QuestionResponse, JournalResponse, ImageResponse } from "@shared/schema";
@@ -57,10 +58,11 @@ export default function Home() {
   const [revisionPrompt, setRevisionPrompt] = useState("");
   const [generatedImage, setGeneratedImage] = useState<ImageResponse | null>(null);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
-  const [generatingImageType, setGeneratingImageType] = useState<'artwork' | 'sketch' | null>(null);
+  const [generatingImageType, setGeneratingImageType] = useState<'artwork' | 'sketch' | 'found' | null>(null);
   const [isJournalConfirmed, setIsJournalConfirmed] = useState(false);
   const [showImageRevision, setShowImageRevision] = useState(false);
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
+  const [isFindingImage, setIsFindingImage] = useState(false);
 
   // Load API key from secure storage on mount
   useEffect(() => {
@@ -627,6 +629,58 @@ export default function Home() {
     }
   };
 
+  const findRelevantImage = async () => {
+    if (!journalEntry || !isJournalConfirmed) return;
+
+    setIsFindingImage(true);
+    setGeneratingImageType('found');
+
+    try {
+      const response = await fetch('/api/find-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          journalEntry: journalEntry.finalEntry,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to find image');
+      }
+
+      const data = await response.json();
+
+      const foundImageResponse = {
+        imageUrl: data.imageUrl,
+        prompt: data.description || data.title,
+        generationTime: data.generationTime,
+        artistStyle: data.artistStyle || `${data.source} (${data.license})`,
+        type: 'found' as const
+      };
+
+      setGeneratedImage(foundImageResponse);
+      
+      toast({
+        title: "Image Found",
+        description: "A relevant non-copyrighted image has been found for your journal.",
+      });
+    } catch (error) {
+      console.error("Image search error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unable to find suitable images at this time.';
+      toast({
+        title: "Image Search Failed",
+        description: `${errorMessage}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsFindingImage(false);
+      setGeneratingImageType(null);
+    }
+  };
+
   const confirmJournal = () => {
     setIsJournalConfirmed(true);
     setShowRevisionInput(false);
@@ -1112,10 +1166,10 @@ export default function Home() {
                   </div>
                   {isJournalConfirmed && (
                     <div className="flex flex-col space-y-3">
-                      <div className="flex space-x-3">
+                      <div className="flex flex-wrap gap-3">
                         <Button
                           onClick={() => generateImage('artwork')}
-                          disabled={isGeneratingImage}
+                          disabled={isGeneratingImage || isFindingImage}
                           variant="outline"
                           className="flex items-center"
                         >
@@ -1128,7 +1182,7 @@ export default function Home() {
                         </Button>
                         <Button
                           onClick={() => generateImage('sketch')}
-                          disabled={isGeneratingImage}
+                          disabled={isGeneratingImage || isFindingImage}
                           variant="outline"
                           className="flex items-center"
                         >
@@ -1138,6 +1192,19 @@ export default function Home() {
                             <Edit className="h-4 w-4 mr-2" />
                           )}
                           Generate Sketch
+                        </Button>
+                        <Button
+                          onClick={findRelevantImage}
+                          disabled={isGeneratingImage || isFindingImage}
+                          variant="outline"
+                          className="flex items-center"
+                        >
+                          {isFindingImage || (isGeneratingImage && generatingImageType === 'found') ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Search className="h-4 w-4 mr-2" />
+                          )}
+                          Find Image
                         </Button>
                       </div>
                       <Button

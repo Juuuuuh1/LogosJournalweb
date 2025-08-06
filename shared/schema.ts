@@ -45,11 +45,17 @@ export const generateImageSchema = z.object({
   journalEntry: z.string().min(1, "Journal entry is required"),
 });
 
+export const findImageSchema = z.object({
+  journalEntry: z.string().min(1, "Journal entry is required"),
+  searchTerms: z.string().optional(),
+});
+
 export type ApiKeyConfig = z.infer<typeof apiKeyConfigSchema>;
 export type GenerateQuestionsRequest = z.infer<typeof generateQuestionsSchema>;
 export type GenerateJournalRequest = z.infer<typeof generateJournalSchema>;
 export type ReviseJournalRequest = z.infer<typeof reviseJournalSchema>;
 export type GenerateImageRequest = z.infer<typeof generateImageSchema>;
+export type FindImageRequest = z.infer<typeof findImageSchema>;
 
 export interface PhilosophicalQuestion {
   id: string;
@@ -78,5 +84,15 @@ export interface ImageResponse {
   prompt: string;
   generationTime: number;
   artistStyle: string;
-  type?: 'artwork' | 'sketch';
+  type?: 'artwork' | 'sketch' | 'found';
+}
+
+export interface FoundImageResponse {
+  imageUrl: string;
+  title: string;
+  source: string;
+  license: string;
+  description: string;
+  generationTime: number;
+  type: 'found';
 }
