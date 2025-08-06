@@ -38,6 +38,7 @@ An AI-powered philosophical journaling platform that transforms daily reflection
 - No data persistence of personal content
 - Secure environment variable management
 - Input validation and sanitization
+- Automated secret scanning with TruffleHog OSS
 
 ## Quick Start
 
