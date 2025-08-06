@@ -22,5 +22,5 @@ jobs:
       uses: trufflesecurity/trufflehog@main
       with:
         path: ./
-        extra_args: --debug --only-verified --json --no-fail
+        extra_args: --debug --only-verified --json
       # Scan entire repository and output JSON for better debugging
