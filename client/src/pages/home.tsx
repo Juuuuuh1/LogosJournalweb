@@ -1521,12 +1521,20 @@ export default function Home() {
               className="justify-start h-auto p-4"
               onClick={() => {
                 const content = extractPersonalContent();
-                const keywords = content.split(' ')
-                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                // Enhanced keyword extraction prioritizing nouns
+                const commonWords = ['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how', 'very', 'more', 'most', 'some', 'many', 'much', 'quite', 'really', 'just', 'only', 'also', 'even', 'still', 'always', 'never', 'often', 'sometimes', 'usually'];
+                const verbs = ['enjoyed', 'walking', 'running', 'thinking', 'feeling', 'being', 'doing', 'going', 'coming', 'looking', 'seeing', 'finding', 'getting', 'making', 'taking', 'giving', 'working', 'playing', 'reading', 'writing', 'learning', 'teaching', 'talking', 'listening', 'watching', 'helping'];
+                const timeWords = ['today', 'yesterday', 'tomorrow', 'morning', 'afternoon', 'evening', 'night', 'week', 'month', 'year', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                const adjectives = ['good', 'great', 'amazing', 'wonderful', 'beautiful', 'nice', 'happy', 'sad', 'excited', 'calm', 'peaceful', 'busy', 'free', 'open', 'close', 'big', 'small', 'large', 'tiny', 'fast', 'slow', 'easy', 'hard', 'simple', 'complex'];
+                
+                const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
+                
+                const keywords = content.split(/[.,;!?]\s*|\s+/)
+                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 console.log("Debug - Extracted keywords for Unsplash:", keywords);
-                const query = encodeURIComponent(keywords || 'philosophical reflection');
+                const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://unsplash.com/s/photos/${query}`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1542,11 +1550,18 @@ export default function Home() {
               className="justify-start h-auto p-4"
               onClick={() => {
                 const content = extractPersonalContent();
-                const keywords = content.split(' ')
-                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                const commonWords = ['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how', 'very', 'more', 'most', 'some', 'many', 'much', 'quite', 'really', 'just', 'only', 'also', 'even', 'still', 'always', 'never', 'often', 'sometimes', 'usually'];
+                const verbs = ['enjoyed', 'walking', 'running', 'thinking', 'feeling', 'being', 'doing', 'going', 'coming', 'looking', 'seeing', 'finding', 'getting', 'making', 'taking', 'giving', 'working', 'playing', 'reading', 'writing', 'learning', 'teaching', 'talking', 'listening', 'watching', 'helping'];
+                const timeWords = ['today', 'yesterday', 'tomorrow', 'morning', 'afternoon', 'evening', 'night', 'week', 'month', 'year', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                const adjectives = ['good', 'great', 'amazing', 'wonderful', 'beautiful', 'nice', 'happy', 'sad', 'excited', 'calm', 'peaceful', 'busy', 'free', 'open', 'close', 'big', 'small', 'large', 'tiny', 'fast', 'slow', 'easy', 'hard', 'simple', 'complex'];
+                
+                const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
+                
+                const keywords = content.split(/[.,;!?]\s*|\s+/)
+                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
-                const query = encodeURIComponent(keywords || 'philosophical reflection');
+                const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://pixabay.com/images/search/${query}/`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1562,11 +1577,18 @@ export default function Home() {
               className="justify-start h-auto p-4"
               onClick={() => {
                 const content = extractPersonalContent();
-                const keywords = content.split(' ')
-                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                const commonWords = ['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how', 'very', 'more', 'most', 'some', 'many', 'much', 'quite', 'really', 'just', 'only', 'also', 'even', 'still', 'always', 'never', 'often', 'sometimes', 'usually'];
+                const verbs = ['enjoyed', 'walking', 'running', 'thinking', 'feeling', 'being', 'doing', 'going', 'coming', 'looking', 'seeing', 'finding', 'getting', 'making', 'taking', 'giving', 'working', 'playing', 'reading', 'writing', 'learning', 'teaching', 'talking', 'listening', 'watching', 'helping'];
+                const timeWords = ['today', 'yesterday', 'tomorrow', 'morning', 'afternoon', 'evening', 'night', 'week', 'month', 'year', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                const adjectives = ['good', 'great', 'amazing', 'wonderful', 'beautiful', 'nice', 'happy', 'sad', 'excited', 'calm', 'peaceful', 'busy', 'free', 'open', 'close', 'big', 'small', 'large', 'tiny', 'fast', 'slow', 'easy', 'hard', 'simple', 'complex'];
+                
+                const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
+                
+                const keywords = content.split(/[.,;!?]\s*|\s+/)
+                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
-                const query = encodeURIComponent(keywords || 'philosophical reflection');
+                const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://www.pexels.com/search/${query}/`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1582,11 +1604,18 @@ export default function Home() {
               className="justify-start h-auto p-4"
               onClick={() => {
                 const content = extractPersonalContent();
-                const keywords = content.split(' ')
-                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                const commonWords = ['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how', 'very', 'more', 'most', 'some', 'many', 'much', 'quite', 'really', 'just', 'only', 'also', 'even', 'still', 'always', 'never', 'often', 'sometimes', 'usually'];
+                const verbs = ['enjoyed', 'walking', 'running', 'thinking', 'feeling', 'being', 'doing', 'going', 'coming', 'looking', 'seeing', 'finding', 'getting', 'making', 'taking', 'giving', 'working', 'playing', 'reading', 'writing', 'learning', 'teaching', 'talking', 'listening', 'watching', 'helping'];
+                const timeWords = ['today', 'yesterday', 'tomorrow', 'morning', 'afternoon', 'evening', 'night', 'week', 'month', 'year', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                const adjectives = ['good', 'great', 'amazing', 'wonderful', 'beautiful', 'nice', 'happy', 'sad', 'excited', 'calm', 'peaceful', 'busy', 'free', 'open', 'close', 'big', 'small', 'large', 'tiny', 'fast', 'slow', 'easy', 'hard', 'simple', 'complex'];
+                
+                const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
+                
+                const keywords = content.split(/[.,;!?]\s*|\s+/)
+                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
-                const query = encodeURIComponent(keywords || 'philosophical reflection');
+                const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://www.flickr.com/search/?text=${query}&license=2%2C3%2C4%2C5%2C6%2C9`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1602,11 +1631,18 @@ export default function Home() {
               className="justify-start h-auto p-4"
               onClick={() => {
                 const content = extractPersonalContent();
-                const keywords = content.split(' ')
-                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                const commonWords = ['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how', 'very', 'more', 'most', 'some', 'many', 'much', 'quite', 'really', 'just', 'only', 'also', 'even', 'still', 'always', 'never', 'often', 'sometimes', 'usually'];
+                const verbs = ['enjoyed', 'walking', 'running', 'thinking', 'feeling', 'being', 'doing', 'going', 'coming', 'looking', 'seeing', 'finding', 'getting', 'making', 'taking', 'giving', 'working', 'playing', 'reading', 'writing', 'learning', 'teaching', 'talking', 'listening', 'watching', 'helping'];
+                const timeWords = ['today', 'yesterday', 'tomorrow', 'morning', 'afternoon', 'evening', 'night', 'week', 'month', 'year', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'january', 'february', 'march', 'april', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+                const adjectives = ['good', 'great', 'amazing', 'wonderful', 'beautiful', 'nice', 'happy', 'sad', 'excited', 'calm', 'peaceful', 'busy', 'free', 'open', 'close', 'big', 'small', 'large', 'tiny', 'fast', 'slow', 'easy', 'hard', 'simple', 'complex'];
+                
+                const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
+                
+                const keywords = content.split(/[.,;!?]\s*|\s+/)
+                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
-                const query = encodeURIComponent(keywords || 'philosophical reflection');
+                const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://www.wikimedia.org/search/?query=${query}`, '_blank');
                 setShowImageSearchMenu(false);
               }}
