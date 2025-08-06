@@ -22,7 +22,8 @@ function extractPersonalKeywords(text: string): string[] {
     'friends', 'family', 'coffee', 'cafe', 'meeting', 'work', 'office',
     'walking', 'running', 'cooking', 'reading', 'writing', 'traveling',
     'music', 'art', 'beach', 'park', 'home', 'garden', 'city', 'mountain',
-    'restaurant', 'shopping', 'studying', 'exercise', 'yoga', 'meditation'
+    'restaurant', 'shopping', 'studying', 'exercise', 'yoga', 'meditation',
+    'dog', 'pet', 'weather', 'outside', 'outdoor', 'nature', 'walk'
   ];
   
   // Extract personal activities mentioned in the text
@@ -130,6 +131,24 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
         user: { name: 'Unsplash Community' },
         description: 'Serene lake representing inner peace',
         alt_description: 'Calm lake for meditation and reflection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Person walking dog in peaceful park',
+        alt_description: 'Dog walking scene representing outdoor enjoyment'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Beautiful sunny day perfect for outdoor activities',
+        alt_description: 'Sunny weather scene for outdoor reflection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Dog enjoying nature and fresh air',
+        alt_description: 'Pet outdoors representing joy and freedom'
       }
     ],
     urban: [
@@ -227,6 +246,8 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
     selectedCategory = 'nature';
   } else if (queryLower.includes('friends') || queryLower.includes('people') || queryLower.includes('meeting') || queryLower.includes('social') || queryLower.includes('cafe') || queryLower.includes('coffee') || queryLower.includes('restaurant') || queryLower.includes('gathering')) {
     selectedCategory = 'social';
+  } else if (queryLower.includes('dog') || queryLower.includes('pet') || queryLower.includes('walk') || queryLower.includes('outside') || queryLower.includes('outdoor') || queryLower.includes('weather')) {
+    selectedCategory = 'nature';
   }
 
   console.log(`Fallback image search: query="${query}", selected category="${selectedCategory}"`);
@@ -365,31 +386,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Search for Creative Commons/royalty-free images
+      // Try searching for external images first, but always fallback to curated images with session tracking
       const searchResults = await searchUnsplashImages(searchQuery);
       
-      if (!searchResults || searchResults.length === 0) {
-        return res.status(404).json({ 
-          message: "No suitable images found for your journal content" 
-        });
+      if (searchResults && searchResults.length > 0) {
+        // Use external search results if available
+        const selectedImage = searchResults[0];
+        const generationTime = (Date.now() - startTime) / 1000;
+
+        const response = {
+          imageUrl: selectedImage.urls.regular,
+          title: selectedImage.alt_description || selectedImage.description || "Philosophical reflection",
+          source: "Unsplash",
+          license: "Unsplash License",
+          description: selectedImage.description || selectedImage.alt_description || "Image related to your philosophical reflection",
+          generationTime,
+          type: 'found' as const,
+          artistStyle: `Photo by ${selectedImage.user.name}`,
+        };
+        
+        res.json(response);
+        return;
       }
 
-      // Select the most relevant image
-      const selectedImage = searchResults[0];
+      // Always fallback to curated images with session tracking
+      const sessionId = req.headers['x-session-id'] as string || `session_${Date.now()}`;
+      const fallbackResults = getFallbackPhilosophicalImages(searchQuery, sessionId);
       const generationTime = (Date.now() - startTime) / 1000;
+      
+      if (fallbackResults && fallbackResults.length > 0) {
+        const selectedImage = fallbackResults[0];
+        const response = {
+          imageUrl: selectedImage.urls.regular,
+          title: selectedImage.alt_description || selectedImage.description || "Curated philosophical image",
+          source: "Curated Collection",
+          license: "Unsplash License",
+          description: selectedImage.description || selectedImage.alt_description || "A thoughtfully selected image for reflection",
+          generationTime,
+          type: 'found' as const,
+          artistStyle: `Photo by ${selectedImage.user.name}`,
+        };
 
-      const response = {
-        imageUrl: selectedImage.urls.regular,
-        title: selectedImage.alt_description || selectedImage.description || "Philosophical reflection",
-        source: "Unsplash",
-        license: "Unsplash License",
-        description: selectedImage.description || selectedImage.alt_description || "Image related to your philosophical reflection",
-        generationTime,
-        type: 'found' as const,
-        artistStyle: `Photo by ${selectedImage.user.name}`,
-      };
+        res.json(response);
+        return;
+      }
 
-      res.json(response);
+      // If no images found at all
+      res.status(404).json({ 
+        message: "No suitable images found for your journal content" 
+      });
     } catch (error) {
       res.status(500).json({ 
         message: error instanceof Error ? error.message : "Failed to find relevant image" 

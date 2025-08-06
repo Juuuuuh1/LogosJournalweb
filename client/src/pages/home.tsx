@@ -60,6 +60,7 @@ export default function Home() {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [generatingImageType, setGeneratingImageType] = useState<'artwork' | 'sketch' | 'found' | null>(null);
   const [isJournalConfirmed, setIsJournalConfirmed] = useState(false);
+  const [sessionId] = useState(() => `user_session_${Date.now()}_${Math.random()}`);
   const [showImageRevision, setShowImageRevision] = useState(false);
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
   const [isFindingImage, setIsFindingImage] = useState(false);
@@ -707,6 +708,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Session-Id': sessionId
         },
         body: JSON.stringify({
           journalEntry: personalizedContent,
@@ -759,6 +761,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-Session-Id': sessionId
         },
         body: JSON.stringify({
           journalEntry: extractPersonalContent(),
