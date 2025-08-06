@@ -62,29 +62,93 @@ async function searchUnsplashImages(query: string): Promise<any[]> {
 
 // Fallback philosophical images when API is not available
 function getFallbackPhilosophicalImages(query: string): any[] {
-  const fallbackImages = [
-    {
-      urls: { regular: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800' },
-      user: { name: 'Unsplash Community' },
-      description: 'Peaceful mountain landscape for reflection',
-      alt_description: 'Mountain view representing contemplation'
-    },
-    {
-      urls: { regular: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800' },
-      user: { name: 'Unsplash Community' },
-      description: 'Forest path symbolizing life journey',
-      alt_description: 'Forest path for philosophical reflection'
-    },
-    {
-      urls: { regular: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800' },
-      user: { name: 'Unsplash Community' },
-      description: 'Serene lake representing inner peace',
-      alt_description: 'Calm lake for meditation and reflection'
-    }
-  ];
+  const queryLower = query.toLowerCase();
   
-  // Return a random image from the fallback collection
-  return [fallbackImages[Math.floor(Math.random() * fallbackImages.length)]];
+  // Categorized fallback images based on common search terms
+  const imageCategories = {
+    nature: [
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Peaceful mountain landscape for reflection',
+        alt_description: 'Mountain view representing contemplation'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Forest path symbolizing life journey',
+        alt_description: 'Forest path for philosophical reflection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Serene lake representing inner peace',
+        alt_description: 'Calm lake for meditation and reflection'
+      }
+    ],
+    urban: [
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'City lights reflecting contemplation',
+        alt_description: 'Urban skyline for modern reflection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'City architecture inspiring thoughts',
+        alt_description: 'Modern urban environment for contemplation'
+      }
+    ],
+    abstract: [
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Abstract patterns for deep thinking',
+        alt_description: 'Abstract composition for reflection'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Geometric patterns inspiring contemplation',
+        alt_description: 'Abstract geometric design for meditation'
+      }
+    ],
+    ocean: [
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Calm ocean waters for peaceful reflection',
+        alt_description: 'Ocean waves representing tranquility'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Sunset over water symbolizing peace',
+        alt_description: 'Ocean sunset for contemplation'
+      }
+    ]
+  };
+
+  // Determine the best category based on search query
+  let selectedCategory = 'nature'; // default
+  
+  if (queryLower.includes('city') || queryLower.includes('urban') || queryLower.includes('building') || queryLower.includes('street')) {
+    selectedCategory = 'urban';
+  } else if (queryLower.includes('abstract') || queryLower.includes('pattern') || queryLower.includes('geometric') || queryLower.includes('modern')) {
+    selectedCategory = 'abstract';
+  } else if (queryLower.includes('ocean') || queryLower.includes('sea') || queryLower.includes('water') || queryLower.includes('beach') || queryLower.includes('wave')) {
+    selectedCategory = 'ocean';
+  } else if (queryLower.includes('mountain') || queryLower.includes('forest') || queryLower.includes('tree') || queryLower.includes('landscape') || queryLower.includes('nature')) {
+    selectedCategory = 'nature';
+  }
+
+  console.log(`Fallback image search: query="${query}", selected category="${selectedCategory}"`);
+  
+  const selectedImages = imageCategories[selectedCategory] || imageCategories.nature;
+  
+  // Return a random image from the selected category
+  return [selectedImages[Math.floor(Math.random() * selectedImages.length)]];
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -185,9 +249,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let searchQuery: string;
       if (searchTerms && searchTerms.trim()) {
         searchQuery = searchTerms.trim();
+        console.log(`Using custom search terms: "${searchQuery}"`);
       } else {
         const extractedThemes = extractThemesFromText(journalEntry);
         searchQuery = extractedThemes.join(' ');
+        console.log(`Using extracted themes: "${searchQuery}"`);
       }
       
       // Search for Creative Commons/royalty-free images
