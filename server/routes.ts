@@ -145,7 +145,7 @@ function getFallbackPhilosophicalImages(query: string): any[] {
 
   console.log(`Fallback image search: query="${query}", selected category="${selectedCategory}"`);
   
-  const selectedImages = imageCategories[selectedCategory] || imageCategories.nature;
+  const selectedImages = (imageCategories as any)[selectedCategory] || imageCategories.nature;
   
   // Return a random image from the selected category
   return [selectedImages[Math.floor(Math.random() * selectedImages.length)]];

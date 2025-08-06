@@ -67,20 +67,42 @@ Return the response in JSON format with this structure:
   async synthesizeJournalEntry(responses: Record<string, any>): Promise<JournalResponse> {
     const startTime = Date.now();
 
+    // Extract and prioritize personal written responses
+    const personalInsights: string[] = [];
+    const multipleChoiceResponses: string[] = [];
+    
+    Object.values(responses).forEach((response: any) => {
+      if (response.customAnswer && response.customAnswer.trim()) {
+        personalInsights.push(response.customAnswer.trim());
+      } else if (response.selectedOption) {
+        multipleChoiceResponses.push(response.selectedOption);
+      }
+    });
+
     const prompt = `Based on the following philosophical reflection responses, create a cohesive, thoughtful journal entry that weaves together the insights and themes. The entry should be personal, contemplative, and philosophically rich.
 
-Responses:
+PRIORITIZE PERSONAL WRITTEN RESPONSES: Give significantly more weight and attention to the personal written insights over multiple choice selections when crafting the journal entry.
+
+Personal Written Insights (PRIORITIZE THESE):
+${personalInsights.length > 0 ? personalInsights.map((insight, i) => `${i + 1}. ${insight}`).join('\n') : 'None provided'}
+
+Multiple Choice Responses (secondary importance):
+${multipleChoiceResponses.length > 0 ? multipleChoiceResponses.map((response, i) => `${i + 1}. ${response}`).join('\n') : 'None provided'}
+
+All Responses (for context):
 ${JSON.stringify(responses, null, 2)}
 
 Create a journal entry that:
-1. Integrates all the responses into a flowing narrative
-2. Connects the philosophical themes
-3. Shows personal growth and insight
-4. Maintains a reflective, contemplative tone
-5. Is LESS THAN 200 words (keep it concise and focused)
-6. Include a UNIQUE and SPECIFIC philosophical quote at the end that directly relates to the dominant themes in these particular responses
+1. PRIMARILY focuses on the personal written insights and makes them the centerpiece of the reflection
+2. Uses multiple choice responses only as supporting context
+3. Integrates the personal thoughts into a flowing, meaningful narrative
+4. Connects the philosophical themes from the written responses
+5. Shows personal growth and insight based on their own words
+6. Maintains a reflective, contemplative tone
+7. Is LESS THAN 200 words (keep it concise and focused)
+8. Include a UNIQUE and SPECIFIC philosophical quote at the end that directly relates to the dominant themes in the PERSONAL WRITTEN responses
 
-IMPORTANT: Select a philosophical quote that specifically resonates with the key themes, emotions, and insights expressed in these responses. Consider quotes from various philosophers like Aristotle, Kant, Nietzsche, Sartre, Marcus Aurelius, Lao Tzu, Confucius, Buddha, Rumi, etc. Choose one that feels most relevant to this person's specific reflections today.
+IMPORTANT: If there are personal written insights, make them the heart of the journal entry. The final entry should feel authentic to the person's own voice and thoughts. Select a philosophical quote that specifically resonates with the key themes and emotions expressed in their personal written responses.
 
 Return the response in JSON format:
 {

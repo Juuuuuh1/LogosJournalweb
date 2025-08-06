@@ -457,12 +457,40 @@ export default function Home() {
     }
   };
 
+  // Helper function to extract personal written responses over multiple choice
+  const extractPersonalContent = () => {
+    const personalInsights: string[] = [];
+    
+    // Extract custom answers from responses
+    Object.values(responses).forEach(response => {
+      if (response.customAnswer && response.customAnswer.trim()) {
+        personalInsights.push(response.customAnswer.trim());
+      }
+    });
+    
+    // Add final thoughts if available
+    if (finalThoughts && finalThoughts.trim()) {
+      personalInsights.push(finalThoughts.trim());
+    }
+    
+    // If we have personal content, prioritize it
+    if (personalInsights.length > 0) {
+      return personalInsights.join('. ') + '. ' + (journalEntry?.finalEntry || '');
+    }
+    
+    // Fallback to journal entry
+    return journalEntry?.finalEntry || '';
+  };
+
   const generateImage = async (style: 'artwork' | 'sketch' = 'artwork') => {
     if (!journalEntry) return;
 
     setIsGeneratingImage(true);
     setGeneratingImageType(style);
     const startTime = Date.now() / 1000;
+    
+    // Get personalized content that prioritizes written responses
+    const personalizedContent = extractPersonalContent();
     
     // Choose prompt based on style
     const sketchStyles = [
@@ -475,8 +503,8 @@ export default function Home() {
     const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
     
     const prompt = style === 'sketch' 
-      ? `Create a hand-drawn sketch that captures the philosophical essence of this journal entry. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation of inner reflection. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`
-      : `Create a contemplative, abstract artwork that captures the philosophical essence of this journal entry through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Journal essence: ${journalEntry.finalEntry.substring(0, 300)}`;
+      ? `Create a hand-drawn sketch that captures the philosophical essence and personal reflections from these thoughts. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation of inner reflection. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Personal reflections: ${personalizedContent.substring(0, 400)}`
+      : `Create a contemplative, abstract artwork that captures the philosophical essence and personal insights from these reflections through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Personal insights: ${personalizedContent.substring(0, 400)}`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -560,9 +588,12 @@ export default function Home() {
     
     const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
     
+    // Get personalized content for regeneration
+    const personalizedContent = extractPersonalContent();
+    
     const prompt = currentImageType === 'sketch' 
-      ? `Create a hand-drawn sketch that captures philosophical reflection. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`
-      : `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Journal essence: ${journalEntry.finalEntry.substring(0, 250)}`;
+      ? `Create a hand-drawn sketch that captures philosophical reflection. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Personal insights: ${personalizedContent.substring(0, 300)}`
+      : `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Personal insights: ${personalizedContent.substring(0, 300)}`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -636,13 +667,16 @@ export default function Home() {
     setGeneratingImageType('found');
 
     try {
+      // Get personalized content that prioritizes written responses
+      const personalizedContent = extractPersonalContent();
+      
       const response = await fetch('/api/find-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          journalEntry: journalEntry.finalEntry,
+          journalEntry: personalizedContent,
         }),
       });
 
@@ -694,7 +728,7 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          journalEntry: journalEntry.finalEntry,
+          journalEntry: extractPersonalContent(),
           searchTerms: imageRevisionPrompt.trim(),
         }),
       });
