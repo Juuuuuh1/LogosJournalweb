@@ -1520,8 +1520,13 @@ export default function Home() {
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => {
-                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
-                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                const content = extractPersonalContent();
+                const keywords = content.split(' ')
+                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                  .slice(0, 4)
+                  .join(' ');
+                console.log("Debug - Extracted keywords for Unsplash:", keywords);
+                const query = encodeURIComponent(keywords || 'philosophical reflection');
                 window.open(`https://unsplash.com/s/photos/${query}`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1536,8 +1541,12 @@ export default function Home() {
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => {
-                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
-                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                const content = extractPersonalContent();
+                const keywords = content.split(' ')
+                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                  .slice(0, 4)
+                  .join(' ');
+                const query = encodeURIComponent(keywords || 'philosophical reflection');
                 window.open(`https://pixabay.com/images/search/${query}/`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1552,8 +1561,12 @@ export default function Home() {
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => {
-                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
-                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                const content = extractPersonalContent();
+                const keywords = content.split(' ')
+                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                  .slice(0, 4)
+                  .join(' ');
+                const query = encodeURIComponent(keywords || 'philosophical reflection');
                 window.open(`https://www.pexels.com/search/${query}/`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1568,8 +1581,12 @@ export default function Home() {
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => {
-                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
-                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                const content = extractPersonalContent();
+                const keywords = content.split(' ')
+                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                  .slice(0, 4)
+                  .join(' ');
+                const query = encodeURIComponent(keywords || 'philosophical reflection');
                 window.open(`https://www.flickr.com/search/?text=${query}&license=2%2C3%2C4%2C5%2C6%2C9`, '_blank');
                 setShowImageSearchMenu(false);
               }}
@@ -1584,8 +1601,12 @@ export default function Home() {
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => {
-                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
-                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                const content = extractPersonalContent();
+                const keywords = content.split(' ')
+                  .filter(word => word.length > 3 && !['the', 'and', 'but', 'for', 'are', 'was', 'were', 'been', 'have', 'has', 'had', 'will', 'would', 'could', 'should', 'this', 'that', 'with', 'from', 'they', 'them', 'their', 'there', 'where', 'when', 'what', 'how'].includes(word.toLowerCase()))
+                  .slice(0, 4)
+                  .join(' ');
+                const query = encodeURIComponent(keywords || 'philosophical reflection');
                 window.open(`https://www.wikimedia.org/search/?query=${query}`, '_blank');
                 setShowImageSearchMenu(false);
               }}
