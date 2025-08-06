@@ -11,6 +11,7 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - Download functionality for journal entries and generated artwork
 - Revision system for both journal entries and visual content
 - Production-ready deployment with proper error handling
+- External image search integration with non-copyrighted image sites
 
 **Technical Achievements:**
 - Fixed deployment issues for production mode
@@ -18,6 +19,8 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - Enhanced NODE_ENV detection for proper development/production mode switching
 - Implemented multi-modal AI integration (GPT-4o and DALL-E 3)
 - Added Instagram sharing with optimized captions and hashtags for both text and images
+- Replaced integrated image search with popup menu directing to external non-copyrighted sites
+- Enhanced AI image generation prompts to ensure no text appears in artwork or sketches
 
 # User Preferences
 

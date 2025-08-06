@@ -262,7 +262,7 @@ Emotional essence to capture: ${journalEntry.substring(0, 200)}`;
         style: "natural"
       });
 
-      const imageUrl = response.data[0]?.url;
+      const imageUrl = response.data?.[0]?.url || "";
       const generationTime = (Date.now() - startTime) / 1000;
 
       return {

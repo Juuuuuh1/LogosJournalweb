@@ -11,6 +11,13 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogDescription 
+} from "@/components/ui/dialog";
+import { 
   storeApiKey, 
   getStoredApiKey, 
   hasStoredApiKey, 
@@ -64,6 +71,7 @@ export default function Home() {
   const [showImageRevision, setShowImageRevision] = useState(false);
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
   const [isFindingImage, setIsFindingImage] = useState(false);
+  const [showImageSearchMenu, setShowImageSearchMenu] = useState(false);
 
   // Load API key from secure storage on mount
   useEffect(() => {
@@ -694,116 +702,14 @@ export default function Home() {
     }
   };
 
-  const findRelevantImage = async () => {
-    if (!journalEntry || !isJournalConfirmed) return;
-
-    setIsFindingImage(true);
-    setGeneratingImageType('found');
-
-    try {
-      // Get personalized content that prioritizes written responses
-      const personalizedContent = extractPersonalContent();
-      
-      const response = await fetch('/api/find-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Session-Id': sessionId
-        },
-        body: JSON.stringify({
-          journalEntry: personalizedContent,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to find image');
-      }
-
-      const data = await response.json();
-
-      const foundImageResponse = {
-        imageUrl: data.imageUrl,
-        prompt: data.description || data.title,
-        generationTime: data.generationTime,
-        artistStyle: data.artistStyle || `${data.source} (${data.license})`,
-        type: 'found' as const
-      };
-
-      setGeneratedImage(foundImageResponse);
-      
-      toast({
-        title: "Image Found",
-        description: "A relevant non-copyrighted image has been found for your journal.",
-      });
-    } catch (error) {
-      console.error("Image search error:", error);
-      const errorMessage = error instanceof Error ? error.message : 'Unable to find suitable images at this time.';
-      toast({
-        title: "Image Search Failed",
-        description: `${errorMessage}`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsFindingImage(false);
-      setGeneratingImageType(null);
-    }
+  const findRelevantImage = () => {
+    // Show popup menu with different image search sites
+    setShowImageSearchMenu(true);
   };
 
-  const findAnotherImage = async () => {
-    if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim()) return;
-
-    setIsGeneratingImage(true);
-    setGeneratingImageType('found');
-
-    try {
-      const response = await fetch('/api/find-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Session-Id': sessionId
-        },
-        body: JSON.stringify({
-          journalEntry: extractPersonalContent(),
-          searchTerms: imageRevisionPrompt.trim(),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to find another image');
-      }
-
-      const data = await response.json();
-
-      const foundImageResponse = {
-        imageUrl: data.imageUrl,
-        prompt: data.description || data.title,
-        generationTime: data.generationTime,
-        artistStyle: data.artistStyle || `${data.source} (${data.license})`,
-        type: 'found' as const
-      };
-
-      setGeneratedImage(foundImageResponse);
-      setShowImageRevision(false);
-      setImageRevisionPrompt("");
-      
-      toast({
-        title: "New Image Found",
-        description: "A different image has been found based on your preferences.",
-      });
-    } catch (error) {
-      console.error("Image search error:", error);
-      const errorMessage = error instanceof Error ? error.message : 'Unable to find another suitable image at this time.';
-      toast({
-        title: "Image Search Failed",
-        description: `${errorMessage}`,
-        variant: "destructive",
-      });
-    } finally {
-      setIsGeneratingImage(false);
-      setGeneratingImageType(null);
-    }
+  const findAnotherImage = () => {
+    // Show popup menu with different image search sites
+    setShowImageSearchMenu(true);
   };
 
   const confirmJournal = () => {
@@ -1320,16 +1226,11 @@ export default function Home() {
                         </Button>
                         <Button
                           onClick={findRelevantImage}
-                          disabled={isGeneratingImage || isFindingImage}
                           variant="outline"
                           className="flex items-center"
                         >
-                          {isFindingImage || (isGeneratingImage && generatingImageType === 'found') ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <Search className="h-4 w-4 mr-2" />
-                          )}
-                          Find Image
+                          <Search className="h-4 w-4 mr-2" />
+                          Search Images
                         </Button>
                       </div>
                       <Button
@@ -1530,7 +1431,7 @@ export default function Home() {
                                 size="sm"
                               >
                                 <ImageIcon className="h-3 w-3 mr-1" />
-                                {generatedImage.type === 'found' ? 'Find Another' : 'Regenerate'}
+                                {generatedImage.type === 'found' ? 'Search Again' : 'Regenerate'}
                               </Button>
                             </div>
                           </div>
@@ -1546,14 +1447,12 @@ export default function Home() {
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="image-revision-prompt" className="block text-sm font-medium text-foreground mb-2">
-                          {generatedImage?.type === 'found' ? 'What kind of image would you prefer?' : 'How would you like to modify the artwork?'}
+                          How would you like to modify the artwork?
                         </Label>
                         <Textarea
                           id="image-revision-prompt"
                           rows={3}
-                          placeholder={generatedImage?.type === 'found' 
-                            ? "e.g., 'More abstract image', 'Nature scene', 'Urban setting', 'Peaceful landscape'..." 
-                            : "e.g., 'More vibrant colors', 'Make it a landscape instead', 'In Van Gogh style', 'Add more warmth'..."}
+                          placeholder="e.g., 'More vibrant colors', 'Make it a landscape instead', 'In Van Gogh style', 'Add more warmth'..."
                           value={imageRevisionPrompt}
                           onChange={(e) => setImageRevisionPrompt(e.target.value)}
                           className="resize-none"
@@ -1579,14 +1478,14 @@ export default function Home() {
                           {isGeneratingImage ? (
                             <>
                               <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                              {generatedImage?.type === 'found' ? 'Searching...' : 'Generating...'}
+                              Generating...
                             </>
                           ) : (
                             <>
                               {generatedImage?.type === 'found' ? (
                                 <>
                                   <Search className="h-3 w-3 mr-2" />
-                                  Find Another Image
+                                  Search External Sites
                                 </>
                               ) : (
                                 <>
@@ -1606,6 +1505,102 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Image Search Menu Dialog */}
+      <Dialog open={showImageSearchMenu} onOpenChange={setShowImageSearchMenu}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Search for Images</DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Choose a non-copyrighted image search site to find visuals for your reflection.
+            </p>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Button
+              variant="outline"
+              className="justify-start h-auto p-4"
+              onClick={() => {
+                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
+                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                window.open(`https://unsplash.com/s/photos/${query}`, '_blank');
+                setShowImageSearchMenu(false);
+              }}
+            >
+              <div className="text-left">
+                <div className="font-medium">Unsplash</div>
+                <div className="text-sm text-muted-foreground">High-quality photos, completely free to use</div>
+              </div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="justify-start h-auto p-4"
+              onClick={() => {
+                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
+                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                window.open(`https://pixabay.com/images/search/${query}/`, '_blank');
+                setShowImageSearchMenu(false);
+              }}
+            >
+              <div className="text-left">
+                <div className="font-medium">Pixabay</div>
+                <div className="text-sm text-muted-foreground">Diverse collection of royalty-free images</div>
+              </div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="justify-start h-auto p-4"
+              onClick={() => {
+                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
+                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                window.open(`https://www.pexels.com/search/${query}/`, '_blank');
+                setShowImageSearchMenu(false);
+              }}
+            >
+              <div className="text-left">
+                <div className="font-medium">Pexels</div>
+                <div className="text-sm text-muted-foreground">Professional photos with simple license</div>
+              </div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="justify-start h-auto p-4"
+              onClick={() => {
+                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
+                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                window.open(`https://www.flickr.com/search/?text=${query}&license=2%2C3%2C4%2C5%2C6%2C9`, '_blank');
+                setShowImageSearchMenu(false);
+              }}
+            >
+              <div className="text-left">
+                <div className="font-medium">Flickr Creative Commons</div>
+                <div className="text-sm text-muted-foreground">Creative Commons licensed photography</div>
+              </div>
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="justify-start h-auto p-4"
+              onClick={() => {
+                const searchTerms = extractPersonalContent().split(' ').slice(0, 5).join(' ');
+                const query = encodeURIComponent(searchTerms || 'philosophical reflection');
+                window.open(`https://www.wikimedia.org/search/?query=${query}`, '_blank');
+                setShowImageSearchMenu(false);
+              }}
+            >
+              <div className="text-left">
+                <div className="font-medium">Wikimedia Commons</div>
+                <div className="text-sm text-muted-foreground">Open-source media repository</div>
+              </div>
+            </Button>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            These sites offer images that are free to use. Always check the specific license for each image.
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Footer */}
       <footer className="bg-card border-t border-border mt-16">
