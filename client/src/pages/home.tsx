@@ -258,8 +258,23 @@ export default function Home() {
 
   const canProceedFromQuestion = () => {
     const currentQuestion = questions[currentQuestionIndex];
-    const response = responses[currentQuestion?.id];
-    return response && (response.selectedOption || response.customAnswer);
+    if (!currentQuestion) return false;
+    
+    const response = responses[currentQuestion.id];
+    if (!response) return false;
+    
+    // Check if user selected an option
+    if (response.selectedOption) {
+      // If they selected "Write my own response", they must also provide custom text
+      if (response.selectedOption === "Write my own response") {
+        return response.customAnswer && response.customAnswer.trim().length > 0;
+      }
+      // Any other selection is valid
+      return true;
+    }
+    
+    // No selection made
+    return false;
   };
 
   const nextQuestion = async () => {
