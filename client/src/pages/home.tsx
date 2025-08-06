@@ -509,9 +509,22 @@ export default function Home() {
     
     const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
     
+    // Create varied artistic styles for artwork generation
+    const artworkStyles = [
+      "vibrant watercolor painting with bright blues, warm oranges, and fresh greens",
+      "oil painting with rich purples, golden yellows, and deep reds",
+      "pastel artwork with soft pinks, lavender, and cream tones",
+      "acrylic painting with bold emerald greens, sunset oranges, and sky blues",
+      "mixed media with earthy browns, forest greens, and sunset colors",
+      "digital art with neon blues, electric purples, and bright whites",
+      "impressionist style with rainbow colors and dynamic brushstrokes"
+    ];
+    
+    const selectedArtworkStyle = artworkStyles[Math.floor(Math.random() * artworkStyles.length)];
+
     const prompt = style === 'sketch' 
       ? `Create a hand-drawn sketch that captures the philosophical essence and personal reflections from these thoughts. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation of inner reflection. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Personal reflections: ${personalizedContent.substring(0, 400)}`
-      : `Create a contemplative, abstract artwork that captures the philosophical essence and personal insights from these reflections through colors, shapes, and mood. Use warm, contemplative colors like soft blues, gentle golds, and muted earth tones. The composition should evoke feelings of reflection, inner peace, and philosophical depth. Style: impressionistic brushwork with flowing, organic forms. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. NO TEXT OR WORDS should appear in the image. Focus purely on abstract visual elements that convey emotion and contemplation. Personal insights: ${personalizedContent.substring(0, 400)}`;
+      : `Create a ${selectedArtworkStyle} artwork that captures the specific personal experiences and emotions from these reflections. Instead of abstract shapes, create a realistic or semi-realistic scene that represents the actual activities and feelings described. Show recognizable elements like places, objects, or situations mentioned in the personal insights. Use the specified color palette and maintain artistic quality while being representational rather than purely abstract. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. NO TEXT OR WORDS should appear in the image. Personal experiences to visualize: ${personalizedContent.substring(0, 400)}`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -598,9 +611,22 @@ export default function Home() {
     // Get personalized content for regeneration
     const personalizedContent = extractPersonalContent();
     
+    // Create varied artistic styles for regeneration too
+    const artworkStyles = [
+      "vibrant watercolor painting with bright blues, warm oranges, and fresh greens",
+      "oil painting with rich purples, golden yellows, and deep reds", 
+      "pastel artwork with soft pinks, lavender, and cream tones",
+      "acrylic painting with bold emerald greens, sunset oranges, and sky blues",
+      "mixed media with earthy browns, forest greens, and sunset colors",
+      "digital art with neon blues, electric purples, and bright whites",
+      "impressionist style with rainbow colors and dynamic brushstrokes"
+    ];
+    
+    const selectedRegenStyle = artworkStyles[Math.floor(Math.random() * artworkStyles.length)];
+    
     const prompt = currentImageType === 'sketch' 
       ? `Create a hand-drawn sketch that captures philosophical reflection. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on visual storytelling through drawing techniques. Personal insights: ${personalizedContent.substring(0, 300)}`
-      : `Create a contemplative, abstract artwork that captures philosophical reflection through colors, shapes, and mood. Use warm, reflective tones and flowing, organic compositions. The image should evoke feelings of inner peace and thoughtful contemplation. Style: modern abstract expressionism with gentle brushwork. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The image should have smooth color transitions and crisp edge definition without any grainy or pixelated areas. User's vision: ${imageRevisionPrompt}. NO TEXT OR WORDS should appear in the image. Focus on abstract visual elements that convey emotion and meaning. Personal insights: ${personalizedContent.substring(0, 300)}`;
+      : `Create a ${selectedRegenStyle} artwork that captures the specific personal experiences from these reflections. Instead of abstract shapes, create a realistic or semi-realistic scene that represents the actual activities and feelings described. Show recognizable elements like places, objects, or situations mentioned. User's vision: ${imageRevisionPrompt}. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. NO TEXT OR WORDS should appear in the image. Personal experiences to visualize: ${personalizedContent.substring(0, 300)}`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {

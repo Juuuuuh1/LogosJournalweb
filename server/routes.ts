@@ -94,9 +94,21 @@ async function searchUnsplashImages(query: string): Promise<any[]> {
   }
 }
 
+// Track used images to avoid repetition per session
+const usedImageUrls = new Map<string, Set<string>>();
+
+// Helper function to get or create session image tracking
+function getSessionUsedImages(sessionId: string = 'default'): Set<string> {
+  if (!usedImageUrls.has(sessionId)) {
+    usedImageUrls.set(sessionId, new Set<string>());
+  }
+  return usedImageUrls.get(sessionId)!;
+}
+
 // Fallback philosophical images when API is not available
-function getFallbackPhilosophicalImages(query: string): any[] {
+function getFallbackPhilosophicalImages(query: string, sessionId: string = 'default'): any[] {
   const queryLower = query.toLowerCase();
+  const sessionUsedImages = getSessionUsedImages(sessionId);
   
   // Categorized fallback images based on common search terms
   const imageCategories = {
@@ -152,6 +164,24 @@ function getFallbackPhilosophicalImages(query: string): any[] {
         user: { name: 'Unsplash Community' },
         description: 'People sharing meaningful conversations',
         alt_description: 'Social connection and friendship scene'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'People sitting together in a busy cafe',
+        alt_description: 'Cafe scene with multiple people socializing'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Restaurant atmosphere with diners',
+        alt_description: 'People dining together in restaurant setting'
+      },
+      {
+        urls: { regular: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800' },
+        user: { name: 'Unsplash Community' },
+        description: 'Group of friends having coffee',
+        alt_description: 'Multiple people enjoying beverages together'
       }
     ],
     abstract: [
@@ -203,8 +233,22 @@ function getFallbackPhilosophicalImages(query: string): any[] {
   
   const selectedImages = imageCategories[selectedCategory as keyof typeof imageCategories] || imageCategories.nature;
   
-  // Return a random image from the selected category
-  return [selectedImages[Math.floor(Math.random() * selectedImages.length)]];
+  // Filter out already used images for this session
+  const availableImages = selectedImages.filter(img => !sessionUsedImages.has(img.urls.regular));
+  
+  // If all images in category are used, reset the session
+  if (availableImages.length === 0) {
+    sessionUsedImages.clear();
+    console.log('Reset used images for session - all images in category were used');
+    const randomImage = selectedImages[Math.floor(Math.random() * selectedImages.length)];
+    sessionUsedImages.add(randomImage.urls.regular);
+    return [randomImage];
+  }
+  
+  // Return a random unused image from the selected category
+  const randomImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+  sessionUsedImages.add(randomImage.urls.regular);
+  return [randomImage];
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
