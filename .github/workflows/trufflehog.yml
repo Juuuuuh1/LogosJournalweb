@@ -18,10 +18,9 @@ jobs:
       with:
         fetch-depth: 0 # fetch all history so multiple commits can be scanned
     
-    - name: TruffleHog OSS
+    - name: TruffleHog OSS - Scan Repository
       uses: trufflesecurity/trufflehog@main
       with:
         path: ./
-        base: main
-        head: HEAD
-        extra_args: --debug --only-verified
+        extra_args: --debug --only-verified --fail
+      # Remove base/head comparison to scan entire repository
