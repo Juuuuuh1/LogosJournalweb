@@ -75,6 +75,7 @@ AI Service Integration (OpenAI GPT-4o, DALL-E 3)
 - **Input Sanitization**: Comprehensive Zod schemas for all user inputs
 - **CORS Configuration**: Proper cross-origin resource sharing setup
 - **Automated Secret Scanning**: TruffleHog OSS integration for continuous security monitoring
+- **Static Code Analysis**: Semgrep integration for security vulnerability detection
 
 ## AI Integration Strategy
 
@@ -194,6 +195,25 @@ on:
 - **Access Control**: Client-side API key storage with no server persistence
 - **Input Validation**: Runtime type checking with Zod schemas
 - **Dependency Security**: Regular security scanning of npm packages
+- **Static Analysis**: Semgrep rules for detecting security anti-patterns and vulnerabilities
+
+#### Multi-Layer Security Architecture
+```typescript
+// Example security validation layers
+const securityLayers = {
+  input: "Zod schema validation",
+  static: "Semgrep code analysis", 
+  secrets: "TruffleHog scanning",
+  runtime: "Environment isolation"
+};
+```
+
+#### Semgrep Integration Strategy
+- **Custom Rule Configuration**: Project-specific security rules in `.config/.semgrep/`
+- **TypeScript/JavaScript Focus**: Rules targeting Node.js and React security patterns
+- **CI/CD Integration**: Automated security analysis in development workflow
+- **Vulnerability Detection**: SQL injection, XSS, authentication bypass prevention
+- **Code Quality**: Security-focused linting alongside functional code analysis
 
 ## Performance Optimizations
 

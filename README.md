@@ -39,6 +39,7 @@ An AI-powered philosophical journaling platform that transforms daily reflection
 - Secure environment variable management
 - Input validation and sanitization
 - Automated secret scanning with TruffleHog OSS
+- Static code analysis with Semgrep for security vulnerabilities
 
 ## Quick Start
 
