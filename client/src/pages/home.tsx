@@ -681,6 +681,61 @@ export default function Home() {
     }
   };
 
+  const findAnotherImage = async () => {
+    if (!journalEntry || !isJournalConfirmed || !imageRevisionPrompt.trim()) return;
+
+    setIsGeneratingImage(true);
+    setGeneratingImageType('found');
+
+    try {
+      const response = await fetch('/api/find-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          journalEntry: journalEntry.finalEntry,
+          searchTerms: imageRevisionPrompt.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to find another image');
+      }
+
+      const data = await response.json();
+
+      const foundImageResponse = {
+        imageUrl: data.imageUrl,
+        prompt: data.description || data.title,
+        generationTime: data.generationTime,
+        artistStyle: data.artistStyle || `${data.source} (${data.license})`,
+        type: 'found' as const
+      };
+
+      setGeneratedImage(foundImageResponse);
+      setShowImageRevision(false);
+      setImageRevisionPrompt("");
+      
+      toast({
+        title: "New Image Found",
+        description: "A different image has been found based on your preferences.",
+      });
+    } catch (error) {
+      console.error("Image search error:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unable to find another suitable image at this time.';
+      toast({
+        title: "Image Search Failed",
+        description: `${errorMessage}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingImage(false);
+      setGeneratingImageType(null);
+    }
+  };
+
   const confirmJournal = () => {
     setIsJournalConfirmed(true);
     setShowRevisionInput(false);
@@ -1405,7 +1460,7 @@ export default function Home() {
                                 size="sm"
                               >
                                 <ImageIcon className="h-3 w-3 mr-1" />
-                                Regenerate
+                                {generatedImage.type === 'found' ? 'Find Another' : 'Regenerate'}
                               </Button>
                             </div>
                           </div>
@@ -1421,12 +1476,14 @@ export default function Home() {
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="image-revision-prompt" className="block text-sm font-medium text-foreground mb-2">
-                          How would you like to modify the artwork?
+                          {generatedImage?.type === 'found' ? 'What kind of image would you prefer?' : 'How would you like to modify the artwork?'}
                         </Label>
                         <Textarea
                           id="image-revision-prompt"
                           rows={3}
-                          placeholder="e.g., 'More vibrant colors', 'Make it a landscape instead', 'In Van Gogh style', 'Add more warmth'..."
+                          placeholder={generatedImage?.type === 'found' 
+                            ? "e.g., 'More abstract image', 'Nature scene', 'Urban setting', 'Peaceful landscape'..." 
+                            : "e.g., 'More vibrant colors', 'Make it a landscape instead', 'In Van Gogh style', 'Add more warmth'..."}
                           value={imageRevisionPrompt}
                           onChange={(e) => setImageRevisionPrompt(e.target.value)}
                           className="resize-none"
@@ -1445,19 +1502,28 @@ export default function Home() {
                         </Button>
                         <Button
                           size="sm"
-                          onClick={regenerateImage}
+                          onClick={generatedImage?.type === 'found' ? findAnotherImage : regenerateImage}
                           disabled={isGeneratingImage || !imageRevisionPrompt.trim()}
                           className="bg-primary hover:bg-primary/90"
                         >
                           {isGeneratingImage ? (
                             <>
                               <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                              Generating...
+                              {generatedImage?.type === 'found' ? 'Searching...' : 'Generating...'}
                             </>
                           ) : (
                             <>
-                              <ImageIcon className="h-3 w-3 mr-2" />
-                              Generate New Image
+                              {generatedImage?.type === 'found' ? (
+                                <>
+                                  <Search className="h-3 w-3 mr-2" />
+                                  Find Another Image
+                                </>
+                              ) : (
+                                <>
+                                  <ImageIcon className="h-3 w-3 mr-2" />
+                                  Generate New Image
+                                </>
+                              )}
                             </>
                           )}
                         </Button>

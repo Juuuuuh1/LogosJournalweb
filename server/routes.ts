@@ -181,9 +181,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { journalEntry, searchTerms } = findImageSchema.parse(req.body);
       const startTime = Date.now();
       
-      // Extract key themes from journal entry for search
-      const extractedThemes = extractThemesFromText(journalEntry);
-      const searchQuery = searchTerms || extractedThemes.join(' ');
+      // Use provided search terms or extract themes from journal entry
+      let searchQuery: string;
+      if (searchTerms && searchTerms.trim()) {
+        searchQuery = searchTerms.trim();
+      } else {
+        const extractedThemes = extractThemesFromText(journalEntry);
+        searchQuery = extractedThemes.join(' ');
+      }
       
       // Search for Creative Commons/royalty-free images
       const searchResults = await searchUnsplashImages(searchQuery);
