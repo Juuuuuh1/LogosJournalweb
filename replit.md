@@ -22,6 +22,8 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - Replaced integrated image search with popup menu directing to external non-copyrighted sites
 - Enhanced AI image generation prompts: artwork avoids text, sketches prefer visual storytelling with minimal but highly readable text when essential
 - Implemented smart keyword extraction that prioritizes nouns over verbs/adjectives/time words for image search
+- Added TruffleHog OSS GitHub Actions for automated secret scanning and security monitoring
+- Enhanced Next button validation to prevent question skipping during AI generation delays
 
 # User Preferences
 
