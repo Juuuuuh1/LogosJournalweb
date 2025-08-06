@@ -1530,7 +1530,7 @@ export default function Home() {
                 const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
                 
                 const keywords = content.split(/[.,;!?]\s*|\s+/)
-                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
+                  .filter(word => word.length >= 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 console.log("Debug - Extracted keywords for Unsplash:", keywords);
@@ -1558,7 +1558,7 @@ export default function Home() {
                 const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
                 
                 const keywords = content.split(/[.,;!?]\s*|\s+/)
-                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
+                  .filter(word => word.length >= 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 const query = encodeURIComponent(keywords || 'nature reflection');
@@ -1585,7 +1585,7 @@ export default function Home() {
                 const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
                 
                 const keywords = content.split(/[.,;!?]\s*|\s+/)
-                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
+                  .filter(word => word.length >= 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 const query = encodeURIComponent(keywords || 'nature reflection');
@@ -1612,7 +1612,7 @@ export default function Home() {
                 const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
                 
                 const keywords = content.split(/[.,;!?]\s*|\s+/)
-                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
+                  .filter(word => word.length >= 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 const query = encodeURIComponent(keywords || 'nature reflection');
@@ -1639,7 +1639,7 @@ export default function Home() {
                 const excludeWords = [...commonWords, ...verbs, ...timeWords, ...adjectives];
                 
                 const keywords = content.split(/[.,;!?]\s*|\s+/)
-                  .filter(word => word.length > 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
+                  .filter(word => word.length >= 3 && !excludeWords.includes(word.toLowerCase().replace(/[.,;!?]/g, '')))
                   .slice(0, 4)
                   .join(' ');
                 const query = encodeURIComponent(keywords || 'nature reflection');
