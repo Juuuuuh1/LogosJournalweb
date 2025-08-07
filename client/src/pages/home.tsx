@@ -931,12 +931,21 @@ export default function Home() {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Privacy & Security First</h3>
                     <p className="text-muted-foreground mb-3">
-                      Your reflections and API keys are stored securely in your browser only. We never see or store your personal thoughts - everything stays between you and OpenAI.
+                      Your reflections and API keys are stored securely in your browser only. We never see or store your personal thoughts - everything stays between you and OpenAI. For maximum privacy, you can run the app locally from our{" "}
+                      <a 
+                        href="https://github.com/Juuuuuh1/LogosJournalweb/tree/main" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-primary hover:underline font-medium"
+                      >
+                        GitHub repository
+                      </a>.
                     </p>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary">Client-side encryption</Badge>
                       <Badge variant="secondary">No data tracking</Badge>
                       <Badge variant="secondary">Direct OpenAI integration</Badge>
+                      <Badge variant="secondary">Open source</Badge>
                     </div>
                   </div>
                 </div>
