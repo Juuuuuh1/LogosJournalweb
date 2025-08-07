@@ -43,7 +43,8 @@ import {
   Image as ImageIcon,
   Loader2,
   Shield,
-  Search
+  Search,
+  Github
 } from "lucide-react";
 import logoImage from "@assets/image_1754419399979.png";
 import type { PhilosophicalQuestion, QuestionResponse, JournalResponse, ImageResponse } from "@shared/schema";
@@ -931,13 +932,14 @@ export default function Home() {
                   <div>
                     <h3 className="text-lg font-semibold mb-2">Privacy & Security First</h3>
                     <p className="text-muted-foreground mb-3">
-                      Your reflections and API keys are stored securely in your browser only. We never see or store your personal thoughts - everything stays between you and OpenAI. For maximum privacy, you can run the app locally from our{" "}
+                      Your reflections and API keys are stored securely in your browser only. We never see or store your personal thoughts - everything stays between you and OpenAI. For maximum privacy, you can run the app locally. You can find how to at our{" "}
                       <a 
                         href="https://github.com/Juuuuuh1/LogosJournalweb/tree/main" 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-primary hover:underline font-medium"
+                        className="text-primary hover:underline font-medium inline-flex items-center gap-1"
                       >
+                        <Github size={16} />
                         GitHub repository
                       </a>.
                     </p>
