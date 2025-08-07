@@ -888,7 +888,7 @@ export default function Home() {
                     <h3 className="text-xl font-semibold">Visual Storytelling</h3>
                   </div>
                   <p className="text-muted-foreground">
-                    Transform your reflections into stunning artwork and hand-drawn sketches that capture the essence of your philosophical journey.
+                    Transform your reflections into stunning artwork, hand-drawn sketches, and discover relevant images through intelligent search that capture the essence of your philosophical journey.
                   </p>
                 </CardContent>
               </Card>
