@@ -1604,7 +1604,14 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                      {!isDemoMode && (
+                      {isDemoMode ? (
+                        <div className="flex items-center justify-center px-4 py-2 bg-muted/30 rounded-md border border-primary/10 w-full sm:w-auto">
+                          <Edit className="h-4 w-4 text-muted-foreground mr-2" />
+                          <span className="text-sm text-muted-foreground">
+                            Revision available in full version
+                          </span>
+                        </div>
+                      ) : (
                         <Button 
                           variant="outline"
                           onClick={() => setShowRevisionInput(!showRevisionInput)}
