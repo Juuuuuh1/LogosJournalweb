@@ -1598,11 +1598,11 @@ export default function Home() {
                     </div>
                     <div className="flex justify-center space-x-4">
                       {isDemoMode ? (
-                        <div className="text-center p-4 bg-muted/50 rounded-lg border border-primary/20">
-                          <Edit className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
-                          <p className="text-xs text-muted-foreground">
-                            Revision feature available in full version
-                          </p>
+                        <div className="flex items-center justify-center px-4 py-2 bg-muted/50 rounded-md border border-primary/20 min-h-[40px]">
+                          <Edit className="h-4 w-4 text-muted-foreground mr-2" />
+                          <span className="text-sm text-muted-foreground">
+                            Revision available in full version
+                          </span>
                         </div>
                       ) : (
                         <Button 
