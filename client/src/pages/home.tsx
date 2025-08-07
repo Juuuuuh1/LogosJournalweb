@@ -1294,13 +1294,16 @@ export default function Home() {
                   {/* Multiple Choice Options */}
                   <RadioGroup
                     value={responses[currentQuestion.id]?.selectedOption || ""}
-                    onValueChange={(value) => updateResponse(currentQuestion.id, 'selectedOption', value)}
+                    onValueChange={isDemoMode ? undefined : (value) => updateResponse(currentQuestion.id, 'selectedOption', value)}
+                    disabled={isDemoMode}
                   >
                     <div className="space-y-3">
                       {currentQuestion.options.map((option, index) => (
                         <div key={index} className="space-y-3">
-                          <Label className="flex items-center p-4 border border-border rounded-lg hover:border-primary/50 cursor-pointer transition-colors">
-                            <RadioGroupItem value={option} className="mr-3" />
+                          <Label className={`flex items-center p-4 border border-border rounded-lg transition-colors ${
+                            isDemoMode ? 'cursor-default opacity-75' : 'hover:border-primary/50 cursor-pointer'
+                          }`}>
+                            <RadioGroupItem value={option} className="mr-3" disabled={isDemoMode} />
                             <span className="text-foreground">{option}</span>
                           </Label>
                           
@@ -1312,7 +1315,8 @@ export default function Home() {
                                 rows={2}
                                 placeholder="Any specific keywords or short description to add to this choice?"
                                 value={responses[currentQuestion.id]?.customAnswer || ""}
-                                onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                                onChange={isDemoMode ? undefined : (e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                                disabled={isDemoMode}
                                 className="resize-none text-sm"
                               />
                             </div>
@@ -1329,7 +1333,8 @@ export default function Home() {
                         rows={4}
                         placeholder="Take a moment to describe your thoughts in your own words..."
                         value={responses[currentQuestion.id]?.customAnswer || ""}
-                        onChange={(e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                        onChange={isDemoMode ? undefined : (e) => updateResponse(currentQuestion.id, 'customAnswer', e.target.value)}
+                        disabled={isDemoMode}
                         className="resize-none"
                       />
                     </div>
@@ -1384,7 +1389,8 @@ export default function Home() {
                     rows={6}
                     placeholder="Optional: Share any additional insights, gratitudes, or specific events from your day..."
                     value={finalThoughts}
-                    onChange={(e) => setFinalThoughts(e.target.value)}
+                    onChange={isDemoMode ? undefined : (e) => setFinalThoughts(e.target.value)}
+                    disabled={isDemoMode}
                     className="resize-none"
                   />
                 </div>
