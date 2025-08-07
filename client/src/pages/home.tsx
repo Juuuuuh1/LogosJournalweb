@@ -1597,13 +1597,22 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="flex justify-center space-x-4">
-                      <Button 
-                        variant="outline"
-                        onClick={() => setShowRevisionInput(!showRevisionInput)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
-                      </Button>
+                      {isDemoMode ? (
+                        <div className="text-center p-4 bg-muted/50 rounded-lg border border-primary/20">
+                          <Edit className="h-5 w-5 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-xs text-muted-foreground">
+                            Revision feature available in full version
+                          </p>
+                        </div>
+                      ) : (
+                        <Button 
+                          variant="outline"
+                          onClick={() => setShowRevisionInput(!showRevisionInput)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
+                        </Button>
+                      )}
                       <Button
                         onClick={confirmJournal}
                         className="bg-primary hover:bg-primary/90"
