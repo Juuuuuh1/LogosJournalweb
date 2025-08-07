@@ -1532,11 +1532,13 @@ export default function Home() {
                   {isJournalConfirmed && (
                     <div className="flex flex-col space-y-3">
                       {isDemoMode ? (
-                        <div className="text-center p-6 bg-muted/50 rounded-lg border-l-4 border-primary/30">
-                          <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                          <p className="text-muted-foreground mb-2 font-medium">Image Generation (Demo Mode)</p>
-                          <p className="text-sm text-muted-foreground">
-                            In the full version, you can generate AI artwork, hand-drawn sketches, and search for relevant images based on your journal content.
+                        <div className="p-4 bg-muted/30 rounded-lg border border-primary/10 text-center">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium text-muted-foreground">Visual Creation</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Generate AI artwork, sketches, and find images in the full version
                           </p>
                         </div>
                       ) : (
