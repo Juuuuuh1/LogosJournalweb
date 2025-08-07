@@ -48,11 +48,11 @@ import {
 import logoImage from "@assets/image_1754419399979.png";
 import type { PhilosophicalQuestion, QuestionResponse, JournalResponse, ImageResponse } from "@shared/schema";
 
-type JournalStep = "apiSetup" | "questions" | "finalComments" | "journalOutput";
+type JournalStep = "welcome" | "apiSetup" | "questions" | "finalComments" | "journalOutput";
 
 export default function Home() {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState<JournalStep>("apiSetup");
+  const [currentStep, setCurrentStep] = useState<JournalStep>("welcome");
   const [apiKey, setApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [questions, setQuestions] = useState<PhilosophicalQuestion[]>([]);
@@ -380,7 +380,7 @@ export default function Home() {
   };
 
   const startNewReflection = () => {
-    setCurrentStep("apiSetup");
+    setCurrentStep("welcome");
     setCurrentQuestionIndex(0);
     setResponses({});
     setFinalThoughts("");
@@ -401,7 +401,7 @@ export default function Home() {
   };
 
   const resetToHome = () => {
-    setCurrentStep("apiSetup");
+    setCurrentStep("welcome");
     setCurrentQuestionIndex(0);
     setResponses({});
     setFinalThoughts("");
@@ -755,7 +755,7 @@ export default function Home() {
   };
 
   const getProgressPercentage = () => {
-    if (currentStep === "apiSetup") return 0;
+    if (currentStep === "welcome" || currentStep === "apiSetup") return 0;
     if (currentStep === "questions") return ((currentQuestionIndex + 1) / questions.length) * 80;
     if (currentStep === "finalComments") return 90;
     return 100;
@@ -826,7 +826,7 @@ export default function Home() {
 
       <main className="max-w-4xl mx-auto px-6 py-8">
         {/* Progress Bar */}
-        {currentStep !== "apiSetup" && (
+        {currentStep !== "welcome" && currentStep !== "apiSetup" && (
           <Card className="mb-8">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
@@ -845,6 +845,122 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Welcome Page */}
+        {currentStep === "welcome" && (
+          <div className="space-y-8">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Feather className="text-white text-2xl" />
+              </div>
+              <h1 className="text-4xl font-bold text-foreground mb-4">Welcome to Logos Journal</h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+                Transform your daily reflections into meaningful insights through AI-guided philosophical questions and beautiful visual art.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-4">
+                      <Sparkles className="text-blue-600 dark:text-blue-400" size={20} />
+                    </div>
+                    <h3 className="text-xl font-semibold">AI-Guided Reflection</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Experience personalized philosophical questions that adapt to your responses, creating a unique journey of self-discovery through thoughtful inquiry.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mr-4">
+                      <ImageIcon className="text-purple-600 dark:text-purple-400" size={20} />
+                    </div>
+                    <h3 className="text-xl font-semibold">Visual Storytelling</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Transform your reflections into stunning artwork and hand-drawn sketches that capture the essence of your philosophical journey.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-4">
+                      <FileText className="text-green-600 dark:text-green-400" size={20} />
+                    </div>
+                    <h3 className="text-xl font-semibold">Personalized Journals</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Receive beautifully synthesized journal entries that capture your thoughts, insights, and philosophical discoveries in meaningful prose.
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mr-4">
+                      <Share2 className="text-orange-600 dark:text-orange-400" size={20} />
+                    </div>
+                    <h3 className="text-xl font-semibold">Easy Sharing</h3>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Share your reflections and generated artwork across social platforms, or download them for personal keepsakes.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
+              <CardContent className="p-6">
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="text-primary" size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Privacy & Security First</h3>
+                    <p className="text-muted-foreground mb-3">
+                      Your reflections and API keys are stored securely in your browser only. We never see or store your personal thoughts - everything stays between you and OpenAI.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary">Client-side encryption</Badge>
+                      <Badge variant="secondary">No data tracking</Badge>
+                      <Badge variant="secondary">Direct OpenAI integration</Badge>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="text-center">
+              <Button 
+                onClick={() => setCurrentStep("apiSetup")} 
+                size="lg" 
+                className="text-lg px-8 py-3"
+              >
+                Begin Your Journey
+                <ChevronRight className="ml-2" size={20} />
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                You'll need an OpenAI API key to get started • 
+                <a 
+                  href="https://platform.openai.com/api-keys" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-primary hover:underline ml-1"
+                >
+                  Get yours here
+                </a>
+              </p>
+            </div>
+          </div>
         )}
 
         {/* API Key Setup */}
