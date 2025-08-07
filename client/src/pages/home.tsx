@@ -497,8 +497,8 @@ export default function Home() {
     setQuestions(demoQuestions);
     setCurrentStep("questions");
     setCurrentQuestionIndex(0);
-    setResponses({});
-    setFinalThoughts("");
+    setResponses(demoResponses); // Pre-fill all demo responses
+    setFinalThoughts(demoFinalThoughts);
     setJournalEntry(null);
     setGeneratedImage(null);
     setIsJournalConfirmed(false);
@@ -511,35 +511,11 @@ export default function Home() {
 
   const proceedDemoToNext = () => {
     if (currentQuestionIndex < demoQuestions.length - 1) {
-      // Auto-fill current question response
-      const currentQ = demoQuestions[currentQuestionIndex];
-      const demoResponse = demoResponses[currentQ.id];
-      if (demoResponse) {
-        setResponses(prev => ({
-          ...prev,
-          [currentQ.id]: demoResponse
-        }));
-      }
-      
-      // Move to next question after a brief delay
-      setTimeout(() => {
-        setCurrentQuestionIndex(prev => prev + 1);
-      }, 500);
+      // Move to next question (responses are already pre-filled)
+      setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      // Auto-fill final question and move to final comments
-      const currentQ = demoQuestions[currentQuestionIndex];
-      const demoResponse = demoResponses[currentQ.id];
-      if (demoResponse) {
-        setResponses(prev => ({
-          ...prev,
-          [currentQ.id]: demoResponse
-        }));
-      }
-      
-      setTimeout(() => {
-        setCurrentStep("finalComments");
-        setFinalThoughts(demoFinalThoughts);
-      }, 500);
+      // Move to final comments (final thoughts already pre-filled)
+      setCurrentStep("finalComments");
     }
   };
 
