@@ -73,6 +73,74 @@ export default function Home() {
   const [imageRevisionPrompt, setImageRevisionPrompt] = useState("");
   const [isFindingImage, setIsFindingImage] = useState(false);
   const [showImageSearchMenu, setShowImageSearchMenu] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+
+  // Demo data for demonstration purposes
+  const demoQuestions: PhilosophicalQuestion[] = [
+    {
+      id: "1",
+      text: "As you reflect on today, what moment stands out as most meaningful, and what does this reveal about what you truly value?",
+      category: "Daily Reflection",
+      options: [
+        "A quiet conversation with someone I care about",
+        "A moment of creative breakthrough or inspiration",
+        "An act of kindness I witnessed or participated in",
+        "Write my own response"
+      ],
+      philosopherQuote: "The unexamined life is not worth living. — Socrates"
+    },
+    {
+      id: "2",
+      text: "How did your interactions with others today shape your understanding of yourself?",
+      category: "Relationships",
+      options: [
+        "They reminded me of my capacity for empathy",
+        "They challenged me to see myself differently",
+        "They reinforced what I already knew about myself",
+        "Write my own response"
+      ],
+      philosopherQuote: "We are what we repeatedly do. Excellence, then, is not an act, but a habit. — Aristotle"
+    },
+    {
+      id: "3",
+      text: "What internal conflict or tension did you navigate today, and what wisdom did it offer?",
+      category: "Inner Growth",
+      options: [
+        "Between what I wanted and what was right",
+        "Between comfort and growth",
+        "Between my ideal self and my actual actions",
+        "Write my own response"
+      ],
+      philosopherQuote: "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion. — Albert Camus"
+    }
+  ];
+
+  const demoResponses: Record<string, QuestionResponse> = {
+    "1": {
+      questionId: "1",
+      selectedOption: "A quiet conversation with someone I care about",
+      customAnswer: ""
+    },
+    "2": {
+      questionId: "2", 
+      selectedOption: "They reminded me of my capacity for empathy",
+      customAnswer: ""
+    },
+    "3": {
+      questionId: "3",
+      selectedOption: "Between comfort and growth",
+      customAnswer: ""
+    }
+  };
+
+  const demoJournalEntry: JournalResponse = {
+    finalEntry: "Today revealed the profound interconnectedness of meaning, empathy, and growth in my daily experience. The quiet conversation that stood out wasn't just meaningful because of its content, but because it reminded me that authentic connection lies at the heart of what I value most. Through my interactions, I discovered my capacity for empathy isn't just a trait I possess, but a lens through which I understand both others and myself more deeply. The tension between comfort and growth that I navigated offered the wisdom that true development happens not in the absence of discomfort, but in our willingness to lean into it. These moments of connection, empathy, and courageous growth form the foundation of a life lived with intention and purpose.",
+    philosophicalQuote: "The privilege of a lifetime is to become who you truly are. — Carl Jung",
+    wordCount: 132,
+    generationTime: 2.3
+  };
+
+  const demoFinalThoughts = "This reflection helped me realize that meaning isn't found in grand gestures, but in the quiet moments where we show up authentically for others and ourselves.";
 
   // Load API key from secure storage on mount
   useEffect(() => {
@@ -415,12 +483,80 @@ export default function Home() {
     setShowImageRevision(false);
     setImageRevisionPrompt("");
     setGeneratingImageType(null);
+    setIsDemoMode(false);
     
     // Keep the API key but reset everything else
     const storedKey = getStoredApiKey();
     if (storedKey) {
       setApiKey(storedKey);
     }
+  };
+
+  const startDemoMode = () => {
+    setIsDemoMode(true);
+    setQuestions(demoQuestions);
+    setCurrentStep("questions");
+    setCurrentQuestionIndex(0);
+    setResponses({});
+    setFinalThoughts("");
+    setJournalEntry(null);
+    setGeneratedImage(null);
+    setIsJournalConfirmed(false);
+    
+    toast({
+      title: "Demo Mode Active",
+      description: "Experience the full Logos Journal workflow with sample content.",
+    });
+  };
+
+  const proceedDemoToNext = () => {
+    if (currentQuestionIndex < demoQuestions.length - 1) {
+      // Auto-fill current question response
+      const currentQ = demoQuestions[currentQuestionIndex];
+      const demoResponse = demoResponses[currentQ.id];
+      if (demoResponse) {
+        setResponses(prev => ({
+          ...prev,
+          [currentQ.id]: demoResponse
+        }));
+      }
+      
+      // Move to next question after a brief delay
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+      }, 500);
+    } else {
+      // Auto-fill final question and move to final comments
+      const currentQ = demoQuestions[currentQuestionIndex];
+      const demoResponse = demoResponses[currentQ.id];
+      if (demoResponse) {
+        setResponses(prev => ({
+          ...prev,
+          [currentQ.id]: demoResponse
+        }));
+      }
+      
+      setTimeout(() => {
+        setCurrentStep("finalComments");
+        setFinalThoughts(demoFinalThoughts);
+      }, 500);
+    }
+  };
+
+  const generateDemoJournal = () => {
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setJournalEntry(demoJournalEntry);
+      setCurrentStep("journalOutput");
+      setIsLoading(false);
+      
+      toast({
+        title: "Demo Journal Generated",
+        description: "This is a sample of how AI synthesizes your reflections into meaningful prose.",
+      });
+    }, 2000);
   };
 
   const reviseJournalEntry = async () => {
@@ -779,7 +915,14 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-foreground hover:text-primary transition-colors">Logos Journal</h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-semibold text-foreground hover:text-primary transition-colors">Logos Journal</h1>
+                  {isDemoMode && (
+                    <Badge variant="secondary" className="text-xs">
+                      Demo Mode
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-sm text-muted-foreground">Daily Philosophy, Reflection & Inquiry</p>
               </div>
             </div>
@@ -985,16 +1128,27 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <div className="text-center">
-              <Button 
-                onClick={() => setCurrentStep("apiSetup")} 
-                size="lg" 
-                className="text-lg px-8 py-3"
-              >
-                Begin Your Journey
-                <ChevronRight className="ml-2" size={20} />
-              </Button>
-              <p className="text-sm text-muted-foreground mt-4">
+            <div className="text-center space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button 
+                  onClick={() => setCurrentStep("apiSetup")} 
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                >
+                  Begin Your Journey
+                  <ChevronRight className="ml-2" size={20} />
+                </Button>
+                <Button 
+                  onClick={() => startDemoMode()} 
+                  variant="outline"
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                >
+                  Try Demo Mode
+                  <Eye className="ml-2" size={20} />
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
                 You'll need an OpenAI API key to get started • 
                 <a 
                   href="https://platform.openai.com/api-keys" 
@@ -1004,6 +1158,8 @@ export default function Home() {
                 >
                   Get yours here
                 </a>
+                <br />
+                <span className="text-xs text-muted-foreground">Demo mode shows the full experience with sample content</span>
               </p>
             </div>
           </div>
@@ -1193,11 +1349,12 @@ export default function Home() {
                 Previous
               </Button>
               <Button
-                onClick={nextQuestion}
-                disabled={!canProceedFromQuestion()}
+                onClick={isDemoMode ? proceedDemoToNext : nextQuestion}
+                disabled={isDemoMode ? false : !canProceedFromQuestion()}
                 className="bg-primary hover:bg-primary/90"
               >
-                {(currentQuestionIndex === questions.length - 1 && questions.length >= 5) ? "Final Thoughts" : "Continue Reflection"}
+                {isDemoMode ? "Continue Demo" : 
+                 (currentQuestionIndex === questions.length - 1 && questions.length >= 5) ? "Final Thoughts" : "Continue Reflection"}
                 <ChevronRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
@@ -1243,12 +1400,12 @@ export default function Home() {
                 Previous
               </Button>
               <Button
-                onClick={generateJournalEntry}
+                onClick={isDemoMode ? generateDemoJournal : generateJournalEntry}
                 disabled={isLoading}
                 className="bg-primary hover:bg-primary/90"
               >
                 <Sparkles className="h-4 w-4 mr-2" />
-                {isLoading ? "Generating..." : "Generate Journal Entry"}
+                {isLoading ? "Generating..." : isDemoMode ? "Generate Demo Journal" : "Generate Journal Entry"}
               </Button>
             </div>
           </div>
@@ -1374,42 +1531,52 @@ export default function Home() {
                   </div>
                   {isJournalConfirmed && (
                     <div className="flex flex-col space-y-3">
-                      <div className="flex flex-wrap gap-3">
-                        <Button
-                          onClick={() => generateImage('artwork')}
-                          disabled={isGeneratingImage || isFindingImage}
-                          variant="outline"
-                          className="flex items-center"
-                        >
-                          {isGeneratingImage && generatingImageType === 'artwork' ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <ImageIcon className="h-4 w-4 mr-2" />
-                          )}
-                          Generate Artwork
-                        </Button>
-                        <Button
-                          onClick={() => generateImage('sketch')}
-                          disabled={isGeneratingImage || isFindingImage}
-                          variant="outline"
-                          className="flex items-center"
-                        >
-                          {isGeneratingImage && generatingImageType === 'sketch' ? (
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          ) : (
-                            <Edit className="h-4 w-4 mr-2" />
-                          )}
-                          Generate Sketch
-                        </Button>
-                        <Button
-                          onClick={findRelevantImage}
-                          variant="outline"
-                          className="flex items-center"
-                        >
-                          <Search className="h-4 w-4 mr-2" />
-                          Search Images
-                        </Button>
-                      </div>
+                      {isDemoMode ? (
+                        <div className="text-center p-6 bg-muted/50 rounded-lg border-l-4 border-primary/30">
+                          <ImageIcon className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
+                          <p className="text-muted-foreground mb-2 font-medium">Image Generation (Demo Mode)</p>
+                          <p className="text-sm text-muted-foreground">
+                            In the full version, you can generate AI artwork, hand-drawn sketches, and search for relevant images based on your journal content.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap gap-3">
+                          <Button
+                            onClick={() => generateImage('artwork')}
+                            disabled={isGeneratingImage || isFindingImage}
+                            variant="outline"
+                            className="flex items-center"
+                          >
+                            {isGeneratingImage && generatingImageType === 'artwork' ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : (
+                              <ImageIcon className="h-4 w-4 mr-2" />
+                            )}
+                            Generate Artwork
+                          </Button>
+                          <Button
+                            onClick={() => generateImage('sketch')}
+                            disabled={isGeneratingImage || isFindingImage}
+                            variant="outline"
+                            className="flex items-center"
+                          >
+                            {isGeneratingImage && generatingImageType === 'sketch' ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : (
+                              <Edit className="h-4 w-4 mr-2" />
+                            )}
+                            Generate Sketch
+                          </Button>
+                          <Button
+                            onClick={findRelevantImage}
+                            variant="outline"
+                            className="flex items-center"
+                          >
+                            <Search className="h-4 w-4 mr-2" />
+                            Search Images
+                          </Button>
+                        </div>
+                      )}
                       <Button
                         onClick={startNewReflection}
                         className="bg-primary hover:bg-primary/90"
