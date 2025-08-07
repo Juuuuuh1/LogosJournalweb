@@ -1590,24 +1590,23 @@ export default function Home() {
                 {/* Draft Confirmation Section */}
                 {!isJournalConfirmed && (
                   <div className="mt-8 p-6 bg-accent/50 rounded-xl border border-primary/20">
-                    <div className="text-center mb-4">
-                      <h3 className="text-lg font-medium text-foreground mb-2">Review Your Journal Draft</h3>
+                    <div className="text-center mb-6">
+                      <h3 className="text-lg font-medium text-foreground mb-2">
+                        {isDemoMode ? "Demo Journal Ready" : "Review Your Journal Draft"}
+                      </h3>
                       <p className="text-sm text-muted-foreground">
-                        You can confirm this draft as your final journal or make revisions first.
+                        {isDemoMode 
+                          ? "This demo shows how your final journal would look with your philosophical reflections."
+                          : "You can confirm this draft as your final journal or make revisions first."
+                        }
                       </p>
                     </div>
-                    <div className="flex justify-center space-x-4">
-                      {isDemoMode ? (
-                        <div className="flex items-center justify-center px-4 py-2 bg-muted/50 rounded-md border border-primary/20 min-h-[40px]">
-                          <Edit className="h-4 w-4 text-muted-foreground mr-2" />
-                          <span className="text-sm text-muted-foreground">
-                            Revision available in full version
-                          </span>
-                        </div>
-                      ) : (
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                      {!isDemoMode && (
                         <Button 
                           variant="outline"
                           onClick={() => setShowRevisionInput(!showRevisionInput)}
+                          className="w-full sm:w-auto"
                         >
                           <Edit className="h-4 w-4 mr-2" />
                           {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
@@ -1615,12 +1614,21 @@ export default function Home() {
                       )}
                       <Button
                         onClick={confirmJournal}
-                        className="bg-primary hover:bg-primary/90"
+                        className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
                       >
                         <Sparkles className="h-4 w-4 mr-2" />
-                        {isDemoMode ? "Confirm as Final Demo Journal" : "Confirm as Final Journal"}
+                        {isDemoMode ? "Confirm Demo Journal" : "Confirm as Final Journal"}
                       </Button>
                     </div>
+                    
+                    {isDemoMode && (
+                      <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-primary/10">
+                        <p className="text-xs text-muted-foreground text-center">
+                          <Edit className="h-3 w-3 inline mr-1" />
+                          In the full version, you can revise and refine your journal entries with AI assistance
+                        </p>
+                      </div>
+                    )}
                     
                     {/* Revision Input Area */}
                     {showRevisionInput && (
