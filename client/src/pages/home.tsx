@@ -1609,7 +1609,7 @@ export default function Home() {
                         className="bg-primary hover:bg-primary/90"
                       >
                         <Sparkles className="h-4 w-4 mr-2" />
-                        Confirm as Final Journal
+                        {isDemoMode ? "Confirm as Final Demo Journal" : "Confirm as Final Journal"}
                       </Button>
                     </div>
                     
