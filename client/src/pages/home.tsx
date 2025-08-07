@@ -851,8 +851,12 @@ export default function Home() {
         {currentStep === "welcome" && (
           <div className="space-y-8">
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Feather className="text-white text-2xl" />
+              <div className="w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <img 
+                  src={logoImage} 
+                  alt="Logos Journal Logo" 
+                  className="w-20 h-20 object-contain"
+                />
               </div>
               <h1 className="text-4xl font-bold text-foreground mb-4">Welcome to Logos Journal</h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
