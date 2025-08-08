@@ -12,6 +12,7 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - Revision system for both journal entries and visual content
 - Production-ready deployment with proper error handling
 - External image search integration with non-copyrighted image sites
+- Complete demo mode for video creation and demonstrations
 
 **Technical Achievements:**
 - Fixed deployment issues for production mode
@@ -25,6 +26,8 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - Added TruffleHog OSS GitHub Actions for automated secret scanning and security monitoring
 - Enhanced Next button validation to prevent question skipping during AI generation delays
 - Integrated Semgrep static code analysis for comprehensive security vulnerability detection
+- **Code Cleanup (January 2025)**: Removed 30+ unused UI components and 25+ unused dependencies, reducing bundle size significantly
+- **Demo Mode Implementation**: Added comprehensive demo mode with pre-filled responses and disabled inputs for perfect video demonstrations
 
 # User Preferences
 

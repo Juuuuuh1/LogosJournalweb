@@ -28,7 +28,6 @@ import {
   Feather, 
   Settings, 
   Key, 
-  Lock, 
   ChevronLeft, 
   ChevronRight, 
   Heart, 
