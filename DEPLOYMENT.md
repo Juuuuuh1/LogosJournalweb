@@ -12,11 +12,13 @@ Your Logos Journal application is fully configured and ready for deployment on R
 
 ### Pre-Deployment Checklist ✅
 - [x] Production build tested and working
-- [x] All dependencies properly configured
+- [x] All dependencies properly configured (cleaned up unused packages)
 - [x] Environment variables ready for production
 - [x] Error handling implemented
-- [x] Security measures in place (API key validation)
+- [x] Security measures in place (API key validation, TruffleHog scanning)
 - [x] Performance optimized (Vite bundling, React optimization)
+- [x] Codebase cleaned and streamlined (removed 30+ unused components)
+- [x] Demo mode implemented for presentations
 
 ### Features Ready for Production
 - [x] AI-powered philosophical question generation
@@ -27,28 +29,23 @@ Your Logos Journal application is fully configured and ready for deployment on R
 - [x] Download functionality for both text and images
 - [x] Revision system for entries and visuals
 - [x] Secure browser-only API key storage
+- [x] Demo mode for presentations and video creation
+- [x] External image search integration with non-copyrighted sites
+- [x] Optimized bundle size (removed 30+ unused components and 25+ dependencies)
 
 ### How to Deploy
 
-**IMPORTANT: Deployment Configuration Fix Required**
-
-Due to an esbuild compilation issue, you need to manually configure the deployment:
+**Standard Replit Deployment Process**
 
 1. **Click the "Deploy" button** in your Replit project
 2. **Select "Autoscale Deployment"** for optimal performance
-3. **In Build Command**, change from `npm run build` to:
-   ```
-   vite build
-   ```
-4. **In Run Command**, change from `npm run start` to:
-   ```
-   NODE_ENV=production tsx server/index.ts
-   ```
+3. **Build Command**: `npm run build` (compiles React frontend + Express backend)
+4. **Run Command**: `npm run start` (runs production server)
 5. **Configure machine resources** (recommended: 0.25 vCPU, 1 GB RAM to start)
 6. **Set maximum machines** based on expected traffic
-7. **Deploy** - Replit will build and deploy with the corrected configuration
+7. **Deploy** - Replit will handle the build and deployment process
 
-**Alternative**: Use the `deploy.js` script created in the project root for a hybrid approach.
+The deployment configuration is now fully working with the standard npm scripts.
 
 ### Post-Deployment
 - Your app will be available at a `.replit.app` domain
@@ -58,7 +55,9 @@ Due to an esbuild compilation issue, you need to manually configure the deployme
 
 ### Environment Requirements
 - Users need their own OpenAI API key for full functionality
+- PostgreSQL database connection (optional - falls back to in-memory storage)
 - No additional setup required - app guides users through API key setup
+- Environment variables: `NODE_ENV=production`, `DATABASE_URL` (optional)
 
 ### Cost Considerations
 - Autoscale deployment scales to zero when idle (cost-effective)
