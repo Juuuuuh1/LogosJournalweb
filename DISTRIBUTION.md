@@ -116,27 +116,36 @@ Add PWA capabilities for mobile/offline use:
 }
 ```
 
-### 4. Static Build for Web Hosting
-Build static files for hosting anywhere:
+### 4. Full-Stack Deployment
+Deploy the complete application with both frontend and backend:
 ```bash
 npm run build
+npm start
 ```
-Then upload the `dist` folder to any web host.
+This app requires a Node.js server for the Express backend and database connectivity.
 
 ## Key Features for Distribution
-- ✅ No server dependencies (uses in-memory storage)
+- ✅ PostgreSQL database support with Neon Database (or in-memory fallback)
 - ✅ User-provided API keys (no shared credentials)
-- ✅ Fully client-side after initial load
-- ✅ Modern web technologies (React, TypeScript)
+- ✅ Full-stack application with Express.js backend
+- ✅ Modern web technologies (React, TypeScript, Express)
 - ✅ Responsive design works on all devices
+- ✅ Demo mode for presentations and video creation
 
 ## Recommended Distribution Methods
 1. **GitHub Releases** - Host ZIP files and provide installation instructions
 2. **Electron** - Cross-platform desktop app (Windows, Mac, Linux)
-3. **Web Host** - Deploy static build to Netlify, Vercel, or similar
-4. **App Stores** - Use Electron to distribute through Microsoft Store, Mac App Store
+3. **Cloud Platforms** - Deploy to Replit, Railway, Render, or similar Node.js hosts
+4. **Self-Hosted** - Run on personal servers with PostgreSQL database
+5. **App Stores** - Use Electron to distribute through Microsoft Store, Mac App Store
 
 ## User Requirements
-- Node.js (for local development)
+- Node.js (for local development/hosting)
+- PostgreSQL database (or uses in-memory fallback)
 - OpenAI API key (user provides their own)
 - Modern web browser
+
+## Environment Variables
+Required for production deployment:
+- `DATABASE_URL` - PostgreSQL connection string (optional, falls back to in-memory)
+- `NODE_ENV` - Set to "production" for production builds
