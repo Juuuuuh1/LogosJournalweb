@@ -38,6 +38,7 @@ export const reviseJournalSchema = z.object({
   apiKey: z.string().min(1, "API key is required"),
   currentEntry: z.string().min(1, "Current entry is required"),
   revisionPrompt: z.string().min(1, "Revision instructions are required"),
+  originalQuote: z.string().optional(),
 });
 
 export const generateImageSchema = z.object({

@@ -367,69 +367,19 @@ export default function Home() {
 
   const generateJournalEntry = async () => {
     setIsLoading(true);
-    const startTime = Date.now() / 1000;
     try {
-      const allResponses = {
-        ...responses,
-        finalThoughts: finalThoughts || null
+      const journalData = {
+        responses,
+        finalThoughts,
+        questions
       };
 
-      // Format responses for the journal prompt
-      const responseText = questions.map(q => {
-        const response = responses[q.id];
-        let answer = 'No response';
-        
-        if (response?.selectedOption && response?.customAnswer) {
-          // Both selection and custom input exist
-          answer = `${response.selectedOption} - ${response.customAnswer}`;
-        } else if (response?.selectedOption) {
-          // Only selection exists
-          answer = response.selectedOption;
-        } else if (response?.customAnswer) {
-          // Only custom answer exists
-          answer = response.customAnswer;
-        }
-        
-        return `Question: ${q.text}\nAnswer: ${answer}`;
-      }).join('\n\n');
-
-      const finalThoughtsText = finalThoughts ? `\n\nFinal Thoughts: ${finalThoughts}` : '';
-
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [{
-            role: "system",
-            content: "You are a philosophical journal writer. Create a concise, thoughtful journal entry based on the user's responses to philosophical questions. Keep the entry under 200 words while maintaining depth and insight. Include relevant philosophical quotes and insights. Structure your response as JSON with: {\"finalEntry\": \"the journal entry text (under 200 words)\", \"philosophicalQuote\": \"a relevant quote with attribution\", \"keyInsights\": [\"insight1\", \"insight2\", \"insight3\"]}"
-          }, {
-            role: "user",
-            content: `Please create a concise philosophical journal entry (under 200 words) based on these responses:\n\n${responseText}${finalThoughtsText}\n\nSynthesize these into a coherent, meaningful reflection that captures the philosophical themes and personal insights in a concise format.`
-          }],
-          response_format: { type: "json_object" },
-          temperature: 0.7
-        })
+      const response = await apiRequest('/api/generate-journal', {
+        apiKey,
+        responses: journalData
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate journal entry');
-      }
-
-      const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
-      
-      // Add missing properties that the UI expects
-      const journalWithMetrics = {
-        ...result,
-        wordCount: result.finalEntry.split(' ').length,
-        generationTime: Date.now() / 1000 - startTime
-      };
-      
-      setJournalEntry(journalWithMetrics);
+      setJournalEntry(response);
       setCurrentStep("journalOutput");
       
       toast({
@@ -538,43 +488,15 @@ export default function Home() {
     if (!journalEntry || !revisionPrompt.trim()) return;
 
     setIsLoading(true);
-    const startTime = Date.now() / 1000;
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: "gpt-4o",
-          messages: [{
-            role: "system",
-            content: "You are a philosophical journal writer. Revise the given journal entry based on the user's feedback while maintaining the philosophical depth and insights. Structure your response as JSON with: {\"finalEntry\": \"the revised journal entry text\", \"philosophicalQuote\": \"a relevant quote with attribution\", \"keyInsights\": [\"insight1\", \"insight2\", \"insight3\"]}"
-          }, {
-            role: "user",
-            content: `Please revise this journal entry based on my feedback:\n\nCurrent Entry: ${journalEntry.finalEntry}\n\nRevision Request: ${revisionPrompt.trim()}\n\nPlease make the requested changes while maintaining the philosophical depth and personal insights.`
-          }],
-          response_format: { type: "json_object" },
-          temperature: 0.7
-        })
+      const response = await apiRequest('/api/revise-journal', {
+        apiKey,
+        currentEntry: journalEntry.finalEntry,
+        revisionPrompt: revisionPrompt.trim(),
+        originalQuote: journalEntry.philosophicalQuote
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to revise journal entry');
-      }
-
-      const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
-      
-      // Add missing properties that the UI expects
-      const journalWithMetrics = {
-        ...result,
-        wordCount: result.finalEntry.split(' ').length,
-        generationTime: Date.now() / 1000 - startTime
-      };
-      
-      setJournalEntry(journalWithMetrics);
+      setJournalEntry(response);
       setShowRevisionInput(false);
       setRevisionPrompt("");
       

@@ -333,9 +333,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Revise journal entry based on user feedback
   app.post("/api/revise-journal", async (req, res) => {
     try {
-      const { apiKey, currentEntry, revisionPrompt } = reviseJournalSchema.parse(req.body);
+      const { apiKey, currentEntry, revisionPrompt, originalQuote } = reviseJournalSchema.parse(req.body);
       const openaiService = new OpenAIService(apiKey);
-      const revisedJournal = await openaiService.reviseJournalEntry(currentEntry, revisionPrompt);
+      const revisedJournal = await openaiService.reviseJournalEntry(currentEntry, revisionPrompt, originalQuote);
       
       res.json(revisedJournal);
     } catch (error) {

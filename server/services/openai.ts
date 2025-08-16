@@ -145,7 +145,7 @@ Return the response in JSON format:
     }
   }
 
-  async reviseJournalEntry(currentEntry: string, revisionPrompt: string): Promise<JournalResponse> {
+  async reviseJournalEntry(currentEntry: string, revisionPrompt: string, originalQuote?: string): Promise<JournalResponse> {
     const startTime = Date.now();
 
     const prompt = `Please revise the following journal entry based on the user's feedback and instructions.
@@ -161,14 +161,14 @@ Create a revised journal entry that:
 2. Maintains the philosophical depth and personal reflection
 3. Keeps the contemplative, authentic tone
 4. Adjusts according to their preferences (word count, tone, style, etc.)
-5. Include a FRESH philosophical quote at the end that fits the revised content
+${originalQuote ? `5. Keep the original philosophical quote unchanged: ${originalQuote}` : '5. Include a fitting philosophical quote at the end'}
 
-IMPORTANT: Based on the revised content and tone, select a NEW philosophical quote that matches the updated themes, mood, and insights. Consider the revision request when choosing the quote - if they asked for more hope, choose an uplifting quote; if they wanted more depth, choose something profound; etc.
+IMPORTANT: Focus on revising only the journal entry content itself. ${originalQuote ? 'The philosophical quote should remain exactly the same as the original.' : 'Select an appropriate philosophical quote that matches the content themes.'}
 
 Return the response in JSON format:
 {
   "entry": "The revised journal entry text here...",
-  "philosophicalQuote": "\"Quote text here\" — Philosopher Name"
+  "philosophicalQuote": "${originalQuote || '\"Quote text here\" — Philosopher Name'}"
 }`;
 
     try {
