@@ -78,21 +78,61 @@ export default function Home() {
   // Generate and set a session quote that stays consistent throughout the reflection
   const generateSessionQuote = () => {
     const quotes = [
+      // Ancient Philosophy
       { text: "The unexamined life is not worth living.", author: "Socrates" },
-      { text: "I think, therefore I am.", author: "René Descartes" },
-      { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
       { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
+      { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+      { text: "The way to happiness is: keep your heart free from hatred, your mind from worry.", author: "Buddha" },
+      { text: "The mind is everything. What you think you become.", author: "Buddha" },
+      { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca" },
+      { text: "We suffer more in imagination than in reality.", author: "Seneca" },
+      { text: "The best revenge is not to be like your enemy.", author: "Marcus Aurelius" },
+      { text: "Very little is needed to make a happy life.", author: "Marcus Aurelius" },
+      
+      // Modern Philosophy  
+      { text: "I think, therefore I am.", author: "René Descartes" },
+      { text: "The heart has its reasons which reason knows not.", author: "Blaise Pascal" },
+      { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
       { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
       { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
       { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
-      { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.", author: "Albert Camus" },
+      
+      // Eastern Philosophy
+      { text: "When you realize there is nothing lacking, the whole world belongs to you.", author: "Lao Tzu" },
+      { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+      { text: "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.", author: "Rumi" },
+      { text: "Let yourself be silently drawn by the strange pull of what you really love. It will not lead you astray.", author: "Rumi" },
+      { text: "The privilege of a lifetime is to become who you truly are.", author: "Carl Jung" },
+      { text: "Everything that irritates us about others can lead us to an understanding of ourselves.", author: "Carl Jung" },
+      
+      // Contemporary Wisdom
       { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
       { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", author: "Ralph Waldo Emerson" },
-      { text: "The mind is everything. What you think you become.", author: "Buddha" },
+      { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
+      { text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
+      { text: "In the midst of winter, I found there was, within me, an invincible summer.", author: "Albert Camus" },
+      { text: "The most beautiful people are those who have known defeat, known suffering, known struggle, known loss, and have found their way out of the depths.", author: "Elisabeth Kübler-Ross" },
+      
+      // Inspirational & Modern
       { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
       { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
       { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-      { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" }
+      { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" },
+      { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.", author: "Ralph Waldo Emerson" },
+      { text: "Life is what happens to you while you're busy making other plans.", author: "John Lennon" },
+      { text: "The two most important days in your life are the day you are born and the day you find out why.", author: "Mark Twain" },
+      { text: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+      
+      // Philosophical Depth
+      { text: "Man's search for meaning is the primary motivation in his life.", author: "Viktor Frankl" },
+      { text: "Those who have a 'why' to live, can bear with almost any 'how'.", author: "Viktor Frankl" },
+      { text: "The question is not what you look at, but what you see.", author: "Henry David Thoreau" },
+      { text: "I went to the woods to live deliberately, and not, when I came to die, discover that I had not lived.", author: "Henry David Thoreau" },
+      { text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde" },
+      { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" }
     ];
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     setSessionQuote(randomQuote);
