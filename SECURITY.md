@@ -12,7 +12,7 @@ Logos Journal implements comprehensive security measures to protect user API key
 ### Server-Side Security
 - API keys are never logged in server logs or console output
 - Request logging filters out sensitive authentication data
-- API keys are only used for OpenAI API calls and immediately discarded
+- Journal generation bypasses server entirely (direct OpenAI API calls)
 - No persistent storage of API keys on the server
 - Sanitized request bodies prevent accidental key exposure
 

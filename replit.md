@@ -46,10 +46,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Backend Architecture
 - **Framework**: Express.js with TypeScript
-- **API Design**: RESTful endpoints for OpenAI integration and journal management
+- **API Design**: Lightweight endpoints for validation and auxiliary services
 - **Request Validation**: Zod schemas for type-safe API validation
 - **Error Handling**: Centralized error middleware with structured error responses
 - **Development**: Hot reload with tsx and Vite integration
+- **OpenAI Integration**: Direct frontend-to-OpenAI API calls for journal generation and revision
 
 ## Data Storage
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
