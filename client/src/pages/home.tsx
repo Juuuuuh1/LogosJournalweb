@@ -110,7 +110,7 @@ export default function Home() {
         "An act of kindness I witnessed or participated in",
         "Write my own response"
       ],
-      philosopherQuote: "The unexamined life is not worth living. — Socrates"
+      philosopherQuote: "Know thyself. — Socrates"
     },
     {
       id: "2",
