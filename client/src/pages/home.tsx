@@ -405,12 +405,24 @@ export default function Home() {
         questions
       };
 
-      const response = await apiRequest('/api/generate-journal', {
-        apiKey,
-        responses: journalData
+      const response = await fetch('/api/generate-journal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          apiKey,
+          responses: journalData
+        })
       });
 
-      setJournalEntry(response);
+      if (!response.ok) {
+        throw new Error('Failed to generate journal entry');
+      }
+
+      const journalResponse = await response.json();
+
+      setJournalEntry(journalResponse);
       setCurrentStep("journalOutput");
       
       toast({
@@ -523,14 +535,25 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      const response = await apiRequest('/api/revise-journal', {
-        apiKey,
-        currentEntry: journalEntry.finalEntry,
-        revisionPrompt: revisionPrompt.trim(),
-        originalQuote: journalEntry.philosophicalQuote
+      const response = await fetch('/api/revise-journal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          apiKey,
+          currentEntry: journalEntry.finalEntry,
+          revisionPrompt: revisionPrompt.trim(),
+          originalQuote: journalEntry.philosophicalQuote
+        })
       });
 
-      setJournalEntry(response);
+      if (!response.ok) {
+        throw new Error('Failed to revise journal entry');
+      }
+
+      const revisedJournal = await response.json();
+      setJournalEntry(revisedJournal);
       setShowRevisionInput(false);
       setRevisionPrompt("");
       
