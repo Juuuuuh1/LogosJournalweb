@@ -648,7 +648,7 @@ export default function Home() {
             content: "You are a philosophical journal writer. Revise the given journal entry based on the user's feedback while maintaining the philosophical depth and insights. Structure your response as JSON with: {\"finalEntry\": \"the revised journal entry text\", \"philosophicalQuote\": \"a relevant quote with attribution\", \"keyInsights\": [\"insight1\", \"insight2\", \"insight3\"]}"
           }, {
             role: "user",
-            content: `Please revise this journal entry based on my feedback:\n\nCurrent Entry: ${journalEntry.finalEntry}\n\nRevision Request: ${revisionPrompt.trim()}\n\n${journalEntry.philosophicalQuote ? `Keep the original philosophical quote: ${journalEntry.philosophicalQuote}` : 'Include a fitting philosophical quote.'}\n\nPlease make the requested changes while maintaining the philosophical depth and personal insights.`
+            content: `Please revise this journal entry based on my feedback:\n\nCurrent Entry: ${journalEntry.finalEntry}\n\nRevision Request: ${revisionPrompt.trim()}\n\nPlease make the requested changes while maintaining the philosophical depth and personal insights.`
           }],
           response_format: { type: "json_object" },
           temperature: 0.7
@@ -662,10 +662,10 @@ export default function Home() {
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
       
-      // Add missing properties and preserve original quote if requested
+      // Add missing properties and use a fresh curated quote for revision
       const revisedJournal = {
         ...result,
-        philosophicalQuote: journalEntry.philosophicalQuote || result.philosophicalQuote, // Keep original quote
+        philosophicalQuote: getRandomPhilosopherQuote(), // Generate new curated quote for revision
         wordCount: result.finalEntry.split(' ').length,
         generationTime: (Date.now() - Date.now()) / 1000 // Quick revision time
       };
