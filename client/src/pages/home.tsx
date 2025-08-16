@@ -73,6 +73,30 @@ export default function Home() {
   const [isFindingImage, setIsFindingImage] = useState(false);
   const [showImageSearchMenu, setShowImageSearchMenu] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [sessionQuote, setSessionQuote] = useState<{text: string, author: string} | null>(null);
+
+  // Generate and set a session quote that stays consistent throughout the reflection
+  const generateSessionQuote = () => {
+    const quotes = [
+      { text: "The unexamined life is not worth living.", author: "Socrates" },
+      { text: "I think, therefore I am.", author: "René Descartes" },
+      { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
+      { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
+      { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
+      { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
+      { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
+      { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
+      { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", author: "Ralph Waldo Emerson" },
+      { text: "The mind is everything. What you think you become.", author: "Buddha" },
+      { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
+      { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+      { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+      { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" }
+    ];
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    setSessionQuote(randomQuote);
+  };
 
   // Demo data for demonstration purposes
   const demoQuestions: PhilosophicalQuestion[] = [
@@ -183,6 +207,7 @@ export default function Home() {
       
       if (testResponse.ok) {
         storeApiKey(apiKey);
+        generateSessionQuote(); // Set the session quote before starting questions
         await generateQuestions();
       } else {
         toast({
@@ -311,7 +336,13 @@ export default function Home() {
     }
   };
 
-  const generateQuestions = generateFirstQuestion;
+  const generateQuestions = async () => {
+    // Ensure we have a session quote when starting questions
+    if (!sessionQuote) {
+      generateSessionQuote();
+    }
+    await generateFirstQuestion();
+  };
 
   const updateResponse = (questionId: string, field: 'selectedOption' | 'customAnswer', value: string) => {
     setResponses(prev => ({
@@ -411,6 +442,7 @@ export default function Home() {
     setShowImageRevision(false);
     setImageRevisionPrompt("");
     setGeneratingImageType(null);
+    setSessionQuote(null); // Reset session quote for new reflection
   };
 
   const handleApiKeyCleared = () => {
@@ -433,6 +465,7 @@ export default function Home() {
     setImageRevisionPrompt("");
     setGeneratingImageType(null);
     setIsDemoMode(false);
+    setSessionQuote(null); // Reset session quote for new reflection
     
     // Keep the API key but reset everything else
     const storedKey = getStoredApiKey();
@@ -451,6 +484,7 @@ export default function Home() {
     setJournalEntry(null);
     setGeneratedImage(null);
     setIsJournalConfirmed(false);
+    generateSessionQuote(); // Set a consistent quote for demo mode
     
     toast({
       title: "Demo Mode Active",
@@ -1962,27 +1996,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <blockquote className="text-muted-foreground italic text-sm font-serif leading-relaxed">
-                {(() => {
-                  const quotes = [
-                    { text: "The unexamined life is not worth living.", author: "Socrates" },
-                    { text: "I think, therefore I am.", author: "René Descartes" },
-                    { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
-                    { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
-                    { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
-                    { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
-                    { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
-                    { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
-                    { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
-                    { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", author: "Ralph Waldo Emerson" },
-                    { text: "The mind is everything. What you think you become.", author: "Buddha" },
-                    { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
-                    { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
-                    { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-                    { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" }
-                  ];
-                  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-                  return `"${randomQuote.text}" — ${randomQuote.author}`;
-                })()}
+{sessionQuote ? `"${sessionQuote.text}" — ${sessionQuote.author}` : `"The unexamined life is not worth living." — Socrates`}
               </blockquote>
             </div>
             <p className="text-xs text-muted-foreground ml-4">Built with contemplation 🤔 and care ❤️</p>
