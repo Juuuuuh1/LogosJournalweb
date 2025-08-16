@@ -3,8 +3,18 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Increase limit for journal content
 app.use(express.urlencoded({ extended: false }));
+
+// Security middleware to prevent API key leakage in logs
+app.use((req: any, res, next) => {
+  // Filter API keys from request bodies for security
+  if (req.body && req.body.apiKey) {
+    // Create a sanitized version for any potential logging
+    req.sanitizedBody = { ...req.body, apiKey: '[REDACTED]' };
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -21,8 +31,13 @@ app.use((req, res, next) => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
+      
+      // Security: Never log API keys or sensitive response data
+      if (capturedJsonResponse && !path.includes("generate") && !path.includes("revise")) {
+        // Only log non-sensitive responses (like validation results)
+        const safeResponse = { ...capturedJsonResponse };
+        delete safeResponse.apiKey; // Remove any API key fields
+        logLine += ` :: ${JSON.stringify(safeResponse)}`;
       }
 
       if (logLine.length > 80) {

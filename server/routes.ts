@@ -44,7 +44,7 @@ function extractPersonalKeywords(text: string): string[] {
     }
   });
   
-  return [...new Set(personalKeywords)].slice(0, 3); // Remove duplicates and limit to top 3
+  return Array.from(new Set(personalKeywords)).slice(0, 3); // Remove duplicates and limit to top 3
 }
 
 // Helper function to extract themes from journal text

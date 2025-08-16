@@ -6,9 +6,18 @@ const MODEL = "gpt-4o";
 
 export class OpenAIService {
   private client: OpenAI;
+  private apiKeyMasked: string;
 
   constructor(apiKey: string) {
+    // Security: Store a masked version for safe logging
+    this.apiKeyMasked = apiKey ? `sk-...${apiKey.slice(-4)}` : '[INVALID]';
+    
     this.client = new OpenAI({ apiKey });
+  }
+
+  // Security: Method to get masked API key for safe logging
+  getApiKeyMask(): string {
+    return this.apiKeyMasked;
   }
 
   async generatePhilosophicalQuestions(): Promise<PhilosophicalQuestion[]> {
