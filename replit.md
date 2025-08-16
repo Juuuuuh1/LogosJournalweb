@@ -30,7 +30,7 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - **Demo Mode Implementation**: Added comprehensive demo mode with pre-filled responses and disabled inputs for perfect video demonstrations
 - **Security Enhancements (August 2025)**: Comprehensive API key protection with secure logging, filtered server responses, and session quote consistency fixes
 - **Architecture Optimization (August 2025)**: Moved all OpenAI operations to frontend, cleaned up unused server routes, removed obsolete build files, fixed progress indicator display
-- **Quote System Enhancement (August 2025)**: Fixed quote duplication issues by implementing curated quote bank system instead of AI-generated quotes, ensuring no repeated quotes within sessions and proper attribution formatting
+- **Quote System Enhancement (August 2025)**: Fixed quote duplication issues by implementing curated quote bank system with 42 diverse philosophical quotes instead of AI-generated quotes, ensuring no repeated quotes within sessions, proper attribution formatting, and user-controlled quote changes via dedicated "Change Quote" button
 
 # User Preferences
 

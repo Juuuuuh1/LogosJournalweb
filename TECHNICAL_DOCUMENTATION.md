@@ -106,8 +106,28 @@ human experience while remaining accessible and personally relevant."
 - **Multi-Response Integration**: Combines multiple-choice selections with custom written responses
 - **Philosophical Depth**: Maintains contemplative tone while incorporating personal insights
 - **Length Optimization**: Balanced entries (200-400 words) for meaningful yet digestible content
+- **Curated Quote System**: 42 diverse philosophical quotes from Ancient to Contemporary thinkers with user-controlled selection
 
 ## Advanced Features Implementation
+
+### Philosophical Quote Management System
+
+#### Quote Bank Architecture
+```typescript
+// Curated collection of 42 philosophical quotes organized by tradition
+const philosophicalQuotes = [
+  // Ancient Philosophy: Socrates, Aristotle, Buddha, Seneca, Marcus Aurelius
+  // Modern Philosophy: Descartes, Nietzsche, Kierkegaard, Sartre, Camus
+  // Eastern Philosophy: Lao Tzu, Rumi, Carl Jung
+  // Contemporary Wisdom: Joseph Campbell, Emerson, Oscar Wilde, Viktor Frankl
+];
+```
+
+#### Quote Selection Strategy
+- **Session Deduplication**: Prevents repeated quotes within single reflection sessions
+- **User-Controlled Changes**: Manual quote refresh via dedicated "Change Quote" button
+- **Revision Stability**: Quotes preserved during journal revisions unless explicitly changed
+- **Random Distribution**: Equal probability (2.4%) for each quote across sessions
 
 ### Smart Keyword Extraction System
 
