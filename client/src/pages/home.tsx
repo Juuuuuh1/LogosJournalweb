@@ -1023,7 +1023,7 @@ export default function Home() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-medium text-foreground">Reflection Progress</h3>
                 <span className="text-sm text-muted-foreground">
-                  {currentStep === "questions" && `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+                  {currentStep === "questions" && `Question ${currentQuestionIndex + 1} of ${Math.max(5, questions.length)}`}
                   {currentStep === "finalComments" && "Final Thoughts"}
                   {currentStep === "journalOutput" && "Complete"}
                 </span>
