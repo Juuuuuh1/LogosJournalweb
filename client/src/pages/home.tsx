@@ -629,6 +629,21 @@ export default function Home() {
     }, 2000);
   };
 
+  const changePhilosophicalQuote = () => {
+    if (!journalEntry) return;
+    
+    const newQuote = getRandomPhilosopherQuote();
+    setJournalEntry({
+      ...journalEntry,
+      philosophicalQuote: newQuote
+    });
+    
+    toast({
+      title: "Quote Updated",
+      description: "A new philosophical quote has been selected for your journal.",
+    });
+  };
+
   const reviseJournalEntry = async () => {
     if (!journalEntry || !revisionPrompt.trim()) return;
 
@@ -662,10 +677,10 @@ export default function Home() {
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
       
-      // Add missing properties and use a fresh curated quote for revision
+      // Add missing properties and preserve original quote unless user requests change
       const revisedJournal = {
         ...result,
-        philosophicalQuote: getRandomPhilosopherQuote(), // Generate new curated quote for revision
+        philosophicalQuote: journalEntry.philosophicalQuote, // Keep original quote during revision
         wordCount: result.finalEntry.split(' ').length,
         generationTime: (Date.now() - Date.now()) / 1000 // Quick revision time
       };
@@ -1697,7 +1712,7 @@ export default function Home() {
                         }
                       </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                       {isDemoMode ? (
                         <div className="flex items-center justify-center px-4 py-2 bg-muted/30 rounded-md border border-primary/10 w-full sm:w-auto">
                           <Edit className="h-4 w-4 text-muted-foreground mr-2" />
@@ -1706,14 +1721,24 @@ export default function Home() {
                           </span>
                         </div>
                       ) : (
-                        <Button 
-                          variant="outline"
-                          onClick={() => setShowRevisionInput(!showRevisionInput)}
-                          className="w-full sm:w-auto"
-                        >
-                          <Edit className="h-4 w-4 mr-2" />
-                          {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
-                        </Button>
+                        <>
+                          <Button 
+                            variant="outline"
+                            onClick={() => setShowRevisionInput(!showRevisionInput)}
+                            className="w-full sm:w-auto"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            {showRevisionInput ? "Cancel Revision" : "Revise Entry"}
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            onClick={changePhilosophicalQuote}
+                            className="w-full sm:w-auto"
+                          >
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Change Quote
+                          </Button>
+                        </>
                       )}
                       <Button
                         onClick={confirmJournal}
