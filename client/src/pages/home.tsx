@@ -900,7 +900,7 @@ export default function Home() {
 
   const getProgressPercentage = () => {
     if (currentStep === "welcome" || currentStep === "apiSetup") return 0;
-    if (currentStep === "questions") return ((currentQuestionIndex + 1) / questions.length) * 80;
+    if (currentStep === "questions") return ((currentQuestionIndex + 1) / 5) * 80; // Always use 5 as the total
     if (currentStep === "finalComments") return 90;
     return 100;
   };
