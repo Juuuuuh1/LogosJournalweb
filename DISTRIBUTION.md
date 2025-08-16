@@ -127,10 +127,11 @@ This app requires a Node.js server for the Express backend and database connecti
 ## Key Features for Distribution
 - ✅ PostgreSQL database support with Neon Database (or in-memory fallback)
 - ✅ User-provided API keys (no shared credentials)
-- ✅ Full-stack application with Express.js backend
+- ✅ Optimized architecture with direct OpenAI integration from frontend
 - ✅ Modern web technologies (React, TypeScript, Express)
 - ✅ Responsive design works on all devices
 - ✅ Demo mode for presentations and video creation
+- ✅ Cleaned codebase with minimal dependencies
 
 ## Recommended Distribution Methods
 1. **GitHub Releases** - Host ZIP files and provide installation instructions

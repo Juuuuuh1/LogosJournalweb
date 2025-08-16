@@ -641,19 +641,17 @@ export default function Home() {
       personalInsights.push(finalThoughts.trim());
     }
     
-    console.log('Debug - Personal insights extracted:', personalInsights);
-    console.log('Debug - Final thoughts:', finalThoughts);
-    console.log('Debug - Responses:', responses);
+    // Extract personal insights for demo mode
     
     // If we have personal content, prioritize it
     if (personalInsights.length > 0) {
       const prioritizedContent = personalInsights.join('. ') + '. ' + (journalEntry?.finalEntry || '');
-      console.log('Debug - Prioritized content:', prioritizedContent.substring(0, 200));
+      // Using prioritized personal content
       return prioritizedContent;
     }
     
     // Fallback to journal entry
-    console.log('Debug - Using fallback journal entry');
+    // Using fallback demo content
     return journalEntry?.finalEntry || '';
   };
 
@@ -712,7 +710,7 @@ export default function Home() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("DALL-E API error:", response.status, errorText);
+        // DALL-E API error occurred
         throw new Error(`Failed to generate image: ${response.status} - ${errorText}`);
       }
 
@@ -744,7 +742,7 @@ export default function Home() {
         description: "A visual representation of your journal has been created.",
       });
     } catch (error) {
-      console.error("Image generation error:", error);
+      // Image generation error occurred
       const errorMessage = error instanceof Error ? error.message : 'Please check your API key and try again.';
       toast({
         title: "Image Generation Failed",
@@ -814,7 +812,7 @@ export default function Home() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("DALL-E API regeneration error:", response.status, errorText);
+        // DALL-E API regeneration error occurred
         throw new Error(`Failed to regenerate image: ${response.status} - ${errorText}`);
       }
 
@@ -848,7 +846,7 @@ export default function Home() {
         description: "A new visual representation has been created.",
       });
     } catch (error) {
-      console.error("Image regeneration error:", error);
+      // Image regeneration error occurred
       const errorMessage = error instanceof Error ? error.message : 'Please check your API key and try again.';
       toast({
         title: "Image Generation Failed",
@@ -1936,7 +1934,7 @@ export default function Home() {
                   .filter(word => word.length >= 3 && !excludeWords.includes(word))
                   .slice(0, 4)
                   .join(' ');
-                console.log("Debug - Extracted keywords for Unsplash:", keywords);
+                // Keywords extracted for image search
                 const query = encodeURIComponent(keywords || 'nature reflection');
                 window.open(`https://unsplash.com/s/photos/${query}`, '_blank');
                 setShowImageSearchMenu(false);

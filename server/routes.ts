@@ -4,9 +4,6 @@ import { storage } from "./storage";
 import { OpenAIService } from "./services/openai";
 import { 
   apiKeyConfigSchema, 
-  generateQuestionsSchema, 
-  generateJournalSchema,
-  reviseJournalSchema,
   generateImageSchema,
   findImageSchema,
   insertJournalEntrySchema 
@@ -250,7 +247,7 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
     selectedCategory = 'nature';
   }
 
-  console.log(`Fallback image search: query="${query}", selected category="${selectedCategory}"`);
+  // Fallback image search category selection
   
   const selectedImages = imageCategories[selectedCategory as keyof typeof imageCategories] || imageCategories.nature;
   
@@ -260,7 +257,7 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
   // If all images in category are used, reset the session
   if (availableImages.length === 0) {
     sessionUsedImages.clear();
-    console.log('Reset used images for session - all images in category were used');
+    // Reset session images when all are used
     const randomImage = selectedImages[Math.floor(Math.random() * selectedImages.length)];
     sessionUsedImages.add(randomImage.urls.regular);
     return [randomImage];
@@ -289,61 +286,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generate philosophical questions
-  app.post("/api/generate-questions", async (req, res) => {
-    try {
-      const { apiKey } = generateQuestionsSchema.parse(req.body);
-      const openaiService = new OpenAIService(apiKey);
-      const questions = await openaiService.generatePhilosophicalQuestions();
-      
-      res.json({ questions });
-    } catch (error) {
-      res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to generate questions" 
-      });
-    }
-  });
-
-  // Generate journal entry from responses
-  app.post("/api/generate-journal", async (req, res) => {
-    try {
-      const { apiKey, responses } = generateJournalSchema.parse(req.body);
-      const openaiService = new OpenAIService(apiKey);
-      const journalResponse = await openaiService.synthesizeJournalEntry(responses);
-      
-      // Save to storage
-      const journalEntry = await storage.createJournalEntry({
-        date: new Date().toISOString().split('T')[0],
-        questions: [], // Could store the original questions if needed
-        responses,
-        finalEntry: journalResponse.finalEntry,
-      });
-      
-      res.json({ 
-        ...journalResponse,
-        entryId: journalEntry.id 
-      });
-    } catch (error) {
-      res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to generate journal entry" 
-      });
-    }
-  });
-
-  // Revise journal entry based on user feedback
-  app.post("/api/revise-journal", async (req, res) => {
-    try {
-      const { apiKey, currentEntry, revisionPrompt, originalQuote } = reviseJournalSchema.parse(req.body);
-      const openaiService = new OpenAIService(apiKey);
-      const revisedJournal = await openaiService.reviseJournalEntry(currentEntry, revisionPrompt, originalQuote);
-      
-      res.json(revisedJournal);
-    } catch (error) {
-      res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to revise journal entry" 
-      });
-    }
-  });
+  // Note: Question generation and journal synthesis now happen directly from frontend to OpenAI
+  // These routes are kept for potential future server-side functionality
 
   // Generate image based on journal content
   app.post("/api/generate-image", async (req, res) => {
@@ -370,7 +314,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let searchQuery: string;
       if (searchTerms && searchTerms.trim()) {
         searchQuery = searchTerms.trim();
-        console.log(`Using custom search terms: "${searchQuery}"`);
+        // Using custom search terms
       } else {
         // Extract personal content keywords from journal entry
         const personalKeywords = extractPersonalKeywords(journalEntry);
@@ -379,10 +323,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Prioritize personal keywords if found
         if (personalKeywords.length > 0) {
           searchQuery = personalKeywords.join(' ');
-          console.log(`Using personal keywords: "${searchQuery}"`);
+          // Using extracted personal keywords
         } else {
           searchQuery = extractedThemes.join(' ');
-          console.log(`Using extracted themes: "${searchQuery}"`);
+          // Using extracted philosophical themes
         }
       }
       

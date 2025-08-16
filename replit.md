@@ -29,6 +29,7 @@ Logos Journal v1.0 - A philosophical journaling application that uses AI to guid
 - **Code Cleanup (January 2025)**: Removed 30+ unused UI components and 25+ unused dependencies, reducing bundle size significantly
 - **Demo Mode Implementation**: Added comprehensive demo mode with pre-filled responses and disabled inputs for perfect video demonstrations
 - **Security Enhancements (August 2025)**: Comprehensive API key protection with secure logging, filtered server responses, and session quote consistency fixes
+- **Architecture Optimization (August 2025)**: Moved all OpenAI operations to frontend, cleaned up unused server routes, removed obsolete build files, fixed progress indicator display
 
 # User Preferences
 

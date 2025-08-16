@@ -47,10 +47,11 @@ Logos Journal addresses these challenges through:
 - **Development Hot Reload**: tsx for TypeScript execution with file watching
 
 #### API Design Principles
-- **RESTful Endpoints**: Clear resource-based routing structure
+- **RESTful Endpoints**: Clear resource-based routing structure for remaining server functions
 - **Zod Validation**: Runtime type checking and request validation
 - **Structured Error Responses**: Consistent error handling with proper HTTP status codes
-- **OpenAI Integration**: Dedicated service layer for AI model interactions
+- **Minimal Server Logic**: Most AI operations moved to frontend for better performance
+- **Direct OpenAI Integration**: Frontend handles question generation and journal synthesis directly
 
 ### Data Architecture
 

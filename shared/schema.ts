@@ -25,21 +25,8 @@ export const apiKeyConfigSchema = z.object({
   apiKey: z.string().min(1, "API key is required"),
 });
 
-export const generateQuestionsSchema = z.object({
-  apiKey: z.string().min(1, "API key is required"),
-});
-
-export const generateJournalSchema = z.object({
-  apiKey: z.string().min(1, "API key is required"),
-  responses: z.record(z.any()),
-});
-
-export const reviseJournalSchema = z.object({
-  apiKey: z.string().min(1, "API key is required"),
-  currentEntry: z.string().min(1, "Current entry is required"),
-  revisionPrompt: z.string().min(1, "Revision instructions are required"),
-  originalQuote: z.string().optional(),
-});
+// Note: Question generation and journal schemas moved to frontend
+// These were removed as OpenAI calls now happen directly from frontend
 
 export const generateImageSchema = z.object({
   apiKey: z.string().min(1, "API key is required"),
@@ -52,9 +39,6 @@ export const findImageSchema = z.object({
 });
 
 export type ApiKeyConfig = z.infer<typeof apiKeyConfigSchema>;
-export type GenerateQuestionsRequest = z.infer<typeof generateQuestionsSchema>;
-export type GenerateJournalRequest = z.infer<typeof generateJournalSchema>;
-export type ReviseJournalRequest = z.infer<typeof reviseJournalSchema>;
 export type GenerateImageRequest = z.infer<typeof generateImageSchema>;
 export type FindImageRequest = z.infer<typeof findImageSchema>;
 

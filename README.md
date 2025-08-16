@@ -166,15 +166,17 @@ The application automatically detects the environment and configures itself acco
 - **Development**: Hot reload, detailed error messages, in-memory storage fallback
 - **Production**: Optimized builds, error handling, database persistence
 
-## API Endpoints
+## API Integration
 
-### Questions
-- `POST /api/questions/generate` - Generate initial philosophical questions
-- `POST /api/questions/next` - Generate follow-up question based on responses
+### Direct OpenAI Integration
+- All question generation and journal synthesis happens directly from frontend to OpenAI API
+- Eliminates server-side processing for better performance and security
+- Users provide their own OpenAI API keys for complete control
 
-### Journal
-- `POST /api/journal/generate` - Create journal entry from responses
-- `POST /api/journal/revise` - Revise existing journal entry
+### Server Endpoints
+- `POST /api/validate-key` - Validate OpenAI API key format
+- `POST /api/generate-image` - Generate artwork using DALL-E 3
+- `POST /api/find-image` - Search for relevant images with smart keyword extraction
 
 ## Deployment
 
