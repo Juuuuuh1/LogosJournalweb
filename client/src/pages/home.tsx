@@ -1368,7 +1368,7 @@ export default function Home() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center h-9 w-9 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                title="Visit Blog"
+                title="Visit Blog - Real-world examples using Logos Journal"
               >
                 <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
                   <svg 
@@ -1387,7 +1387,7 @@ export default function Home() {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center h-9 w-9 hover:bg-accent hover:text-accent-foreground rounded-md transition-colors"
-                title="Try Logos Journal GPT"
+                title="Try Logos Journal GPT - Conversational version of this app"
               >
                 <span className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
                   <svg 
