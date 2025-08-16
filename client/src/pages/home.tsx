@@ -75,9 +75,8 @@ export default function Home() {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [sessionQuote, setSessionQuote] = useState<{text: string, author: string} | null>(null);
 
-  // Generate and set a session quote that stays consistent throughout the reflection
-  const generateSessionQuote = () => {
-    const quotes = [
+  // Curated philosophical quotes bank for consistent quality
+  const philosophicalQuotes = [
       // Ancient Philosophy
       { text: "The unexamined life is not worth living.", author: "Socrates" },
       { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
@@ -134,8 +133,25 @@ export default function Home() {
       { text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde" },
       { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" }
     ];
-    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+
+  // Generate and set a session quote that stays consistent throughout the reflection
+  const generateSessionQuote = () => {
+    const randomQuote = philosophicalQuotes[Math.floor(Math.random() * philosophicalQuotes.length)];
     setSessionQuote(randomQuote);
+  };
+
+  // Get a random philosopher quote that hasn't been used in this session
+  const getRandomPhilosopherQuote = () => {
+    // Get quotes not yet used in current questions
+    const usedQuotes = questions.map(q => q.philosopherQuote).filter(Boolean);
+    const availableQuotes = philosophicalQuotes.filter(q => 
+      !usedQuotes.includes(`${q.text} — ${q.author}`)
+    );
+    
+    // If all quotes are used, reset and use any quote
+    const quotesToUse = availableQuotes.length > 0 ? availableQuotes : philosophicalQuotes;
+    const selectedQuote = quotesToUse[Math.floor(Math.random() * quotesToUse.length)];
+    return `${selectedQuote.text} — ${selectedQuote.author}`;
   };
 
   // Demo data for demonstration purposes
@@ -280,7 +296,7 @@ export default function Home() {
           model: "gpt-4o",
           messages: [{
             role: "system",
-            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Generate 1 thoughtful opening question for daily reflection. Structure your response as JSON with this format: {\"question\": {\"id\": \"1\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}}"
+            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Generate 1 thoughtful opening question for daily reflection. Structure your response as JSON with this format: {\"question\": {\"id\": \"1\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"]}}"
           }, {
             role: "user",
             content: "Generate the first philosophical question for daily reflection. Start with something about how their day went, but make it philosophical and introspective. Include 3 multiple choice options plus 'Write my own response'."
@@ -296,7 +312,14 @@ export default function Home() {
 
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
-      setQuestions([result.question]);
+      
+      // Add curated philosopher quote to the question
+      const questionWithQuote = {
+        ...result.question,
+        philosopherQuote: getRandomPhilosopherQuote()
+      };
+      
+      setQuestions([questionWithQuote]);
       setCurrentStep("questions");
       
       toast({
@@ -336,7 +359,7 @@ export default function Home() {
           model: "gpt-4o",
           messages: [{
             role: "system",
-            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Based on the user's previous answers, generate 1 thoughtful follow-up question that builds upon their responses while remaining philosophical and introspective. The question should feel like a natural progression from their previous thoughts. Structure your response as JSON with this format: {\"question\": {\"id\": \"nextId\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"], \"philosopherQuote\": \"quote text\"}}"
+            content: "You are a philosophical guide helping users explore deep questions for daily reflection. Based on the user's previous answers, generate 1 thoughtful follow-up question that builds upon their responses while remaining philosophical and introspective. The question should feel like a natural progression from their previous thoughts. Structure your response as JSON with this format: {\"question\": {\"id\": \"nextId\", \"text\": \"question text\", \"category\": \"category name\", \"options\": [\"option1\", \"option2\", \"option3\", \"Write my own response\"]}}"
           }, {
             role: "user",
             content: `Based on the user's previous responses, generate the next philosophical question that builds upon their answers:\n\n${previousQA}\n\nCreate a follow-up question that explores deeper themes from their responses while maintaining philosophical depth. Include 3 relevant multiple choice options plus 'Write my own response'.`
@@ -353,10 +376,11 @@ export default function Home() {
       const data = await response.json();
       const result = JSON.parse(data.choices[0].message.content);
       
-      // Add the new question with proper ID
+      // Add the new question with proper ID and curated quote
       const nextQuestion = {
         ...result.question,
-        id: (questions.length + 1).toString()
+        id: (questions.length + 1).toString(),
+        philosopherQuote: getRandomPhilosopherQuote()
       };
       
       setQuestions(prev => [...prev, nextQuestion]);
