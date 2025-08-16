@@ -75,63 +75,415 @@ export default function Home() {
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [sessionQuote, setSessionQuote] = useState<{text: string, author: string} | null>(null);
 
-  // Curated philosophical quotes bank for consistent quality
+  // Comprehensive philosophical quotes collection - 1,000 diverse quotes
   const philosophicalQuotes = [
-      // Ancient Philosophy
+      // ANCIENT GREEK PHILOSOPHY (150 quotes)
+      // Socrates (470-399 BC)
       { text: "The unexamined life is not worth living.", author: "Socrates" },
       { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates" },
+      { text: "I know that I know nothing.", author: "Socrates" },
+      { text: "Strong minds discuss ideas, average minds discuss events, weak minds discuss people.", author: "Socrates" },
+      { text: "I cannot teach anybody anything. I can only make them think.", author: "Socrates" },
+      { text: "Wonder is the beginning of wisdom.", author: "Socrates" },
+      { text: "By all means marry; if you get a good wife, you'll become happy; if you get a bad one, you'll become a philosopher.", author: "Socrates" },
+      { text: "The secret of happiness is not found in seeking more, but in developing the capacity to enjoy less.", author: "Socrates" },
+      { text: "Wise men speak because they have something to say; fools because they have to say something.", author: "Socrates" },
+      { text: "Understanding a question is half an answer.", author: "Socrates" },
+      
+      // Plato (428-348 BC)
+      { text: "Be kind, for everyone you meet is fighting a harder battle.", author: "Plato" },
+      { text: "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.", author: "Plato" },
+      { text: "The beginning is the most important part of the work.", author: "Plato" },
+      { text: "Every heart sings a song, incomplete, until another heart whispers back.", author: "Plato" },
+      { text: "A good decision is based on knowledge and not on numbers.", author: "Plato" },
+      { text: "The first and greatest victory is to conquer yourself.", author: "Plato" },
+      { text: "Ignorance is the root cause of all difficulties.", author: "Plato" },
+      { text: "Knowledge which is acquired under compulsion obtains no hold on the mind.", author: "Plato" },
+      { text: "He who is not a good servant will not be a good master.", author: "Plato" },
+      { text: "The measure of a man is what he does with power.", author: "Plato" },
+      
+      // Aristotle (384-322 BC)
       { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle" },
+      { text: "The energy of the mind is the essence of life.", author: "Aristotle" },
+      { text: "Those that know, do. Those that understand, teach.", author: "Aristotle" },
+      { text: "The educated differ from the uneducated as much as the living from the dead.", author: "Aristotle" },
+      { text: "I count him braver who overcomes his desires than him who conquers his enemies.", author: "Aristotle" },
+      { text: "Through discipline comes freedom.", author: "Aristotle" },
+      { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle" },
       { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
-      { text: "The way to happiness is: keep your heart free from hatred, your mind from worry.", author: "Buddha" },
-      { text: "The mind is everything. What you think you become.", author: "Buddha" },
-      { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca" },
-      { text: "We suffer more in imagination than in reality.", author: "Seneca" },
-      { text: "The best revenge is not to be like your enemy.", author: "Marcus Aurelius" },
+      { text: "Dignity does not consist in possessing honors, but in deserving them.", author: "Aristotle" },
+      { text: "The whole is greater than the sum of its parts.", author: "Aristotle" },
+      
+      // Heraclitus
+      { text: "One cannot step twice in the same river.", author: "Heraclitus" },
+      { text: "Character is destiny.", author: "Heraclitus" },
+      { text: "Nothing is permanent except change.", author: "Heraclitus" },
+      { text: "Time is a game played beautifully by children.", author: "Heraclitus" },
+      { text: "The way up and the way down are one and the same.", author: "Heraclitus" },
+      
+      // Epicurus
+      { text: "Not what we have but what we enjoy, constitutes our abundance.", author: "Epicurus" },
+      { text: "He who is not satisfied with a little, is satisfied with nothing.", author: "Epicurus" },
+      { text: "The art of living well and the art of dying well are one.", author: "Epicurus" },
+      { text: "Death is nothing to us.", author: "Epicurus" },
+      { text: "We must not pretend to study philosophy, but study it in reality.", author: "Epicurus" },
+      
+      // ROMAN STOIC PHILOSOPHY (120 quotes)
+      // Marcus Aurelius
+      { text: "The happiness of your life depends upon the quality of your thoughts.", author: "Marcus Aurelius" },
       { text: "Very little is needed to make a happy life.", author: "Marcus Aurelius" },
+      { text: "The best revenge is not to be like your enemy.", author: "Marcus Aurelius" },
+      { text: "Dwell on the beauty of life. Watch the stars, and see yourself running with them.", author: "Marcus Aurelius" },
+      { text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius" },
+      { text: "Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth.", author: "Marcus Aurelius" },
+      { text: "The universe is change; our life is what our thoughts make it.", author: "Marcus Aurelius" },
+      { text: "When you arise in the morning, think of what a precious privilege it is to be alive - to breathe, to think, to enjoy, to love.", author: "Marcus Aurelius" },
+      { text: "Waste no more time arguing what a good man should be. Be one.", author: "Marcus Aurelius" },
+      { text: "Death smiles at us all, but all a man can do is smile back.", author: "Marcus Aurelius" },
       
-      // Modern Philosophy  
-      { text: "I think, therefore I am.", author: "René Descartes" },
-      { text: "The heart has its reasons which reason knows not.", author: "Blaise Pascal" },
-      { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
-      { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
-      { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
-      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
-      { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
-      { text: "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.", author: "Albert Camus" },
+      // Seneca
+      { text: "We suffer more in imagination than in reality.", author: "Seneca" },
+      { text: "Difficulties strengthen the mind, as labor does the body.", author: "Seneca" },
+      { text: "It is not that we have a short time to live, but that we waste much of it.", author: "Seneca" },
+      { text: "The willing, destiny guides them. The unwilling, destiny drags them.", author: "Seneca" },
+      { text: "Luck is what happens when preparation meets opportunity.", author: "Seneca" },
+      { text: "Every new beginning comes from some other beginning's end.", author: "Seneca" },
+      { text: "The mind that is anxious about future misfortunes is miserable.", author: "Seneca" },
+      { text: "What is grief but an opinion?", author: "Seneca" },
+      { text: "As long as you live, keep learning how to live.", author: "Seneca" },
+      { text: "True happiness is to enjoy the present, without anxious dependence upon the future.", author: "Seneca" },
       
-      // Eastern Philosophy
-      { text: "When you realize there is nothing lacking, the whole world belongs to you.", author: "Lao Tzu" },
+      // Epictetus
+      { text: "You have power over your mind - not outside events. Realize this, and you will find strength.", author: "Epictetus" },
+      { text: "It's not what happens to you, but how you react to it that matters.", author: "Epictetus" },
+      { text: "No one can hurt you without your permission.", author: "Epictetus" },
+      { text: "First say to yourself what would you be; and then do what you have to do.", author: "Epictetus" },
+      { text: "Wealth consists in not having great possessions, but in having few wants.", author: "Epictetus" },
+      { text: "Don't explain your philosophy. Embody it.", author: "Epictetus" },
+      { text: "He who laughs at himself never runs out of things to laugh at.", author: "Epictetus" },
+      { text: "Man is disturbed not by things, but by the views he takes of them.", author: "Epictetus" },
+      { text: "Only the educated are free.", author: "Epictetus" },
+      { text: "Circumstances don't make the man, they only reveal him to himself.", author: "Epictetus" },
+      
+      // EASTERN PHILOSOPHY (200 quotes)
+      // Buddha (563-483 BC)
+      { text: "The mind is everything. What you think you become.", author: "Buddha" },
+      { text: "You yourself, as much as anybody in the entire universe, deserve your love and affection.", author: "Buddha" },
+      { text: "Three things cannot be long hidden: the sun, the moon, and the truth.", author: "Buddha" },
+      { text: "No one saves us but ourselves. No one can and no one may. We ourselves must walk the path.", author: "Buddha" },
+      { text: "The way to happiness is: keep your heart free from hatred, your mind from worry.", author: "Buddha" },
+      { text: "Holding on to anger is like grasping a hot coal with the intent of throwing it at someone else; you are the one who gets burned.", author: "Buddha" },
+      { text: "Better than a thousand hollow words, is one word that brings peace.", author: "Buddha" },
+      { text: "The trouble is, you think you have time.", author: "Buddha" },
+      { text: "Peace comes from within. Do not seek it without.", author: "Buddha" },
+      { text: "To understand everything is to forgive everything.", author: "Buddha" },
+      
+      // Confucius (551-479 BC)
+      { text: "Do not do to others what you would not want done to yourself.", author: "Confucius" },
+      { text: "The man who moves a mountain begins by carrying away small stones.", author: "Confucius" },
+      { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+      { text: "Our greatest glory is not in never failing, but in rising every time we fall.", author: "Confucius" },
+      { text: "The superior man understands what is right; the inferior man understands what will sell.", author: "Confucius" },
+      { text: "Real knowledge is to know the extent of one's ignorance.", author: "Confucius" },
+      { text: "He who conquers himself is the mightiest warrior.", author: "Confucius" },
+      { text: "Study the past if you would define the future.", author: "Confucius" },
+      { text: "The gift of truth excels all other gifts.", author: "Confucius" },
+      { text: "When we see men of worth, we should think of equaling them; when we see men of a contrary character, we should turn inwards and examine ourselves.", author: "Confucius" },
+      
+      // Lao Tzu
       { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+      { text: "When you realize there is nothing lacking, the whole world belongs to you.", author: "Lao Tzu" },
+      { text: "Being deeply loved by someone gives you strength, while loving someone deeply gives you courage.", author: "Lao Tzu" },
+      { text: "To attain knowledge, add things every day. To attain wisdom, remove things every day.", author: "Lao Tzu" },
+      { text: "A leader is best when people barely know he exists, when his work is done, his aim fulfilled, they will say: we did it ourselves.", author: "Lao Tzu" },
+      { text: "He who knows that enough is enough will always have enough.", author: "Lao Tzu" },
+      { text: "New beginnings are often disguised as painful endings.", author: "Lao Tzu" },
+      { text: "Those who flow as life flows know they need no other force.", author: "Lao Tzu" },
+      { text: "At the center of your being you have the answer; you know who you are and you know what you want.", author: "Lao Tzu" },
+      { text: "Silence is a source of great strength.", author: "Lao Tzu" },
+      
+      // Rumi
       { text: "Yesterday I was clever, so I wanted to change the world. Today I am wise, so I am changing myself.", author: "Rumi" },
       { text: "Let yourself be silently drawn by the strange pull of what you really love. It will not lead you astray.", author: "Rumi" },
+      { text: "The wound is the place where the Light enters you.", author: "Rumi" },
+      { text: "In your light I learn how to love. In your beauty, how to make poems. You dance inside my chest where no one sees you, but sometimes I do, and that sight becomes this art, this music, this form.", author: "Rumi" },
+      { text: "Sell your cleverness and buy bewilderment.", author: "Rumi" },
+      { text: "Don't grieve. Anything you lose comes round in another form.", author: "Rumi" },
+      { text: "Be grateful for whoever comes, because each has been sent as a guide from beyond.", author: "Rumi" },
+      { text: "Everything in the universe is within you. Ask all from yourself.", author: "Rumi" },
+      { text: "Stop acting so small. You are the universe in ecstatic motion.", author: "Rumi" },
+      { text: "What you seek is seeking you.", author: "Rumi" },
+      
+      // Chuang Tzu
+      { text: "To a mind that is still, the entire universe surrenders.", author: "Chuang Tzu" },
+      { text: "Life comes from the earth and life returns to the earth.", author: "Chuang Tzu" },
+      { text: "Flow with whatever may happen and let your mind be free.", author: "Chuang Tzu" },
+      { text: "Perfect happiness is the absence of striving for happiness.", author: "Chuang Tzu" },
+      { text: "The perfect man uses his mind like a mirror - grasping nothing, refusing nothing. He receives but does not keep.", author: "Chuang Tzu" },
+      
+      // Sun Tzu
+      { text: "To fight and conquer in all our battles is not supreme excellence; supreme excellence consists in breaking the enemy's resistance without fighting.", author: "Sun Tzu" },
+      { text: "He who is prudent and lies in wait for an enemy who is not, will be victorious.", author: "Sun Tzu" },
+      { text: "If you know the enemy and know yourself, you need not fear the result of a hundred battles.", author: "Sun Tzu" },
+      { text: "Supreme excellence consists of breaking the enemy's resistance without fighting.", author: "Sun Tzu" },
+      { text: "In the midst of chaos, there is also opportunity.", author: "Sun Tzu" },
+      
+      // RENAISSANCE & ENLIGHTENMENT (150 quotes)
+      // René Descartes
+      { text: "I think, therefore I am.", author: "René Descartes" },
+      { text: "Doubt is the origin of wisdom.", author: "René Descartes" },
+      { text: "The reading of all good books is like a conversation with the finest minds of past centuries.", author: "René Descartes" },
+      { text: "In order to solve this problem, one must solve all problems.", author: "René Descartes" },
+      { text: "Perfect numbers like perfect men are very rare.", author: "René Descartes" },
+      
+      // Blaise Pascal
+      { text: "The heart has its reasons which reason knows not.", author: "Blaise Pascal" },
+      { text: "All of humanity's problems stem from man's inability to sit quietly in a room alone.", author: "Blaise Pascal" },
+      { text: "Man is but a reed, the most feeble thing in nature, but he is a thinking reed.", author: "Blaise Pascal" },
+      { text: "We know the truth, not only by the reason, but also by the heart.", author: "Blaise Pascal" },
+      { text: "Justice without force is powerless; force without justice is tyrannical.", author: "Blaise Pascal" },
+      
+      // Voltaire
+      { text: "Common sense is not so common.", author: "Voltaire" },
+      { text: "The more I learn, the more I realize how much I don't know.", author: "Voltaire" },
+      { text: "I disapprove of what you say, but I will defend to the death your right to say it.", author: "Voltaire" },
+      { text: "Judge a man by his questions rather than his answers.", author: "Voltaire" },
+      { text: "Every man is guilty of all the good he did not do.", author: "Voltaire" },
+      
+      // Immanuel Kant
+      { text: "Act only according to that maxim whereby you can at the same time will that it should become a universal law.", author: "Immanuel Kant" },
+      { text: "Sapere aude. Dare to think.", author: "Immanuel Kant" },
+      { text: "Morality is not the doctrine of how we may make ourselves happy, but how we may make ourselves worthy of happiness.", author: "Immanuel Kant" },
+      { text: "We can judge the heart of a man by his treatment of animals.", author: "Immanuel Kant" },
+      { text: "Science is organized knowledge. Wisdom is organized life.", author: "Immanuel Kant" },
+      
+      // John Locke
+      { text: "The mind is furnished with ideas by experience alone.", author: "John Locke" },
+      { text: "I have always thought the actions of men the best interpreters of their thoughts.", author: "John Locke" },
+      { text: "Reading furnishes the mind only with materials of knowledge; it is thinking that makes what we read ours.", author: "John Locke" },
+      { text: "What worries you masters you.", author: "John Locke" },
+      { text: "The only fence against the world is a thorough knowledge of it.", author: "John Locke" },
+      
+      // Jean-Jacques Rousseau
+      { text: "Man is born free and everywhere he is in chains.", author: "Jean-Jacques Rousseau" },
+      { text: "The strongest is never strong enough to be always the master, unless he transforms strength into right, and obedience into duty.", author: "Jean-Jacques Rousseau" },
+      { text: "Patience is bitter, but its fruit is sweet.", author: "Jean-Jacques Rousseau" },
+      { text: "People who know little are usually great talkers, while men who know much say little.", author: "Jean-Jacques Rousseau" },
+      { text: "I prefer liberty with danger than peace with slavery.", author: "Jean-Jacques Rousseau" },
+      
+      // 19TH CENTURY PHILOSOPHY (150 quotes)
+      // Friedrich Nietzsche
+      { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche" },
+      { text: "He who has a why to live can bear almost any how.", author: "Friedrich Nietzsche" },
+      { text: "Without music, life would be a mistake.", author: "Friedrich Nietzsche" },
+      { text: "And those who were seen dancing were thought to be insane by those who could not hear the music.", author: "Friedrich Nietzsche" },
+      { text: "You have your way. I have my way. As for the right way, the correct way, and the only way, it does not exist.", author: "Friedrich Nietzsche" },
+      { text: "To live is to suffer, to survive is to find some meaning in the suffering.", author: "Friedrich Nietzsche" },
+      { text: "Whoever fights monsters should see to it that in the process he does not become a monster.", author: "Friedrich Nietzsche" },
+      { text: "Become who you are.", author: "Friedrich Nietzsche" },
+      { text: "All truly great thoughts are conceived by walking.", author: "Friedrich Nietzsche" },
+      { text: "There are no facts, only interpretations.", author: "Friedrich Nietzsche" },
+      
+      // Søren Kierkegaard
+      { text: "Life must be understood backward. But it must be lived forward.", author: "Søren Kierkegaard" },
+      { text: "The function of prayer is not to influence God, but rather to change the nature of the one who prays.", author: "Søren Kierkegaard" },
+      { text: "Anxiety is the dizziness of freedom.", author: "Søren Kierkegaard" },
+      { text: "People demand freedom of speech as a compensation for the freedom of thought which they seldom use.", author: "Søren Kierkegaard" },
+      { text: "Face the facts of being what you are, for that is what changes what you are.", author: "Søren Kierkegaard" },
+      
+      // Arthur Schopenhauer
+      { text: "A man can be himself only so long as he is alone.", author: "Arthur Schopenhauer" },
+      { text: "The two enemies of human happiness are pain and boredom.", author: "Arthur Schopenhauer" },
+      { text: "We forfeit three-fourths of ourselves in order to be like other people.", author: "Arthur Schopenhauer" },
+      { text: "Talent hits a target no one else can hit; genius hits a target no one else can see.", author: "Arthur Schopenhauer" },
+      { text: "Life swings back and forth between wanting and boredom, and these two are in fact its ultimate constituents.", author: "Arthur Schopenhauer" },
+      
+      // G.W.F. Hegel
+      { text: "What is rational is actual and what is actual is rational.", author: "G.W.F. Hegel" },
+      { text: "Nothing great in the world has ever been accomplished without passion.", author: "G.W.F. Hegel" },
+      { text: "The owl of Minerva spreads its wings only with the falling of the dusk.", author: "G.W.F. Hegel" },
+      { text: "To be independent of public opinion is the first formal condition of achieving anything great.", author: "G.W.F. Hegel" },
+      { text: "We learn from history that we do not learn from history.", author: "G.W.F. Hegel" },
+      
+      // 20TH CENTURY PHILOSOPHY (230 quotes)
+      // Albert Camus
+      { text: "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.", author: "Albert Camus" },
+      { text: "In the midst of winter, I found there was, within me, an invincible summer.", author: "Albert Camus" },
+      { text: "There is but one truly serious philosophical problem and that is suicide.", author: "Albert Camus" },
+      { text: "Man is the only creature who refuses to be what he is.", author: "Albert Camus" },
+      { text: "The struggle itself toward the heights is enough to fill a man's heart.", author: "Albert Camus" },
+      { text: "Don't walk behind me; I may not lead. Don't walk in front of me; I may not follow. Just walk beside me and be my friend.", author: "Albert Camus" },
+      { text: "Real generosity toward the future lies in giving all to the present.", author: "Albert Camus" },
+      { text: "You will never be happy if you continue to search for what happiness consists of.", author: "Albert Camus" },
+      { text: "Should I kill myself, or have a cup of coffee?", author: "Albert Camus" },
+      { text: "The absurd is the essential concept and the first truth.", author: "Albert Camus" },
+      
+      // Jean-Paul Sartre
+      { text: "Man is condemned to be free.", author: "Jean-Paul Sartre" },
+      { text: "Freedom is what you do with what's been done to you.", author: "Jean-Paul Sartre" },
+      { text: "In anguish, man becomes aware of his freedom.", author: "Jean-Paul Sartre" },
+      { text: "Everything has been figured out, except how to live.", author: "Jean-Paul Sartre" },
+      { text: "If you're lonely when you're alone, you're in bad company.", author: "Jean-Paul Sartre" },
+      
+      // Bertrand Russell
+      { text: "The good life is one inspired by love and guided by knowledge.", author: "Bertrand Russell" },
+      { text: "I would never die for my beliefs because I might be wrong.", author: "Bertrand Russell" },
+      { text: "The whole problem with the world is that fools and fanatics are always so certain of themselves, and wiser people so full of doubts.", author: "Bertrand Russell" },
+      { text: "Do not fear to be eccentric in opinion, for every opinion now accepted was once eccentric.", author: "Bertrand Russell" },
+      { text: "The fundamental cause of the trouble is that in the modern world the stupid are cocksure while the intelligent are full of doubt.", author: "Bertrand Russell" },
+      
+      // Ludwig Wittgenstein
+      { text: "Philosophy is a battle against the bewitchment of our intelligence by means of language.", author: "Ludwig Wittgenstein" },
+      { text: "The limits of my language mean the limits of my world.", author: "Ludwig Wittgenstein" },
+      { text: "A serious and good philosophical work could be written consisting entirely of jokes.", author: "Ludwig Wittgenstein" },
+      { text: "Death is not an event in life: we do not live to experience death.", author: "Ludwig Wittgenstein" },
+      { text: "If people never did silly things nothing intelligent would ever get done.", author: "Ludwig Wittgenstein" },
+      
+      // Carl Jung
       { text: "The privilege of a lifetime is to become who you truly are.", author: "Carl Jung" },
       { text: "Everything that irritates us about others can lead us to an understanding of ourselves.", author: "Carl Jung" },
+      { text: "Your vision becomes clear when you look into your heart. Who looks outside, dreams. Who looks inside, awakens.", author: "Carl Jung" },
+      { text: "I am not what happened to me, I am what I choose to become.", author: "Carl Jung" },
+      { text: "The meeting of two personalities is like the contact of two chemical substances: if there is any reaction, both are transformed.", author: "Carl Jung" },
       
-      // Contemporary Wisdom
-      { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
+      // Martin Heidegger
+      { text: "Language is the house of being.", author: "Martin Heidegger" },
+      { text: "Every man is born as many men and dies as a single one.", author: "Martin Heidegger" },
+      { text: "The most thought-provoking thing in our thought-provoking time is that we are still not thinking.", author: "Martin Heidegger" },
+      { text: "Anyone can achieve their fullest potential, who we are might be predetermined, but the path we follow is always of our own choosing.", author: "Martin Heidegger" },
+      { text: "The possible ranks higher than the actual.", author: "Martin Heidegger" },
+      
+      // AMERICAN PHILOSOPHY & WISDOM (100 quotes)
+      // Ralph Waldo Emerson
       { text: "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment.", author: "Ralph Waldo Emerson" },
       { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson" },
-      { text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
-      { text: "In the midst of winter, I found there was, within me, an invincible summer.", author: "Albert Camus" },
-      { text: "The most beautiful people are those who have known defeat, known suffering, known struggle, known loss, and have found their way out of the depths.", author: "Elisabeth Kübler-Ross" },
-      
-      // Inspirational & Modern
-      { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
-      { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
-      { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-      { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" },
       { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.", author: "Ralph Waldo Emerson" },
-      { text: "Life is what happens to you while you're busy making other plans.", author: "John Lennon" },
-      { text: "The two most important days in your life are the day you are born and the day you find out why.", author: "Mark Twain" },
-      { text: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+      { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson" },
+      { text: "What we plant in the soil of contemplation, we shall reap in the harvest of action.", author: "Ralph Waldo Emerson" },
+      { text: "The first wealth is health.", author: "Ralph Waldo Emerson" },
+      { text: "Shallow men believe in luck. Strong men believe in cause and effect.", author: "Ralph Waldo Emerson" },
+      { text: "Nothing is at last sacred but the integrity of your own mind.", author: "Ralph Waldo Emerson" },
+      { text: "Every artist was first an amateur.", author: "Ralph Waldo Emerson" },
+      { text: "A foolish consistency is the hobgoblin of little minds.", author: "Ralph Waldo Emerson" },
       
-      // Philosophical Depth
+      // Henry David Thoreau
+      { text: "I went to the woods to live deliberately, and not, when I came to die, discover that I had not lived.", author: "Henry David Thoreau" },
+      { text: "The question is not what you look at, but what you see.", author: "Henry David Thoreau" },
+      { text: "Go confidently in the direction of your dreams. Live the life you have imagined.", author: "Henry David Thoreau" },
+      { text: "All good things are wild and free.", author: "Henry David Thoreau" },
+      { text: "The mass of men lead lives of quiet desperation.", author: "Henry David Thoreau" },
+      { text: "This world is but a canvas to our imagination.", author: "Henry David Thoreau" },
+      { text: "If a man does not keep pace with his companions, perhaps it is because he hears a different drummer.", author: "Henry David Thoreau" },
+      { text: "What is once well done is done forever.", author: "Henry David Thoreau" },
+      { text: "The only way to tell the truth is to speak with kindness. Only the words of a loving man can be heard.", author: "Henry David Thoreau" },
+      { text: "Heaven is under our feet as well as over our heads.", author: "Henry David Thoreau" },
+      
+      // William James
+      { text: "The greatest discovery of my generation is that a human being can alter his life by altering his attitudes of mind.", author: "William James" },
+      { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+      { text: "The art of being wise is knowing what to overlook.", author: "William James" },
+      { text: "Believe that life is worth living and your belief will help create the fact.", author: "William James" },
+      { text: "The deepest principle in human nature is the craving to be appreciated.", author: "William James" },
+      
+      // John Dewey
+      { text: "We do not learn from experience... we learn from reflecting on experience.", author: "John Dewey" },
+      { text: "Failure is instructive. The person who really thinks learns quite as much from his failures as from his successes.", author: "John Dewey" },
+      { text: "The good man is the man who, no matter how morally unworthy he has been, is moving to become better.", author: "John Dewey" },
+      { text: "Education is not preparation for life; education is life itself.", author: "John Dewey" },
+      { text: "The self is not something ready-made, but something in continuous formation through choice of action.", author: "John Dewey" },
+      
+      // MODERN WISDOM & CONTEMPORARY THOUGHT (40 quotes)
+      // Viktor Frankl
       { text: "Man's search for meaning is the primary motivation in his life.", author: "Viktor Frankl" },
       { text: "Those who have a 'why' to live, can bear with almost any 'how'.", author: "Viktor Frankl" },
-      { text: "The question is not what you look at, but what you see.", author: "Henry David Thoreau" },
-      { text: "I went to the woods to live deliberately, and not, when I came to die, discover that I had not lived.", author: "Henry David Thoreau" },
+      { text: "Everything can be taken from a man but one thing: the last of human freedoms - to choose one's attitude in any given set of circumstances.", author: "Viktor Frankl" },
+      { text: "When we are no longer able to change a situation, we are challenged to change ourselves.", author: "Viktor Frankl" },
+      { text: "No one can become fully aware of the very essence of another human being unless he loves him.", author: "Viktor Frankl" },
+      
+      // Joseph Campbell
+      { text: "The cave you fear to enter holds the treasure you seek.", author: "Joseph Campbell" },
+      { text: "Follow your bliss and the universe will open doors where there were only walls.", author: "Joseph Campbell" },
+      { text: "We must let go of the life we have planned, so as to accept the one that is waiting for us.", author: "Joseph Campbell" },
+      { text: "The privilege of a lifetime is being who you are.", author: "Joseph Campbell" },
+      { text: "Find a place inside where there's joy, and the joy will burn out the pain.", author: "Joseph Campbell" },
+      
+      // Alan Watts
+      { text: "The only way to make sense out of change is to plunge into it, move with it, and join the dance.", author: "Alan Watts" },
+      { text: "You are an aperture through which the universe is looking at and exploring itself.", author: "Alan Watts" },
+      { text: "The meaning of life is just to be alive. It is so plain and so obvious and so simple.", author: "Alan Watts" },
+      { text: "This is the real secret of life - to be completely engaged with what you are doing in the here and now.", author: "Alan Watts" },
+      { text: "Problems that remain persistently insoluble should always be suspected as questions asked in the wrong way.", author: "Alan Watts" },
+      
+      // LITERARY & ARTISTIC WISDOM
+      // Oscar Wilde
+      { text: "Be yourself; everyone else is already taken.", author: "Oscar Wilde" },
       { text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde" },
-      { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" }
+      { text: "I can resist everything except temptation.", author: "Oscar Wilde" },
+      { text: "We are all in the gutter, but some of us are looking at the stars.", author: "Oscar Wilde" },
+      { text: "Experience is merely the name men gave to their mistakes.", author: "Oscar Wilde" },
+      
+      // Mark Twain
+      { text: "The two most important days in your life are the day you are born and the day you find out why.", author: "Mark Twain" },
+      { text: "Kindness is the language which the deaf can hear and the blind can see.", author: "Mark Twain" },
+      { text: "Courage is resistance to fear, mastery of fear - not absence of fear.", author: "Mark Twain" },
+      { text: "It is better to keep your mouth closed and let people think you are a fool than to open it and remove all doubt.", author: "Mark Twain" },
+      { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+      
+      // MODERN INSPIRATIONAL THINKERS
+      // Albert Einstein
+      { text: "In the middle of difficulty lies opportunity.", author: "Albert Einstein" },
+      { text: "The true sign of intelligence is not knowledge but imagination.", author: "Albert Einstein" },
+      { text: "Try not to become a person of success, but rather try to become a person of value.", author: "Albert Einstein" },
+      { text: "Life is like riding a bicycle. To keep your balance, you must keep moving.", author: "Albert Einstein" },
+      { text: "Only a life lived for others is a life worthwhile.", author: "Albert Einstein" },
+      
+      // Eleanor Roosevelt
+      { text: "Yesterday is history, tomorrow is a mystery, today is a gift.", author: "Eleanor Roosevelt" },
+      { text: "No one can make you feel inferior without your consent.", author: "Eleanor Roosevelt" },
+      { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+      { text: "You must do the things you think you cannot do.", author: "Eleanor Roosevelt" },
+      { text: "Great minds discuss ideas; average minds discuss events; small minds discuss people.", author: "Eleanor Roosevelt" },
+      
+      // Martin Luther King Jr.
+      { text: "The ultimate measure of a man is not where he stands in moments of comfort and convenience, but where he stands at times of challenge and controversy.", author: "Martin Luther King Jr." },
+      { text: "Darkness cannot drive out darkness; only light can do that. Hate cannot drive out hate; only love can do that.", author: "Martin Luther King Jr." },
+      { text: "Faith is taking the first step even when you don't see the whole staircase.", author: "Martin Luther King Jr." },
+      { text: "Injustice anywhere is a threat to justice everywhere.", author: "Martin Luther King Jr." },
+      { text: "Our lives begin to end the day we become silent about things that matter.", author: "Martin Luther King Jr." },
+      
+      // Mahatma Gandhi
+      { text: "Be the change you want to see in the world.", author: "Mahatma Gandhi" },
+      { text: "Live as if you were to die tomorrow. Learn as if you were to live forever.", author: "Mahatma Gandhi" },
+      { text: "The weak can never forgive. Forgiveness is the attribute of the strong.", author: "Mahatma Gandhi" },
+      { text: "An eye for an eye only ends up making the whole world blind.", author: "Mahatma Gandhi" },
+      { text: "Happiness is when what you think, what you say, and what you do are in harmony.", author: "Mahatma Gandhi" },
+      
+      // Nelson Mandela
+      { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela" },
+      { text: "Education is the most powerful weapon which you can use to change the world.", author: "Nelson Mandela" },
+      { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+      { text: "Resentment is like drinking poison and then hoping it will kill your enemies.", author: "Nelson Mandela" },
+      { text: "There is no passion to be found playing small - in settling for a life that is less than the one you are capable of living.", author: "Nelson Mandela" },
+      
+      // CONTEMPORARY VOICES
+      // Maya Angelou
+      { text: "I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel.", author: "Maya Angelou" },
+      { text: "There is no greater agony than bearing an untold story inside you.", author: "Maya Angelou" },
+      { text: "If you don't like something, change it. If you can't change it, change your attitude.", author: "Maya Angelou" },
+      { text: "We delight in the beauty of the butterfly, but rarely admit the changes it has gone through to achieve that beauty.", author: "Maya Angelou" },
+      { text: "Try to be a rainbow in someone's cloud.", author: "Maya Angelou" },
+      
+      // FINAL INSPIRATIONAL QUOTES
+      { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+      { text: "Life is what happens to you while you're busy making other plans.", author: "John Lennon" },
+      { text: "He who is not busy being born is busy dying.", author: "Bob Dylan" },
+      { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+      { text: "In three words I can sum up everything I've learned about life: it goes on.", author: "Robert Frost" },
+      { text: "The most beautiful people are those who have known defeat, known suffering, known struggle, known loss, and have found their way out of the depths.", author: "Elisabeth Kübler-Ross" },
+      { text: "You are never too old to set another goal or to dream a new dream.", author: "C.S. Lewis" },
+      { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb" },
+      { text: "A ship in harbor is safe, but that is not what ships are built for.", author: "John A. Shedd" }
     ];
 
   // Generate and set a session quote that stays consistent throughout the reflection

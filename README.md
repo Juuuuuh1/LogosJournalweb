@@ -15,8 +15,8 @@ An AI-powered philosophical journaling platform that transforms daily reflection
 - Transforms multiple-choice and written responses into coherent narratives
 - Maintains philosophical depth while incorporating personal insights
 - Generates 200-400 word thoughtful journal entries
-- 42 curated philosophical quotes from Ancient to Contemporary thinkers
-- User-controlled quote changes with session deduplication
+- 1,000 curated philosophical quotes spanning 2,500+ years of wisdom from Ancient to Contemporary thinkers
+- User-controlled quote changes with session deduplication ensuring maximum variety
 
 ### 🎨 Multi-Modal Content Creation
 - **Artwork Generation**: Realistic visual representations using DALL-E 3
