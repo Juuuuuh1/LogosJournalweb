@@ -12,6 +12,10 @@ on:
 jobs:
   TruffleHog:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
