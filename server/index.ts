@@ -1,8 +1,24 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import rateLimit from "express-rate-limit";
 
 const app = express();
+
+// Rate limiting for security - protects against abuse of file system access and API calls
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // Limit each IP to 1000 requests per windowMs (generous for SPA)
+  message: {
+    error: "Too many requests from this IP, please try again later."
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiting to all requests
+app.use(generalLimiter);
+
 app.use(express.json({ limit: '10mb' })); // Increase limit for journal content
 app.use(express.urlencoded({ extended: false }));
 
