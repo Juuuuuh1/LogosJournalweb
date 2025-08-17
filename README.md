@@ -193,6 +193,17 @@ The application automatically detects the environment and configures itself acco
 3. Start the server: `npm start`
 4. Configure reverse proxy (nginx recommended)
 
+## Security
+
+Logos Journal implements comprehensive security measures:
+
+- **TruffleHog OSS**: Automated secret scanning for API keys and credentials
+- **Semgrep**: Static code analysis for security vulnerabilities
+- **GitHub CodeQL**: Advanced semantic code analysis for security patterns
+- **Dependabot**: Automated dependency updates with security prioritization
+- **Rate Limiting**: Protection against API and file system abuse
+- **API Key Protection**: Secure client-side storage with server-side filtering
+
 ## Contributing
 
 1. Fork the repository
@@ -202,6 +213,8 @@ The application automatically detects the environment and configures itself acco
 5. Commit your changes: `git commit -am 'Add feature'`
 6. Push to the branch: `git push origin feature-name`
 7. Submit a pull request
+
+All contributions automatically undergo security analysis via our integrated scanning tools.
 
 ## License
 

@@ -75,8 +75,15 @@ AI Service Integration (OpenAI GPT-4o, DALL-E 3)
 - **Client-Side API Key Storage**: localStorage with browser-only access for OpenAI integration
 - **Input Sanitization**: Comprehensive Zod schemas for all user inputs
 - **CORS Configuration**: Proper cross-origin resource sharing setup
-- **Automated Secret Scanning**: TruffleHog OSS integration for continuous security monitoring
-- **Static Code Analysis**: Semgrep integration for security vulnerability detection
+- **Rate Limiting**: Express rate limiting to prevent abuse of file system access and API endpoints
+- **Automated Security Pipeline**: Multi-layered security monitoring and analysis
+
+#### Automated Security Tools
+- **TruffleHog OSS**: Continuous secret scanning across repository history and new commits
+- **Semgrep**: Static code analysis for security vulnerabilities and code quality issues
+- **GitHub CodeQL**: Semantic code analysis for advanced security pattern detection
+- **Dependabot**: Automated dependency updates with security vulnerability prioritization
+- **Multi-Stage Security**: Integrated scanning on commits, pull requests, and scheduled reviews
 
 ## AI Integration Strategy
 

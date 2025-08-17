@@ -5,6 +5,9 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 
+// Configure Express to trust proxy headers (required for Replit environment)
+app.set('trust proxy', true);
+
 // Rate limiting for security - protects against abuse of file system access and API calls
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
