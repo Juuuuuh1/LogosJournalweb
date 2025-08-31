@@ -1203,12 +1203,13 @@ export default function Home() {
       "minimalist line drawing style"
     ];
     
-    const selectedSketchStyle = sketchStyles[Math.floor(Math.random() * sketchStyles.length)];
+    // Use the same style as the original image or default to first option
+    const selectedSketchStyle = generatedImage?.artistStyle || sketchStyles[0];
     
     // Get personalized content for regeneration
     const personalizedContent = extractPersonalContent();
     
-    // Create varied artistic styles for regeneration too
+    // Use the same style as the original artwork or default to first option
     const artworkStyles = [
       "vibrant watercolor painting with bright blues, warm oranges, and fresh greens",
       "oil painting with rich purples, golden yellows, and deep reds", 
@@ -1219,11 +1220,11 @@ export default function Home() {
       "impressionist style with rainbow colors and dynamic brushstrokes"
     ];
     
-    const selectedRegenStyle = artworkStyles[Math.floor(Math.random() * artworkStyles.length)];
+    const selectedRegenStyle = generatedImage?.artistStyle || artworkStyles[0];
     
     const prompt = currentImageType === 'sketch' 
-      ? `Create a hand-drawn sketch that captures philosophical reflection. Style: ${selectedSketchStyle}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. User's vision: ${imageRevisionPrompt}. IMPORTANT: Do NOT include any text, letters, words, speech bubbles, captions, or written characters of any kind in the image. Absolutely no random alphabets, fake writing, or gibberish text should appear. Focus entirely on pure visual storytelling through drawing techniques, facial expressions, body language, symbolic objects, and environmental elements. Personal insights: ${personalizedContent.substring(0, 300)}`
-      : `Create a ${selectedRegenStyle} artwork that captures the specific personal experiences from these reflections. Instead of abstract shapes, create a realistic or semi-realistic scene that represents the actual activities and feelings described. Show recognizable elements like places, objects, or situations mentioned. User's vision: ${imageRevisionPrompt}. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. IMPORTANT: NO TEXT, LETTERS, WORDS, OR WRITTEN CHARACTERS should appear anywhere in the image. Absolutely no random alphabets, fake writing, or gibberish text should appear. Use only pure visual elements to convey meaning. Personal experiences to visualize: ${personalizedContent.substring(0, 300)}`;
+      ? `Based on the previously generated philosophical sketch, create an improved version that incorporates the user's feedback. Maintain the same ${selectedSketchStyle} and general composition from the previous image, but make these specific adjustments: ${imageRevisionPrompt}. The image should be either black and white line art or colored sketch showing a contemplative scene, character in thoughtful pose, or symbolic representation. Use clean, expressive lines and thoughtful composition. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. The entire image should have a polished, professional appearance with crisp details and smooth edge transitions. IMPORTANT: Do NOT include any text, letters, words, speech bubbles, captions, or written characters of any kind in the image. Absolutely no random alphabets, fake writing, or gibberish text should appear. Focus entirely on pure visual storytelling through drawing techniques, facial expressions, body language, symbolic objects, and environmental elements. Keep the core philosophical theme while implementing the requested changes. Personal insights: ${personalizedContent.substring(0, 300)}`
+      : `Based on the previously generated philosophical artwork, create an improved version that incorporates the user's feedback. Maintain the same ${selectedRegenStyle} and general composition from the previous image, but make these specific adjustments: ${imageRevisionPrompt}. Instead of creating something completely new, build upon the existing artwork by refining elements like colors, composition, lighting, or specific details mentioned in the feedback. Show recognizable elements like places, objects, or situations from the previous version while implementing the requested improvements. Ensure clean, sharp edges with no noise, artifacts, or visual disturbances around the borders. IMPORTANT: NO TEXT, LETTERS, WORDS, OR WRITTEN CHARACTERS should appear anywhere in the image. Absolutely no random alphabets, fake writing, or gibberish text should appear. Use only pure visual elements to convey meaning. Keep the core visual theme while making the requested modifications. Personal experiences to visualize: ${personalizedContent.substring(0, 300)}`;
 
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
