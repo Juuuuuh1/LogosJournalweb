@@ -416,6 +416,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy endpoint for downloading images (to avoid CORS issues)
+  app.get("/api/download-image", async (req, res) => {
+    try {
+      const { url, filename } = req.query;
+      
+      if (!url || typeof url !== 'string') {
+        return res.status(400).json({ message: "Image URL is required" });
+      }
+
+      // Fetch the image from the external URL
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        return res.status(404).json({ message: "Image not found or expired" });
+      }
+
+      const imageBuffer = Buffer.from(await response.arrayBuffer());
+      const contentType = response.headers.get('content-type') || 'image/png';
+      
+      // Set appropriate headers for download
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Content-Disposition', `attachment; filename="${filename || 'image.png'}"`);
+      res.setHeader('Content-Length', imageBuffer.length);
+      
+      // Send the image buffer
+      res.send(imageBuffer);
+    } catch (error) {
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to download image" 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
