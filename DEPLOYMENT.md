@@ -57,7 +57,7 @@ The deployment configuration is now fully working with the standard npm scripts.
 - Users need their own OpenAI API key for full functionality
 - PostgreSQL database connection (optional - falls back to in-memory storage)
 - No additional setup required - app guides users through API key setup
-- Environment variables: `NODE_ENV=production`, `DATABASE_URL` (optional)
+- Environment variables: `NODE_ENV=production`, `DATABASE_URL` (required for migrations or persistent storage)
 
 ### Cost Considerations
 - Autoscale deployment scales to zero when idle (cost-effective)

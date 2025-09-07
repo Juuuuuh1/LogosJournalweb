@@ -1,4 +1,3 @@
-import { defineConfig } from "drizzle-kit";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -6,11 +5,11 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function loadDatabaseUrl(): string | undefined {
+function resolveDatabaseUrl() {
   if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
 
-  for (const file of [".env", ".env.example"]) {
-    const fullPath = path.join(__dirname, file);
+  for (const file of ["../.env", "../.env.example"]) {
+    const fullPath = path.resolve(__dirname, file);
     if (fs.existsSync(fullPath)) {
       const content = fs.readFileSync(fullPath, "utf-8");
       const match = content.match(/^DATABASE_URL=(.+)$/m);
@@ -23,15 +22,7 @@ function loadDatabaseUrl(): string | undefined {
   return undefined;
 }
 
-const databaseUrl = loadDatabaseUrl();
-
-export default databaseUrl
-  ? defineConfig({
-      out: "./migrations",
-      schema: "./shared/schema.ts",
-      dialect: "postgresql",
-      dbCredentials: {
-        url: databaseUrl,
-      },
-    })
-  : {};
+if (!resolveDatabaseUrl()) {
+  console.error("Error: DATABASE_URL is required for this operation.");
+  process.exit(1);
+}

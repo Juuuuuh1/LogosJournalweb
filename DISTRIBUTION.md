@@ -148,5 +148,5 @@ This app requires a Node.js server for the Express backend and database connecti
 
 ## Environment Variables
 Required for production deployment:
-- `DATABASE_URL` - PostgreSQL connection string (optional, falls back to in-memory)
+- `DATABASE_URL` - PostgreSQL connection string (required for migrations and CI, optional for in-memory fallback)
 - `NODE_ENV` - Set to "production" for production builds
