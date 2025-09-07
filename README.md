@@ -64,14 +64,11 @@ npm install
 ```
 
 3. **Set up environment variables**
-Create a `.env` file in the root directory:
+Copy the example file and update the values:
 ```bash
-# Database (optional)
-DATABASE_URL=your_postgresql_connection_string
-
-# Development settings
-NODE_ENV=development
+cp .env.example .env
 ```
+`DATABASE_URL` is required for database migrations and CI workflows but optional for basic local development (an in-memory store is used when absent).
 
 4. **Start the application**
 ```bash
@@ -159,6 +156,7 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run preview      # Preview production build
 npm run type-check   # Run TypeScript checking
+npm run db:push      # Run database migrations (requires DATABASE_URL)
 ```
 
 ### Environment Configuration
@@ -167,6 +165,8 @@ The application automatically detects the environment and configures itself acco
 
 - **Development**: Hot reload, detailed error messages, in-memory storage fallback
 - **Production**: Optimized builds, error handling, database persistence
+
+For continuous integration workflows, ensure a `DATABASE_URL` value is provided so that database migrations and checks can run.
 
 ## API Integration
 
