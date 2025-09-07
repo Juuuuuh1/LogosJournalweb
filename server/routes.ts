@@ -425,19 +425,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Image URL is required" });
       }
 
-      // Fetch the image from the external URL
+      // Security: Validate URL to prevent SSRF attacks
+      let parsedUrl: URL;
+      try {
+        parsedUrl = new URL(url);
+      } catch {
+        return res.status(400).json({ message: "Invalid URL format" });
+      }
+
+      // Only allow HTTPS URLs from trusted domains
+      const allowedHosts = [
+        'oaidalleapiprodscus.blob.core.windows.net', // OpenAI DALL-E images
+        'cdn.openai.com', // OpenAI CDN
+        'images.unsplash.com', // Unsplash images (if used)
+      ];
+
+      if (parsedUrl.protocol !== 'https:') {
+        return res.status(400).json({ message: "Only HTTPS URLs are allowed" });
+      }
+
+      if (!allowedHosts.includes(parsedUrl.hostname)) {
+        return res.status(400).json({ message: "URL domain not allowed" });
+      }
+
+      // Fetch the image from the validated external URL
       const response = await fetch(url);
       
       if (!response.ok) {
         return res.status(404).json({ message: "Image not found or expired" });
       }
 
+      // Validate content type is an image
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.startsWith('image/')) {
+        return res.status(400).json({ message: "URL does not point to a valid image" });
+      }
+
       const imageBuffer = Buffer.from(await response.arrayBuffer());
-      const contentType = response.headers.get('content-type') || 'image/png';
+      
+      // Validate file size (max 10MB)
+      if (imageBuffer.length > 10 * 1024 * 1024) {
+        return res.status(400).json({ message: "Image file too large" });
+      }
+      
+      // Sanitize filename to prevent path traversal
+      const sanitizedFilename = (filename as string || 'image.png')
+        .replace(/[^a-zA-Z0-9.-]/g, '_')
+        .replace(/^\.+/, '')
+        .substring(0, 100);
       
       // Set appropriate headers for download
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Content-Disposition', `attachment; filename="${filename || 'image.png'}"`);
+      res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFilename}"`);
       res.setHeader('Content-Length', imageBuffer.length);
       
       // Send the image buffer
