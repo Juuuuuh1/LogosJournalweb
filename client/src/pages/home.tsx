@@ -663,7 +663,12 @@ export default function Home() {
       }
 
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      let result;
+      try {
+        result = JSON.parse(data.choices[0].message.content);
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response');
+      }
       
       // Add curated philosopher quote to the question
       const questionWithQuote = {
@@ -726,7 +731,12 @@ export default function Home() {
       }
 
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      let result;
+      try {
+        result = JSON.parse(data.choices[0].message.content);
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response');
+      }
       
       // Add the new question with proper ID and curated quote
       const nextQuestion = {
@@ -864,7 +874,12 @@ export default function Home() {
       }
 
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      let result;
+      try {
+        result = JSON.parse(data.choices[0].message.content);
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response');
+      }
       
       // Add missing properties that the UI expects
       const journalWithMetrics = {
@@ -1027,7 +1042,12 @@ export default function Home() {
       }
 
       const data = await response.json();
-      const result = JSON.parse(data.choices[0].message.content);
+      let result;
+      try {
+        result = JSON.parse(data.choices[0].message.content);
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response');
+      }
       
       // Add missing properties and preserve original quote unless user requests change
       const revisedJournal = {
