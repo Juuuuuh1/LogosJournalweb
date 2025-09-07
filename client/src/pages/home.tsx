@@ -2204,14 +2204,14 @@ export default function Home() {
                                   <DropdownMenuItem onClick={async () => {
                                     if (generatedImage) {
                                       try {
-                                        const response = await fetch(generatedImage.imageUrl);
-                                        const blob = await response.blob();
-                                        const url = URL.createObjectURL(blob);
+                                        const filename = `philosophical-${generatedImage.type || 'artwork'}-${new Date().toISOString().split('T')[0]}.png`;
+                                        const downloadUrl = `/api/download-image?url=${encodeURIComponent(generatedImage.imageUrl)}&filename=${encodeURIComponent(filename)}`;
+                                        
                                         const a = document.createElement('a');
-                                        a.href = url;
-                                        a.download = `philosophical-${generatedImage.type || 'artwork'}-${new Date().toISOString().split('T')[0]}.png`;
+                                        a.href = downloadUrl;
+                                        a.download = filename;
                                         a.click();
-                                        URL.revokeObjectURL(url);
+                                        
                                         toast({
                                           title: "Image Downloaded",
                                           description: "Your image has been saved to your device.",
