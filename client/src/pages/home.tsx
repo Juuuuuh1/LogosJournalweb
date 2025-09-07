@@ -17,11 +17,11 @@ import {
   DialogTitle,
   DialogDescription 
 } from "@/components/ui/dialog";
-import { 
-  storeApiKey, 
-  getStoredApiKey, 
-  hasStoredApiKey, 
-  clearStoredApiKey 
+import {
+  storeApiKey,
+  getStoredApiKey,
+  hasStoredApiKey,
+  clearStoredApiKey
 } from "@/lib/security";
 import { SecurityBadge } from "@/components/ui/security-badge";
 import { 
@@ -575,12 +575,14 @@ export default function Home() {
 
   // Load API key from secure storage on mount
   useEffect(() => {
-    const storedKey = getStoredApiKey();
-    if (storedKey) {
-      setApiKey(storedKey);
-      // If user already has a stored API key, they can skip directly to questions
-      // but still allow them to see the API setup screen to manage their key
-    }
+    (async () => {
+      const storedKey = await getStoredApiKey();
+      if (storedKey) {
+        setApiKey(storedKey);
+        // If user already has a stored API key, they can skip directly to questions
+        // but still allow them to see the API setup screen to manage their key
+      }
+    })();
   }, []);
 
   const validateAndSaveApiKey = async () => {
@@ -614,7 +616,7 @@ export default function Home() {
       });
       
       if (testResponse.ok) {
-        storeApiKey(apiKey);
+        await storeApiKey(apiKey);
         generateSessionQuote(); // Set the session quote before starting questions
         await generateQuestions();
       } else {
@@ -928,7 +930,7 @@ export default function Home() {
     setCurrentStep("apiSetup");
   };
 
-  const resetToHome = () => {
+  const resetToHome = async () => {
     setCurrentStep("welcome");
     setCurrentQuestionIndex(0);
     setResponses({});
@@ -946,7 +948,7 @@ export default function Home() {
     setSessionQuote(null); // Reset session quote for new reflection
     
     // Keep the API key but reset everything else
-    const storedKey = getStoredApiKey();
+    const storedKey = await getStoredApiKey();
     if (storedKey) {
       setApiKey(storedKey);
     }
