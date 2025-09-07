@@ -66,8 +66,12 @@ Return the response in JSON format with this structure:
         temperature: 0.8,
       });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
-      return result.questions || [];
+      try {
+        const result = JSON.parse(response.choices[0].message.content || "{}");
+        return result.questions || [];
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response for questions');
+      }
     } catch (error) {
       throw new Error(`Failed to generate philosophical questions: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -136,7 +140,13 @@ Return the response in JSON format:
         temperature: 0.7,
       });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+      let result: any;
+      try {
+        result = JSON.parse(response.choices[0].message.content || "{}");
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response for journal synthesis');
+      }
+      
       const finalEntry = result.entry || "Unable to generate journal entry.";
       const philosophicalQuote = result.philosophicalQuote || "\"The unexamined life is not worth living.\" — Socrates";
       const generationTime = (Date.now() - startTime) / 1000;
@@ -197,7 +207,13 @@ Return the response in JSON format:
         temperature: 0.7,
       });
 
-      const result = JSON.parse(response.choices[0].message.content || "{}");
+      let result: any;
+      try {
+        result = JSON.parse(response.choices[0].message.content || "{}");
+      } catch (parseError) {
+        throw new Error('Failed to parse AI response for journal revision');
+      }
+      
       const finalEntry = result.entry || "Unable to revise journal entry.";
       const philosophicalQuote = result.philosophicalQuote || "\"The unexamined life is not worth living.\" — Socrates";
       const generationTime = (Date.now() - startTime) / 1000;
