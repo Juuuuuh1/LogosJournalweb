@@ -1,12 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import { z } from "zod";
 import { storage } from "./storage";
 import { OpenAIService } from "./services/openai";
 import { 
   apiKeyConfigSchema, 
   generateImageSchema,
   findImageSchema,
-  insertJournalEntrySchema 
+  insertJournalEntrySchema,
+  journalEntryIdSchema 
 } from "@shared/schema";
 
 // Helper function to extract personal keywords from journal text
@@ -401,7 +403,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get specific journal entry
   app.get("/api/journal-entries/:id", async (req, res) => {
     try {
-      const { id } = req.params;
+      const { id } = journalEntryIdSchema.parse(req.params);
       const entry = await storage.getJournalEntry(id);
       
       if (!entry) {
@@ -410,8 +412,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ entry });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid journal entry ID" });
+      }
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to fetch journal entry" 
+        message: "Failed to fetch journal entry" 
       });
     }
   });

@@ -38,6 +38,10 @@ export const findImageSchema = z.object({
   searchTerms: z.string().optional(),
 });
 
+export const journalEntryIdSchema = z.object({
+  id: z.string().regex(/^[a-zA-Z0-9_-]+$/, "Invalid journal entry ID format"),
+});
+
 export type ApiKeyConfig = z.infer<typeof apiKeyConfigSchema>;
 export type GenerateImageRequest = z.infer<typeof generateImageSchema>;
 export type FindImageRequest = z.infer<typeof findImageSchema>;
