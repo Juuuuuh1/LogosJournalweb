@@ -283,7 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ valid: isValid });
     } catch (error) {
       res.status(400).json({ 
-        message: error instanceof Error ? error.message : "Invalid request" 
+        message: "Invalid API key format" 
       });
     }
   });
@@ -301,7 +301,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(imageResponse);
     } catch (error) {
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to generate image" 
+        message: "Failed to generate image" 
       });
     }
   });
@@ -383,7 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to find relevant image" 
+        message: "Failed to find relevant image" 
       });
     }
   });
@@ -395,7 +395,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ entries });
     } catch (error) {
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to fetch journal entries" 
+        message: "Failed to fetch journal entries" 
       });
     }
   });
@@ -488,7 +488,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(imageBuffer);
     } catch (error) {
       res.status(500).json({ 
-        message: error instanceof Error ? error.message : "Failed to download image" 
+        message: "Failed to download image" 
       });
     }
   });
