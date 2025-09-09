@@ -1097,12 +1097,10 @@ export default function Home() {
     // If we have personal content, prioritize it
     if (personalInsights.length > 0) {
       const prioritizedContent = personalInsights.join('. ') + '. ' + (journalEntry?.finalEntry || '');
-      // Using prioritized personal content
       return prioritizedContent;
     }
     
     // Fallback to journal entry
-    // Using fallback demo content
     return journalEntry?.finalEntry || '';
   };
 

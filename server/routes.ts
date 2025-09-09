@@ -229,8 +229,6 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
     selectedCategory = 'nature';
   }
 
-  // Fallback image search category selection
-  
   const selectedImages = imageCategories[selectedCategory as keyof typeof imageCategories] || imageCategories.nature;
   
   // Filter out already used images for this session
@@ -239,7 +237,6 @@ function getFallbackPhilosophicalImages(query: string, sessionId: string = 'defa
   // If all images in category are used, reset the session
   if (availableImages.length === 0) {
     sessionUsedImages.clear();
-    // Reset session images when all are used
     const randomImage = selectedImages[Math.floor(Math.random() * selectedImages.length)];
     sessionUsedImages.add(randomImage.urls.regular);
     return [randomImage];
@@ -296,7 +293,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let searchQuery: string;
       if (searchTerms && searchTerms.trim()) {
         searchQuery = searchTerms.trim();
-        // Using custom search terms
       } else {
         // Extract personal content keywords from journal entry
         const personalKeywords = extractPersonalKeywords(journalEntry);
@@ -305,10 +301,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Prioritize personal keywords if found
         if (personalKeywords.length > 0) {
           searchQuery = personalKeywords.join(' ');
-          // Using extracted personal keywords
         } else {
           searchQuery = extractedThemes.join(' ');
-          // Using extracted philosophical themes
         }
       }
       
