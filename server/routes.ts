@@ -68,30 +68,10 @@ function extractThemesFromText(text: string): string[] {
   return themes.slice(0, 3); // Limit to top 3 themes
 }
 
-// Function to search Unsplash for free images
+// Function to search Unsplash for free images (requires API key setup)
 async function searchUnsplashImages(query: string): Promise<any[]> {
-  try {
-    // Using Unsplash's public API endpoint for search
-    const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=10&orientation=landscape`,
-      {
-        headers: {
-          'Authorization': 'Client-ID your-unsplash-access-key' // This would need to be set up
-        }
-      }
-    );
-    
-    if (!response.ok) {
-      // Fallback to a curated list of philosophical images
-      return getFallbackPhilosophicalImages(query);
-    }
-    
-    const data = await response.json();
-    return data.results || [];
-  } catch (error) {
-    // Return fallback images if API fails
-    return getFallbackPhilosophicalImages(query);
-  }
+  // Always use fallback images as Unsplash API requires proper setup
+  return getFallbackPhilosophicalImages(query);
 }
 
 // Track used images to avoid repetition per session

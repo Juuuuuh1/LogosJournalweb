@@ -14,7 +14,7 @@ export function encryptApiKey(apiKey: string): string {
     }
     return btoa(encrypted); // Base64 encode
   } catch (error) {
-    console.warn('Encryption failed, storing as-is');
+    // Fallback to plain storage if encryption fails
     return apiKey;
   }
 }
@@ -30,7 +30,7 @@ export function decryptApiKey(encryptedKey: string): string {
     }
     return decrypted;
   } catch (error) {
-    console.warn('Decryption failed, using as-is');
+    // Fallback to using value as-is if decryption fails
     return encryptedKey;
   }
 }
